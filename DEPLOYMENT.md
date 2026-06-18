@@ -138,9 +138,12 @@ production.
 24-hour booking reminders are sent by `GET /api/cron/reminders`, secured with
 `CRON_SECRET`.
 
-- **Vercel:** already wired in `vercel.json` (`crons`) to run hourly. Set
-  `CRON_SECRET`; Vercel sends it automatically as an `Authorization: Bearer`
-  header.
+- **Vercel:** add a cron in the dashboard (Project → Settings → Cron Jobs) or
+  in `vercel.json` pointing at `/api/cron/reminders`. It is intentionally **not**
+  pre-wired in `vercel.json`, because Hobby-plan projects reject sub-daily
+  schedules and that fails the whole deploy. On a Hobby plan use a daily
+  schedule (e.g. `0 9 * * *`); on Pro you can run it hourly. Set `CRON_SECRET`;
+  Vercel sends it automatically as an `Authorization: Bearer` header.
 - **Docker / other:** add a cron job, e.g.
   ```
   0 * * * * curl -fsS -H "x-cron-secret: $CRON_SECRET" https://<domain>/api/cron/reminders
