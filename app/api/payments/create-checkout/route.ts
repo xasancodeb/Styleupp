@@ -38,48 +38,79 @@ export async function POST(request: Request) {
   const split = commissionSplit(service.price, stylist.commissionRate);
   const supabase = await supabaseServer();
 
-  // Create the pending booking first so the unique index blocks double-booking.
-  const { data: booking, error: bookingError } = await supabase
+  // Reuse a pending booking the same user already holds for this exact slot
+  // (e.g. they abandoned Stripe and came back), so we don't self-conflict on
+  // the no-double-book index.
+  const { data: held } = await supabase
     .from("bookings")
-    .insert({
-      client_id: auth.user.id,
-      stylist_id: stylistId,
-      stylist_account_id: stylist.accountId,
-      service_id: serviceId,
-      service_name: service.name,
-      session_type: service.sessionType,
-      scheduled_for: scheduledFor,
-      duration_minutes: service.durationMinutes,
-      amount: base,
-      platform_fee: fee + split.platformFee,
-      total,
-      status: "pending",
-      notes: notes ? sanitizeText(notes, 1000) : null,
-    })
-    .select()
-    .single();
+    .select("*")
+    .eq("client_id", auth.user.id)
+    .eq("stylist_id", stylistId)
+    .eq("scheduled_for", scheduledFor)
+    .eq("status", "pending")
+    .maybeSingle();
 
-  if (bookingError) {
-    if ((bookingError as { code?: string }).code === "23505") {
-      return NextResponse.json({ error: "That slot was just taken. Choose another." }, { status: 409 });
+  let booking = held;
+  if (!booking) {
+    // Create the pending booking; the unique index blocks others double-booking.
+    const { data: created, error: bookingError } = await supabase
+      .from("bookings")
+      .insert({
+        client_id: auth.user.id,
+        stylist_id: stylistId,
+        stylist_account_id: stylist.accountId,
+        service_id: serviceId,
+        service_name: service.name,
+        session_type: service.sessionType,
+        scheduled_for: scheduledFor,
+        duration_minutes: service.durationMinutes,
+        amount: base,
+        platform_fee: fee + split.platformFee,
+        total,
+        status: "pending",
+        notes: notes ? sanitizeText(notes, 1000) : null,
+      })
+      .select()
+      .single();
+
+    if (bookingError) {
+      if ((bookingError as { code?: string }).code === "23505") {
+        return NextResponse.json({ error: "That slot was just taken. Choose another." }, { status: 409 });
+      }
+      return NextResponse.json({ error: bookingError.message }, { status: 500 });
     }
-    return NextResponse.json({ error: bookingError.message }, { status: 500 });
+    booking = created;
   }
 
-  // Record a pending payment.
-  const { data: payment } = await supabase
+  if (!booking) {
+    return NextResponse.json({ error: "Could not create the booking." }, { status: 500 });
+  }
+
+  // Reuse or create the pending payment record for this booking.
+  const { data: existingPayment } = await supabase
     .from("payments")
-    .insert({
-      booking_id: booking.id,
-      client_id: auth.user.id,
-      stylist_account_id: stylist.accountId,
-      amount: total,
-      platform_fee: fee + split.platformFee,
-      stylist_earnings: split.stylistEarnings,
-      status: "pending",
-    })
-    .select()
-    .single();
+    .select("*")
+    .eq("booking_id", booking.id)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  const payment =
+    existingPayment ??
+    (
+      await supabase
+        .from("payments")
+        .insert({
+          booking_id: booking.id,
+          client_id: auth.user.id,
+          stylist_account_id: stylist.accountId,
+          amount: total,
+          platform_fee: fee + split.platformFee,
+          stylist_earnings: split.stylistEarnings,
+          status: "pending",
+        })
+        .select()
+        .single()
+    ).data;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const usesConnect = Boolean(stylist.stripeAccountId && stylist.payoutsEnabled);
