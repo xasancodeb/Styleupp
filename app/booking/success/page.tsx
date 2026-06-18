@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { getStylist } from "@/lib/data";
@@ -14,6 +14,36 @@ function SuccessContent() {
   const when = params.get("when");
   const service = stylist?.services.find((s) => s.id === serviceId);
   const breakdown = service ? priceBreakdown(service.price) : null;
+
+  // Reflect the real booking status — it flips to "confirmed" once Stripe's
+  // webhook lands. Poll briefly so the badge updates without a refresh.
+  const [status, setStatus] = useState<string | null>(null);
+  useEffect(() => {
+    if (!stylist || !when) return;
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const check = async () => {
+      try {
+        const res = await fetch("/api/bookings");
+        if (res.ok) {
+          const data = await res.json();
+          const match = (data.bookings ?? []).find(
+            (b: { stylist_id: string; scheduled_for: string; status: string }) =>
+              b.stylist_id === stylist.id && Math.abs(new Date(b.scheduled_for).getTime() - new Date(when).getTime()) < 60000
+          );
+          if (match) {
+            setStatus(match.status);
+            if (match.status === "confirmed") return;
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+      if (tries++ < 5) timer = setTimeout(check, 2000);
+    };
+    void check();
+    return () => clearTimeout(timer);
+  }, [stylist, when]);
 
   return (
     <div className="section" style={{ padding: "4rem 1.5rem", maxWidth: 640, textAlign: "center" }}>
@@ -63,6 +93,12 @@ function SuccessContent() {
             {when && <Row label="When" value={formatDateTime(when)} />}
             {service && <Row label="Format" value={cap(service.sessionType)} />}
             {breakdown && <Row label="Paid" value={formatGBP(breakdown.total)} strong />}
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem" }}>
+              <span style={{ color: "var(--dim)" }}>Status</span>
+              <span style={{ fontWeight: 700, color: status === "confirmed" ? "#2f5d3a" : "var(--accent-dark)", textTransform: "capitalize" }}>
+                {status === "confirmed" ? "● Confirmed" : status ? "● Confirming…" : "● Processing…"}
+              </span>
+            </div>
           </div>
         </div>
       )}

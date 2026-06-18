@@ -11,15 +11,18 @@ const PRICE_BANDS = [
   { label: "£110+", min: 110, max: Infinity },
 ];
 
+type SortKey = "featured" | "rating" | "price-asc" | "price-desc";
+
 export default function ExplorePage() {
   const [specialty, setSpecialty] = useState<string | null>(null);
   const [session, setSession] = useState<SessionType | null>(null);
   const [priceBand, setPriceBand] = useState(0);
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("featured");
 
   const results = useMemo(() => {
     const band = PRICE_BANDS[priceBand];
-    return STYLISTS.filter((s) => {
+    const filtered = STYLISTS.filter((s) => {
       if (specialty && !s.specialties.includes(specialty)) return false;
       if (session && !s.sessionTypes.includes(session)) return false;
       if (s.startingPrice < band.min || s.startingPrice > band.max) return false;
@@ -30,7 +33,22 @@ export default function ExplorePage() {
       }
       return true;
     });
-  }, [specialty, session, priceBand, query]);
+    const sorted = [...filtered];
+    switch (sort) {
+      case "rating":
+        sorted.sort((a, b) => b.rating - a.rating);
+        break;
+      case "price-asc":
+        sorted.sort((a, b) => a.startingPrice - b.startingPrice);
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => b.startingPrice - a.startingPrice);
+        break;
+      default:
+        sorted.sort((a, b) => Number(b.featured) - Number(a.featured) || b.rating - a.rating);
+    }
+    return sorted;
+  }, [specialty, session, priceBand, query, sort]);
 
   const clear = () => {
     setSpecialty(null);
@@ -118,9 +136,24 @@ export default function ExplorePage() {
         <p style={{ color: "var(--dim)", fontWeight: 600 }}>
           {results.length} stylist{results.length === 1 ? "" : "s"}
         </p>
-        <button onClick={clear} className="btn btn-outline" style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}>
-          Clear filters
-        </button>
+        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+          <label style={{ fontSize: "0.85rem", color: "var(--faint)" }} htmlFor="sort">Sort</label>
+          <select
+            id="sort"
+            className="input"
+            style={{ width: "auto", padding: "0.45rem 0.7rem" }}
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+          >
+            <option value="featured">Featured</option>
+            <option value="rating">Top rated</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+          </select>
+          <button onClick={clear} className="btn btn-outline" style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}>
+            Clear
+          </button>
+        </div>
       </div>
 
       {results.length === 0 ? (

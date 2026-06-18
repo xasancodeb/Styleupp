@@ -1,4 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Become a StyleUp stylist — grow your styling business",
+  description:
+    "Join StyleUp's global community of personal stylists. Reach new clients, set your own rates, get paid securely, and pay commission as low as 10%.",
+};
 
 const TIERS = [
   { name: "Starter", commission: "20%", req: "0–4 sessions / month", perks: ["Profile listing", "Secure payments", "Booking management"] },
