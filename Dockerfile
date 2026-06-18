@@ -11,6 +11,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Public envs can be baked at build time; secrets are injected at runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
+# Emit the self-contained standalone server for the runtime stage below.
+ENV BUILD_STANDALONE=1
 RUN npm run build
 
 # ---- Runtime ---------------------------------------------------------------

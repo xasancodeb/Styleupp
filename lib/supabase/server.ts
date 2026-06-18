@@ -6,10 +6,20 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-function env(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing environment variable ${name}`);
-  return value;
+// Non-throwing env access with safe placeholders, so a server component or
+// route never 500s purely because credentials aren't configured yet — auth
+// simply resolves to "logged out" and data calls fail gracefully.
+const PLACEHOLDER_URL = "https://placeholder.supabase.co";
+const PLACEHOLDER_KEY = "placeholder-key";
+
+function url(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || PLACEHOLDER_URL;
+}
+function anonKey(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || PLACEHOLDER_KEY;
+}
+function serviceKey(): string {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY || PLACEHOLDER_KEY;
 }
 
 /**
@@ -18,10 +28,7 @@ function env(name: string): string {
  */
 export async function supabaseServer(): Promise<SupabaseClient> {
   const cookieStore = await cookies();
-  return createServerClient(
-    env("NEXT_PUBLIC_SUPABASE_URL"),
-    env("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-    {
+  return createServerClient(url(), anonKey(), {
       cookies: {
         getAll() {
           return cookieStore.getAll();
@@ -44,7 +51,7 @@ export async function supabaseServer(): Promise<SupabaseClient> {
  * (webhooks, admin mutations, payouts). Never expose to the browser.
  */
 export function supabaseAdmin(): SupabaseClient {
-  return createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
+  return createClient(url(), serviceKey(), {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

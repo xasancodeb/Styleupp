@@ -11,14 +11,24 @@ import { createBrowserClient } from "@supabase/ssr";
 // results are treated as loosely typed and validated at the route boundary.
 type DB = SupabaseClient;
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(
-      `Missing environment variable ${name}. Add it to your .env.local (see .env.example).`
-    );
-  }
-  return value;
+// Safe placeholders. When env vars are absent (e.g. a preview deployed before
+// secrets were configured) we still construct a client with valid-looking
+// placeholders so the UI NEVER hard-crashes — network calls simply fail and are
+// handled gracefully (logged-out browsing keeps working). Once real env vars are
+// present at build/runtime, the real values are used.
+const PLACEHOLDER_URL = "https://placeholder.supabase.co";
+const PLACEHOLDER_KEY = "placeholder-anon-key";
+
+function supabaseUrl(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || PLACEHOLDER_URL;
+}
+function supabaseAnonKey(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || PLACEHOLDER_KEY;
+}
+
+/** Whether real Supabase credentials are configured. */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
 /**
@@ -26,9 +36,7 @@ function requireEnv(name: string): string {
  * handlers; respects RLS as the anon role.
  */
 export function getSupabase(): DB {
-  const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  return createClient(url, anonKey, {
+  return createClient(supabaseUrl(), supabaseAnonKey(), {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
@@ -38,13 +46,12 @@ let browserClient: DB | null = null;
 /**
  * Singleton browser client. Uses the SSR browser client so the session is
  * stored in cookies — that lets middleware and server components read the same
- * authenticated session. Reused across the app.
+ * authenticated session. Never throws, so the nav/UI can't crash on a missing
+ * key; calls simply no-op until real credentials are configured.
  */
 export function supabaseBrowser(): DB {
   if (browserClient) return browserClient;
-  const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  browserClient = createBrowserClient(url, anonKey);
+  browserClient = createBrowserClient(supabaseUrl(), supabaseAnonKey());
   return browserClient;
 }
 
@@ -53,9 +60,7 @@ export function supabaseBrowser(): DB {
  * in trusted server code (webhooks, admin routes) and never expose to the client.
  */
 export function serverClient(): DB {
-  const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
-  return createClient(url, serviceKey, {
+  return createClient(supabaseUrl(), process.env.SUPABASE_SERVICE_ROLE_KEY || PLACEHOLDER_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
@@ -65,9 +70,7 @@ export function serverClient(): DB {
  * that user, which is what we want for per-user API routes.
  */
 export function userScopedClient(accessToken: string): DB {
-  const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  return createClient(url, anonKey, {
+  return createClient(supabaseUrl(), supabaseAnonKey(), {
     global: { headers: { Authorization: `Bearer ${accessToken}` } },
     auth: { persistSession: false, autoRefreshToken: false },
   });
