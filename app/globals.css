@@ -1,23 +1,26 @@
 @import "tailwindcss";
 
 /* ─────────────────────────── Design tokens ───────────────────────────────
-   Quiet luxury: neutral warm off-white, soft near-black ink, and a single
-   muted bronze accent used only for small details. Lots of restraint. */
+   Quiet luxury, authored. Neutral warm paper, soft near-black ink, one muted
+   bronze accent for small details. A unified photographic treatment ties the
+   imagery into a single editorial brand. */
 :root {
-  --accent: #8a6a4c;        /* muted bronze — small details only */
+  --accent: #8a6a4c;
   --accent-dark: #6d5036;
   --accent-soft: #efeae1;
-  --bg: #f6f4ef;            /* soft warm off-white */
-  --paper: #f6f4ef;
-  --dark: #201d18;          /* near-black ink */
-  --ink: #201d18;
-  --dim: #6e675c;
-  --faint: #a79f92;
-  --border: #e8e3d9;
-  --card: #fffdf9;
+  --bg: #f5f3ed;
+  --paper: #f5f3ed;
+  --dark: #1d1a15;
+  --ink: #1d1a15;
+  --dim: #6c655a;
+  --faint: #a89f91;
+  --border: #e7e2d7;
+  --card: #fffdf8;
 
   --font-serif-stack: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans-stack: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.21, 1);
 }
 
 @theme inline {
@@ -45,9 +48,31 @@ body {
   background-color: var(--bg);
   color: var(--dark);
   font-family: var(--font-sans-stack);
+  font-feature-settings: "ss01", "cv05";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   margin: 0;
   line-height: 1.65;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Refined, unobtrusive scrollbar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d8d1c4;
+  border: 3px solid var(--bg);
+  border-radius: 999px;
 }
 
 header,
@@ -60,37 +85,47 @@ footer {
 .serif {
   font-family: var(--font-serif-stack);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  font-optical-sizing: auto;
+  letter-spacing: -0.012em;
 }
 
-/* Restrained editorial display type. */
+/* Editorial display type with optical sizing. */
 .display {
   font-family: var(--font-serif-stack);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.018em;
+  font-weight: 480;
+  font-optical-sizing: auto;
+  line-height: 1.05;
+  letter-spacing: -0.021em;
 }
 .display em {
   font-style: italic;
-  font-weight: 500;
+  font-weight: 460;
 }
 
-/* Quiet kicker label — neutral, not coloured. */
+/* Intro paragraph. */
+.lede {
+  font-size: clamp(1.05rem, 1.6vw, 1.22rem);
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+/* Quiet kicker label. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.72rem;
+  gap: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   color: var(--faint);
 }
 .eyebrow::before {
   content: "";
-  width: 20px;
+  width: 22px;
   height: 1px;
-  background: var(--faint);
+  background: currentColor;
+  opacity: 0.7;
 }
 
 a {
@@ -98,20 +133,56 @@ a {
   text-decoration: none;
 }
 
+hr.rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ───────────────────── Unified photographic treatment ───────────────────── */
+/* All brand imagery sits in a .photo wrapper: gently desaturated + warmed by
+   default, blooming to full colour on hover. This makes disparate stock
+   photography read as one curated editorial. */
+.photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent-soft);
+}
+.photo img {
+  filter: saturate(0.82) contrast(1.03) brightness(1.01) sepia(0.05);
+  transition: filter 0.7s var(--ease), transform 1s var(--ease);
+}
+.photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(138, 106, 76, 0.06);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: opacity 0.7s var(--ease);
+}
+.photo:hover img {
+  filter: none;
+  transform: scale(1.045);
+}
+.photo:hover::after {
+  opacity: 0;
+}
+
 /* ───────────────────────────── Cards ─────────────────────────────────────── */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(32, 29, 24, 0.03);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(29, 26, 21, 0.03);
 }
 
 a.card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 a.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 36px rgba(32, 29, 24, 0.09);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(29, 26, 21, 0.1);
 }
 
 /* ───────────────────────────── Buttons ───────────────────────────────────── */
@@ -119,12 +190,12 @@ a.card:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   font-weight: 500;
   font-size: 0.92rem;
   border-radius: 9999px;
-  padding: 0.74rem 1.6rem;
-  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  padding: 0.78rem 1.65rem;
+  transition: transform 0.18s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
   cursor: pointer;
   border: 1px solid transparent;
   line-height: 1;
@@ -132,14 +203,21 @@ a.card:hover {
 .btn:active {
   transform: translateY(1px);
 }
+.btn .arrow {
+  display: inline-block;
+  transition: transform 0.3s var(--ease);
+}
+.btn:hover .arrow {
+  transform: translateX(4px);
+}
 
-/* Primary is ink — luxurious and quiet, not a loud colour. */
 .btn-primary {
   background: var(--ink);
   color: var(--paper);
 }
 .btn-primary:hover {
   background: #000;
+  box-shadow: 0 10px 26px rgba(29, 26, 21, 0.22);
 }
 
 .btn-dark {
@@ -168,13 +246,13 @@ a.card:hover {
   padding: 0.72rem 0.95rem;
   font-size: 0.95rem;
   color: var(--dark);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
   font-family: inherit;
 }
 .input:focus {
   outline: none;
   border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(32, 29, 24, 0.06);
+  box-shadow: 0 0 0 3px rgba(29, 26, 21, 0.06);
 }
 
 /* ───────────────────────────── Chips ─────────────────────────────────────── */
@@ -184,13 +262,13 @@ a.card:hover {
   gap: 0.35rem;
   padding: 0.3rem 0.72rem;
   border-radius: 9999px;
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   font-weight: 500;
   background: var(--accent-soft);
   color: var(--accent-dark);
 }
 .chip-muted {
-  background: #f0ece3;
+  background: #efebe2;
   color: var(--dim);
 }
 
@@ -202,7 +280,7 @@ a.card:hover {
   font-size: 0.85rem;
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s var(--ease);
 }
 .tag-toggle:hover {
   border-color: var(--ink);
@@ -214,7 +292,7 @@ a.card:hover {
 }
 
 .section {
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
@@ -227,7 +305,7 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
-/* Subtle nav underline. */
+/* Nav underline. */
 .ul-link {
   position: relative;
 }
@@ -241,20 +319,31 @@ button:focus-visible,
   background: var(--ink);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.25s ease;
+  transition: transform 0.3s var(--ease);
 }
 .ul-link:hover::after,
 .ul-link[data-active="true"]::after {
   transform: scaleX(1);
 }
 
+/* ───────────────────────── Scroll reveal ─────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
 .fade-up {
-  animation: fadeUp 0.5s ease both;
+  animation: fadeUp 0.6s var(--ease) both;
 }
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -263,6 +352,10 @@ button:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   *,
   *::before,
   *::after {

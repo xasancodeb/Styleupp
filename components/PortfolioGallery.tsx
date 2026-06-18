@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function PortfolioGallery({ images, name }: { images: string[]; name: string }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -33,23 +34,15 @@ export default function PortfolioGallery({ images, name }: { images: string[]; n
             key={src}
             onClick={() => setOpen(i)}
             aria-label={`View look ${i + 1}`}
-            style={{
-              border: "none",
-              padding: 0,
-              cursor: "zoom-in",
-              borderRadius: 10,
-              overflow: "hidden",
-              aspectRatio: "4 / 5",
-              background: "var(--accent-soft)",
-            }}
+            className="photo"
+            style={{ border: "none", padding: 0, cursor: "zoom-in", borderRadius: 10, aspectRatio: "4 / 5" }}
           >
-            <img
+            <Image
               src={src}
               alt={`${name} — look ${i + 1}`}
-              loading="lazy"
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s ease" }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              fill
+              sizes="(max-width: 700px) 45vw, 180px"
+              style={{ objectFit: "cover" }}
             />
           </button>
         ))}

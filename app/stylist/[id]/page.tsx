@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getStylist, STYLISTS, getPortfolio } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
@@ -37,24 +38,16 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
   return (
     <div>
       {/* Cover */}
-      <div
-        style={{
-          height: 260,
-          backgroundImage: `linear-gradient(180deg, rgba(26,22,18,0.1), rgba(26,22,18,0.55)), url(${stylist.cover})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      <div className="photo" style={{ height: 280 }}>
+        <Image src={stylist.cover} alt="" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(29,26,21,0.12), rgba(29,26,21,0.5))" }} />
+      </div>
 
-      <div className="section" style={{ padding: "0 1.5rem 3rem", marginTop: "-70px", position: "relative" }}>
+      <div className="section" style={{ padding: "0 1.5rem 3rem", marginTop: "-78px", position: "relative" }}>
         <div className="card" style={{ padding: "1.75rem", display: "flex", gap: "1.5rem", flexWrap: "wrap", alignItems: "center" }}>
-          <img
-            src={stylist.avatar}
-            alt={stylist.name}
-            width={104}
-            height={104}
-            style={{ borderRadius: "50%", border: "4px solid #fff", objectFit: "cover", boxShadow: "0 6px 18px rgba(0,0,0,0.15)" }}
-          />
+          <div className="photo" style={{ width: 108, height: 108, borderRadius: "50%", border: "4px solid var(--card)", flexShrink: 0, boxShadow: "0 6px 18px rgba(0,0,0,0.15)" }}>
+            <Image src={stylist.avatar} alt={stylist.name} fill sizes="108px" style={{ objectFit: "cover" }} />
+          </div>
           <div style={{ flex: "1 1 280px" }}>
             <span className="eyebrow">{stylist.city} · {stylist.country} · {stylist.yearsExperience} yrs</span>
             <h1 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", marginTop: "0.5rem" }}>

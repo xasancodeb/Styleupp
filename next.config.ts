@@ -6,10 +6,10 @@ const nextConfig: NextConfig = {
   // Everywhere else — Vercel, local `next start` — we use the default output.
   ...(process.env.BUILD_STANDALONE === "1" ? { output: "standalone" as const } : {}),
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "i.pravatar.cc" },
-    ],
+    // Delegate resizing to Unsplash's CDN (see lib/imageLoader.ts) so images
+    // load directly in the browser — no optimizer round-trip, no CLS.
+    loader: "custom",
+    loaderFile: "./lib/imageLoader.ts",
   },
 };
 
