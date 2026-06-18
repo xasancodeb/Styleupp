@@ -36,6 +36,7 @@ export default function StylistDashboard() {
   const [stylist, setStylist] = useState<StylistRow | null>(null);
   const [services, setServices] = useState<ServiceRow[]>([]);
   const [earnings, setEarnings] = useState<{ lifetime: number; monthSessions: number; tier: string } | null>(null);
+  const [upcoming, setUpcoming] = useState<{ id: string; service_name: string; scheduled_for: string; total: number }[]>([]);
   const [connect, setConnect] = useState<{ connected: boolean; payoutsEnabled: boolean }>({ connected: false, payoutsEnabled: false });
   const [authError, setAuthError] = useState(false);
 
@@ -52,6 +53,7 @@ export default function StylistDashboard() {
       setServices((await s.json()).services ?? []);
       const ed = await e.json();
       setEarnings({ lifetime: ed.summary?.lifetime ?? 0, monthSessions: ed.summary?.monthSessions ?? 0, tier: ed.tier?.name ?? "Starter" });
+      setUpcoming(ed.bookings ?? []);
       setConnect(await c.json());
     } catch {
       setAuthError(true);
@@ -88,11 +90,45 @@ export default function StylistDashboard() {
       </div>
 
       {tab === "earnings" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))", gap: "1.25rem" }}>
-          <Stat label="Lifetime earnings" value={formatGBP(earnings?.lifetime ?? 0)} accent />
-          <Stat label="Sessions this month" value={String(earnings?.monthSessions ?? 0)} />
-          <Stat label="Commission tier" value={earnings?.tier ?? "Starter"} />
-          <Stat label="Payouts" value={connect.payoutsEnabled ? "Active" : "Not set up"} />
+        <div style={{ display: "grid", gap: "1.5rem" }}>
+          {stylist && !connect.payoutsEnabled && (
+            <div
+              className="card"
+              style={{ padding: "1.1rem 1.4rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap", background: "rgba(196,146,58,0.08)", border: "1px solid rgba(196,146,58,0.25)" }}
+            >
+              <span><strong>Set up payouts</strong> to start receiving your earnings automatically.</span>
+              <button onClick={() => setTab("payouts")} className="btn btn-primary" style={{ padding: "0.5rem 1.1rem" }}>Connect payouts</button>
+            </div>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))", gap: "1.25rem" }}>
+            <Stat label="Lifetime earnings" value={formatGBP(earnings?.lifetime ?? 0)} accent />
+            <Stat label="Sessions this month" value={String(earnings?.monthSessions ?? 0)} />
+            <Stat label="Commission tier" value={earnings?.tier ?? "Starter"} />
+            <Stat label="Payouts" value={connect.payoutsEnabled ? "Active" : "Not set up"} />
+          </div>
+          <section>
+            <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.75rem" }}>Upcoming sessions</h2>
+            {upcoming.length === 0 ? (
+              <p style={{ color: "var(--dim)" }}>No upcoming confirmed sessions yet.</p>
+            ) : (
+              <div style={{ display: "grid", gap: "0.6rem" }}>
+                {upcoming.map((b) => (
+                  <div key={b.id} className="card" style={{ padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div>
+                      <strong>{b.service_name}</strong>
+                      <div style={{ color: "var(--dim)", fontSize: "0.85rem" }}>
+                        {new Date(b.scheduled_for).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                      <span className="font-serif" style={{ fontWeight: 700 }}>{formatGBP(b.total)}</span>
+                      <a href={`/messages/${b.id}`} className="btn btn-outline" style={{ padding: "0.4rem 0.85rem", fontSize: "0.8rem" }}>Message</a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       )}
 
