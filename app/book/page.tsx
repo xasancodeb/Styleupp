@@ -244,9 +244,21 @@ function BookingFlow() {
             >
               {submitting ? "Processing…" : breakdown ? `Pay ${formatGBP(breakdown.total)}` : "Confirm & pay"}
             </button>
-            <p style={{ color: "var(--faint)", fontSize: "0.78rem", marginTop: "0.75rem", lineHeight: 1.5 }}>
-              By booking you agree to our <Link href="/terms" style={{ color: "var(--accent-dark)" }}>terms</Link>.
-              Cancellation: full refund 48h+, 50% within 24–48h, none under 24h.
+            <div style={{ marginTop: "1.1rem", paddingTop: "1.1rem", borderTop: "1px solid var(--border)", display: "grid", gap: "0.55rem" }}>
+              {[
+                ["✓", "Free cancellation up to 48 hours before"],
+                ["✓", "Every stylist is personally vetted"],
+                ["✓", "Secure payment — you're never charged twice"],
+              ].map(([icon, text]) => (
+                <div key={text} style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", fontSize: "0.84rem", color: "var(--dim)" }}>
+                  <span style={{ color: "var(--accent-dark)" }}>{icon}</span>
+                  <span>{text}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ color: "var(--faint)", fontSize: "0.76rem", marginTop: "0.85rem", lineHeight: 1.5 }}>
+              By booking you agree to our <Link href="/terms" style={{ textDecoration: "underline" }}>terms</Link>.
+              No pressure — you can reschedule or cancel any time from your dashboard.
             </p>
           </div>
         </aside>

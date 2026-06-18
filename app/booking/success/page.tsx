@@ -103,7 +103,28 @@ function SuccessContent() {
         </div>
       )}
 
-      <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginTop: "2rem", flexWrap: "wrap" }}>
+      <div className="card" style={{ padding: "1.75rem", marginTop: "1.25rem", textAlign: "left" }}>
+        <h2 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 600 }}>What happens next</h2>
+        <ol style={{ listStyle: "none", padding: 0, margin: "1rem 0 0", display: "grid", gap: "0.9rem" }}>
+          {[
+            { t: "We've saved your session", d: "It's in your dashboard, and a confirmation is on its way to your inbox." },
+            { t: "Your stylist will reach out", d: "They'll introduce themselves and share anything to prepare beforehand." },
+            { t: "Chat any time", d: "Message your stylist from your dashboard. Contact details unlock 24h before." },
+          ].map((s, i) => (
+            <li key={s.t} style={{ display: "flex", gap: "0.85rem" }}>
+              <span style={{ flexShrink: 0, width: 26, height: 26, borderRadius: "50%", background: "var(--ink)", color: "var(--paper)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: 600 }}>
+                {i + 1}
+              </span>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{s.t}</div>
+                <div style={{ color: "var(--dim)", fontSize: "0.9rem" }}>{s.d}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginTop: "1.5rem", flexWrap: "wrap" }}>
         <Link href="/dashboard" className="btn btn-primary">
           View in dashboard
         </Link>

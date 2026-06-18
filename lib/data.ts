@@ -470,3 +470,69 @@ export function getFeatured(): Stylist[] {
 export function getService(stylistId: string, serviceId: string): Service | undefined {
   return getStylist(stylistId)?.services.find((svc) => svc.id === serviceId);
 }
+
+// ─────────────────────────── Portfolio "looks" ──────────────────────────────
+// Each stylist shows a small lookbook so clients can judge whether the
+// aesthetic is right for them. Images are themed to the stylist's vibe and
+// drawn from a curated, reliable set of editorial fashion photography.
+const LOOK_THEMES: Record<string, string[]> = {
+  colour: [
+    "1490481651871-ab68de25d43d",
+    "1483985988355-763728e1935b",
+    "1502716119720-b23a93e5fe1b",
+    "1492707892479-7bc8d5a4ee93",
+    "1483181957632-8bda974cbc91",
+    "1485968579580-b6d095142e6e",
+  ],
+  minimal: [
+    "1445205170230-053b83016050",
+    "1490578474895-699cd4e2cf59",
+    "1441986300917-64674bd600d8",
+    "1507003211169-0a1dd7228f2d",
+    "1539109136881-3be0616acf4b",
+    "1521334884684-d80222895322",
+  ],
+  occasion: [
+    "1469334031218-e382a71b716b",
+    "1512436991641-6745cdb1723f",
+    "1469371670807-013ccf25f16a",
+    "1485462537746-965f33f7f6a7",
+    "1490481651871-ab68de25d43d",
+    "1492707892479-7bc8d5a4ee93",
+  ],
+  menswear: [
+    "1507003211169-0a1dd7228f2d",
+    "1445205170230-053b83016050",
+    "1441986300917-64674bd600d8",
+    "1521334884684-d80222895322",
+    "1490578474895-699cd4e2cf59",
+    "1469371670807-013ccf25f16a",
+  ],
+  editorial: [
+    "1483985988355-763728e1935b",
+    "1490481651871-ab68de25d43d",
+    "1496747611176-843222e1e57c",
+    "1483181957632-8bda974cbc91",
+    "1502716119720-b23a93e5fe1b",
+    "1512436991641-6745cdb1723f",
+  ],
+};
+
+function vibeFor(stylist: Stylist): keyof typeof LOOK_THEMES {
+  const sp = stylist.specialties;
+  if (sp.includes("Menswear")) return "menswear";
+  if (sp.includes("Occasion & Event") || sp.includes("Bridal Styling")) return "occasion";
+  if (sp.includes("Colour Analysis") || sp.includes("Body Confidence")) return "colour";
+  if (sp.includes("Sustainable Fashion") || sp.includes("Wardrobe Detox") || sp.includes("Capsule Wardrobe"))
+    return "minimal";
+  return "editorial";
+}
+
+/** Returns a stylist's lookbook image URLs (their cover + themed looks). */
+export function getPortfolio(stylist: Stylist): string[] {
+  const ids = LOOK_THEMES[vibeFor(stylist)];
+  const coverId = stylist.cover.match(/photo-([^?]+)/)?.[1];
+  const unique = Array.from(new Set([coverId, ...ids].filter(Boolean) as string[])).slice(0, 6);
+  return unique.map((id) => `https://images.unsplash.com/photo-${id}?w=640&h=800&fit=crop&auto=format&q=70`);
+}
+

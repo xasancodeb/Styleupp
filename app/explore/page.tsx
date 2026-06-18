@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { STYLISTS, SPECIALTIES, SESSION_TYPES, type SessionType } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
+import { loadProfile, PALETTES, type ColorSeason } from "@/lib/profile";
 
 const PRICE_BANDS = [
   { label: "Any price", min: 0, max: Infinity },
@@ -18,6 +20,15 @@ export default function ExplorePage() {
   const [session, setSession] = useState<SessionType | null>(null);
   const [priceBand, setPriceBand] = useState(0);
   const [query, setQuery] = useState("");
+  const [season, setSeason] = useState<ColorSeason | null>(null);
+  const [name, setName] = useState("");
+
+  // Reflect the visitor's saved quiz result back to them.
+  useEffect(() => {
+    const p = loadProfile();
+    setSeason(p.season);
+    setName(p.fullName);
+  }, []);
   const [sort, setSort] = useState<SortKey>("featured");
 
   const results = useMemo(() => {
@@ -68,7 +79,39 @@ export default function ExplorePage() {
         budget to find your perfect match.
       </p>
 
-      <div className="card" style={{ padding: "1.5rem", marginTop: "1.75rem", display: "grid", gap: "1.25rem" }}>
+      {season ? (
+        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
+            <div style={{ display: "flex" }}>
+              {PALETTES[season].bestColors.slice(0, 4).map((c, i) => (
+                <span key={c.hex} style={{ width: 26, height: 26, borderRadius: "50%", background: c.hex, border: "2px solid var(--card)", marginLeft: i ? -8 : 0 }} />
+              ))}
+            </div>
+            <div>
+              <div style={{ fontWeight: 600 }}>
+                {name ? `${name.split(" ")[0]}, you're a ${PALETTES[season].name}` : `You're a ${PALETTES[season].name}`}
+              </div>
+              <div style={{ color: "var(--dim)", fontSize: "0.88rem" }}>
+                We'd start with a colour specialist to bring your palette to life.
+              </div>
+            </div>
+          </div>
+          <button onClick={() => setSpecialty(specialty === "Colour Analysis" ? null : "Colour Analysis")} className="btn btn-outline" style={{ padding: "0.5rem 1.1rem", fontSize: "0.85rem" }}>
+            {specialty === "Colour Analysis" ? "Showing colour experts" : "Show colour experts"}
+          </button>
+        </div>
+      ) : (
+        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ color: "var(--dim)", fontSize: "0.92rem" }}>
+            <strong style={{ color: "var(--dark)" }}>Not sure who to pick?</strong> Take the 2-minute quiz and we'll match you to your colours.
+          </div>
+          <Link href="/quiz" className="btn btn-outline" style={{ padding: "0.5rem 1.1rem", fontSize: "0.85rem" }}>
+            Take the quiz
+          </Link>
+        </div>
+      )}
+
+      <div className="card" style={{ padding: "1.5rem", marginTop: "1.5rem", display: "grid", gap: "1.25rem" }}>
         <input
           className="input"
           placeholder="Search by name, city or specialty…"

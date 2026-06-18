@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getStylist, STYLISTS } from "@/lib/data";
+import { getStylist, STYLISTS, getPortfolio } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
 import StylistCard from "@/components/StylistCard";
+import PortfolioGallery from "@/components/PortfolioGallery";
 
 export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
@@ -98,6 +99,19 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 <Stat label="Languages" value={stylist.languages.join(", ")} />
                 <Stat label="Formats" value={stylist.sessionTypes.map(cap).join(", ")} />
               </div>
+            </section>
+
+            <section className="card" style={{ padding: "1.75rem" }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "1rem" }}>
+                <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700 }}>
+                  Recent looks
+                </h2>
+                <span style={{ color: "var(--faint)", fontSize: "0.82rem" }}>Tap any image to enlarge</span>
+              </div>
+              <p style={{ color: "var(--dim)", marginTop: "0.5rem", fontSize: "0.95rem" }}>
+                A taste of {stylist.name.split(" ")[0]}&apos;s styling — so you can see if the aesthetic feels like you.
+              </p>
+              <PortfolioGallery images={getPortfolio(stylist)} name={stylist.name} />
             </section>
 
             <section className="card" style={{ padding: "1.75rem" }}>
