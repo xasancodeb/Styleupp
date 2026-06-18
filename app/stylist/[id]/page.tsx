@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getStylist, STYLISTS } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
+import SaveStylistButton from "@/components/SaveStylistButton";
 
 export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
@@ -171,6 +172,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
               <Link href={`/book?stylist=${stylist.id}`} className="btn btn-primary" style={{ width: "100%", marginTop: "1rem" }}>
                 Book a session
               </Link>
+              <SaveStylistButton slug={stylist.id} />
               <Link href="/explore" className="btn btn-outline" style={{ width: "100%", marginTop: "0.6rem" }}>
                 Compare stylists
               </Link>

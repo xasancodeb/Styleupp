@@ -56,6 +56,12 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <p style={{ textAlign: "center", marginTop: "0.9rem" }}>
+          <Link href="/auth/reset" style={{ color: "var(--dim)", fontSize: "0.88rem" }}>
+            Forgot your password?
+          </Link>
+        </p>
+
         <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "1.25rem", textAlign: "center" }}>
           New to StyleUp?{" "}
           <Link href="/auth/signup" style={{ color: "var(--accent-dark)", fontWeight: 600 }}>

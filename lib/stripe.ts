@@ -63,3 +63,62 @@ export function formatGBP(amount: number): string {
     currency: "GBP",
   }).format(amount);
 }
+
+// ─────────────────────────── Stripe Connect ─────────────────────────────────
+// Stylists are paid via Connect Express accounts. The platform takes an
+// application fee equal to the client service fee plus the tier commission, and
+// the remainder is transferred to the connected stylist account.
+
+const APP_URL = () => process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+/** Creates (or returns) an Express connected account for a stylist. */
+export async function createConnectAccount(email: string, country = "GB"): Promise<string> {
+  const account = await getStripe().accounts.create({
+    type: "express",
+    email,
+    country,
+    capabilities: {
+      transfers: { requested: true },
+      card_payments: { requested: true },
+    },
+    business_type: "individual",
+    metadata: { platform: "styleup" },
+  });
+  return account.id;
+}
+
+/** Generates an onboarding link the stylist follows to finish KYC + payouts. */
+export async function createAccountLink(accountId: string): Promise<string> {
+  const link = await getStripe().accountLinks.create({
+    account: accountId,
+    refresh_url: `${APP_URL()}/stylist-dashboard?connect=refresh`,
+    return_url: `${APP_URL()}/stylist-dashboard?connect=done`,
+    type: "account_onboarding",
+  });
+  return link.url;
+}
+
+/** Returns whether a connected account can receive payouts. */
+export async function accountPayoutsEnabled(accountId: string): Promise<boolean> {
+  const account = await getStripe().accounts.retrieve(accountId);
+  return Boolean(account.payouts_enabled && account.charges_enabled);
+}
+
+/** A dashboard login link so stylists can manage their Stripe account. */
+export async function createLoginLink(accountId: string): Promise<string> {
+  const link = await getStripe().accounts.createLoginLink(accountId);
+  return link.url;
+}
+
+/** Issues a (possibly partial) refund against a payment intent. */
+export async function refundPaymentIntent(
+  paymentIntentId: string,
+  amount?: number
+): Promise<Stripe.Refund> {
+  return getStripe().refunds.create({
+    payment_intent: paymentIntentId,
+    ...(amount != null ? { amount: toPence(amount) } : {}),
+    reverse_transfer: true,
+    refund_application_fee: true,
+  });
+}

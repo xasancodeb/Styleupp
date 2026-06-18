@@ -3,6 +3,7 @@
 // actually requested at runtime.
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 // We use an untyped client surface here. The hand-written Database types in
 // database.types.ts document the schema for readers, but feeding them to the
@@ -35,20 +36,15 @@ export function getSupabase(): DB {
 let browserClient: DB | null = null;
 
 /**
- * Singleton browser client. Reuses a single instance across the app so auth
- * state and realtime subscriptions are shared.
+ * Singleton browser client. Uses the SSR browser client so the session is
+ * stored in cookies — that lets middleware and server components read the same
+ * authenticated session. Reused across the app.
  */
 export function supabaseBrowser(): DB {
   if (browserClient) return browserClient;
   const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
   const anonKey = requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  browserClient = createClient(url, anonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  });
+  browserClient = createBrowserClient(url, anonKey);
   return browserClient;
 }
 

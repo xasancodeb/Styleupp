@@ -1,52 +1,42 @@
 import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/server";
+import { parseBody, stylistApplicationSchema } from "@/lib/validation";
+import { rateLimit } from "@/lib/rate-limit";
+import { sanitizeText } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
-// POST /api/stylist-applications — public endpoint for prospective stylists to
-// submit an application. Stored as `pending` for admin review.
+// POST /api/stylist-applications — public stylist application intake.
 export async function POST(request: Request) {
-  let body: Record<string, unknown>;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const limited = rateLimit(request, "applications", 10);
+  if (limited) return limited;
 
-  const fullName = String(body.full_name ?? "").trim();
-  const email = String(body.email ?? "").trim();
-  if (!fullName || !email) {
-    return NextResponse.json({ error: "full_name and email are required" }, { status: 400 });
-  }
-
-  const specialties = Array.isArray(body.specialties) ? (body.specialties as string[]) : [];
+  const parsed = await parseBody(request, stylistApplicationSchema);
+  if (!parsed.ok) return parsed.response;
+  const d = parsed.data;
 
   try {
-    const supabase = getSupabase();
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin()
       .from("stylist_applications")
       .insert({
-        full_name: fullName,
-        email,
-        city: (body.city as string) ?? null,
-        country: (body.country as string) ?? null,
-        years_experience: body.years_experience != null ? Number(body.years_experience) : null,
-        specialties,
-        portfolio_url: (body.portfolio_url as string) ?? null,
-        about: (body.about as string) ?? null,
+        full_name: sanitizeText(d.full_name, 120),
+        email: d.email,
+        city: d.city ? sanitizeText(d.city, 120) : null,
+        country: d.country ? sanitizeText(d.country, 120) : null,
+        years_experience: d.years_experience ?? null,
+        specialties: d.specialties ?? [],
+        portfolio_url: d.portfolio_url || null,
+        about: d.about ? sanitizeText(d.about, 3000) : null,
         status: "pending",
       })
       .select()
       .single();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ application: data }, { status: 201 });
   } catch (err) {
-    // If Supabase isn't configured we still acknowledge so the demo UX works.
     return NextResponse.json(
-      { received: true, note: err instanceof Error ? err.message : "stored locally" },
+      { received: true, note: err instanceof Error ? err.message : "queued" },
       { status: 202 }
     );
   }

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabaseBrowser } from "@/lib/supabase";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { formatGBP } from "@/lib/stripe";
-import type { ApplicationStatus, StylistApplicationRow } from "@/lib/database.types";
 
 interface Stats {
   totalBookings: number;
@@ -11,186 +10,208 @@ interface Stats {
   grossRevenue: number;
   platformRevenue: number;
   activeStylists: number;
+  totalUsers: number;
   pendingApplications: number;
 }
-
-// Fallback figures so the dashboard is meaningful even before any data exists.
-const DEMO_STATS: Stats = {
-  totalBookings: 1284,
-  confirmedBookings: 1192,
-  grossRevenue: 248640,
-  platformRevenue: 31920,
-  activeStylists: 13,
-  pendingApplications: 3,
-};
-
-const DEMO_APPLICATIONS: StylistApplicationRow[] = [
-  {
-    id: "app-1",
-    full_name: "Marta Kowalski",
-    email: "marta@example.com",
-    city: "Warsaw",
-    country: "Poland",
-    years_experience: 6,
-    specialties: ["Capsule Wardrobe", "Colour Analysis"],
-    portfolio_url: "https://example.com/marta",
-    about: "Former retail buyer turned stylist focused on sustainable capsule wardrobes.",
-    status: "pending",
-    created_at: "2026-06-10T09:00:00Z",
-    reviewed_at: null,
-  },
-  {
-    id: "app-2",
-    full_name: "Tariq Hassan",
-    email: "tariq@example.com",
-    city: "Cairo",
-    country: "Egypt",
-    years_experience: 9,
-    specialties: ["Menswear", "Occasion & Event"],
-    portfolio_url: "https://example.com/tariq",
-    about: "Menswear specialist with a decade dressing grooms and executives across the Middle East.",
-    status: "pending",
-    created_at: "2026-06-12T11:30:00Z",
-    reviewed_at: null,
-  },
-  {
-    id: "app-3",
-    full_name: "Hana Park",
-    email: "hana@example.com",
-    city: "Seoul",
-    country: "South Korea",
-    years_experience: 4,
-    specialties: ["Personal Shopping", "Body Confidence"],
-    portfolio_url: null,
-    about: "Confidence-first stylist working with young professionals in Seoul.",
-    status: "pending",
-    created_at: "2026-06-14T15:45:00Z",
-    reviewed_at: null,
-  },
-];
+interface Application {
+  id: string;
+  full_name: string;
+  email: string;
+  city: string | null;
+  country: string | null;
+  years_experience: number | null;
+  specialties: string[];
+  about: string | null;
+  portfolio_url: string | null;
+  status: string;
+}
 
 export default function AdminPage() {
-  const [stats, setStats] = useState<Stats>(DEMO_STATS);
-  const [applications, setApplications] = useState<StylistApplicationRow[]>(DEMO_APPLICATIONS);
-  const [loading, setLoading] = useState(true);
-  const [live, setLive] = useState(false);
+  const [tab, setTab] = useState<"overview" | "applications" | "users" | "stylists" | "reviews">("overview");
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [users, setUsers] = useState<Record<string, unknown>[]>([]);
+  const [stylists, setStylists] = useState<Record<string, unknown>[]>([]);
+  const [reviews, setReviews] = useState<Record<string, unknown>[]>([]);
+  const [analytics, setAnalytics] = useState<{ months: { month: string; revenue: number }[] } | null>(null);
+  const [denied, setDenied] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabaseBrowser().auth.getSession();
-        const token = data.session?.access_token;
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-        const res = await fetch("/api/admin/stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const body = (await res.json()) as { stats: Stats; applications: StylistApplicationRow[] };
-          setStats(body.stats);
-          setApplications(body.applications);
-          setLive(true);
-        }
-      } catch {
-        // keep demo data
-      } finally {
-        setLoading(false);
-      }
-    })();
+  const loadCore = useCallback(async () => {
+    const [s, a] = await Promise.all([fetch("/api/admin/stats"), fetch("/api/admin/analytics")]);
+    if (s.status === 401 || s.status === 403) return setDenied(true);
+    const sd = await s.json();
+    setStats(sd.stats);
+    setApplications(sd.applications ?? []);
+    setAnalytics(await a.json());
   }, []);
 
-  async function review(id: string, status: ApplicationStatus) {
+  useEffect(() => {
+    void loadCore();
+  }, [loadCore]);
+
+  useEffect(() => {
+    if (tab === "users" && users.length === 0) fetch("/api/admin/users").then((r) => r.json()).then((d) => setUsers(d.users ?? []));
+    if (tab === "stylists" && stylists.length === 0) fetch("/api/admin/stylists").then((r) => r.json()).then((d) => setStylists(d.stylists ?? []));
+    if (tab === "reviews" && reviews.length === 0) fetch("/api/admin/reviews").then((r) => r.json()).then((d) => setReviews(d.reviews ?? []));
+  }, [tab, users.length, stylists.length, reviews.length]);
+
+  async function reviewApp(id: string, status: "approved" | "rejected") {
     setApplications((apps) => apps.map((a) => (a.id === id ? { ...a, status } : a)));
-    try {
-      const { data } = await supabaseBrowser().auth.getSession();
-      const token = data.session?.access_token;
-      if (!token) return;
-      await fetch(`/api/admin/applications/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status }),
-      });
-    } catch {
-      // optimistic update already applied
-    }
+    await fetch(`/api/admin/applications/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+  }
+
+  async function moderateReview(reviewId: string, status: string) {
+    await fetch("/api/admin/reviews", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reviewId, status }),
+    });
+    setReviews((rs) => rs.map((r) => (r.id === reviewId ? { ...r, status } : r)));
+  }
+
+  async function setUserRole(userId: string, role: string) {
+    await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, role }),
+    });
+    setUsers((us) => us.map((u) => (u.id === userId ? { ...u, role } : u)));
+  }
+
+  if (denied) {
+    return (
+      <div className="section" style={{ padding: "4rem 1.5rem", maxWidth: 520, textAlign: "center" }}>
+        <h1 className="font-serif" style={{ fontSize: "2rem", fontWeight: 700 }}>Admin access required</h1>
+        <p style={{ color: "var(--dim)", marginTop: "0.6rem" }}>You need an admin account to view this page.</p>
+        <Link href="/auth/login?next=/admin" className="btn btn-primary" style={{ marginTop: "1.5rem" }}>Sign in</Link>
+      </div>
+    );
   }
 
   const pending = applications.filter((a) => a.status === "pending");
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-        <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>
-          Admin dashboard
-        </h1>
-        <span className="chip chip-muted">{live ? "Live data" : loading ? "Loading…" : "Demo data"}</span>
-      </div>
-      <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
-        Platform overview and stylist application review.
-      </p>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: "1.25rem",
-          marginTop: "2rem",
-        }}
-      >
-        <StatCard label="Total bookings" value={stats.totalBookings.toLocaleString()} />
-        <StatCard label="Confirmed" value={stats.confirmedBookings.toLocaleString()} />
-        <StatCard label="Gross revenue" value={formatGBP(stats.grossRevenue)} />
-        <StatCard label="Platform revenue" value={formatGBP(stats.platformRevenue)} accent />
-        <StatCard label="Active stylists" value={String(stats.activeStylists)} />
-        <StatCard label="Pending applications" value={String(stats.pendingApplications)} />
+      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>Admin dashboard</h1>
+      <div style={{ display: "flex", gap: "0.5rem", margin: "1.5rem 0", flexWrap: "wrap" }}>
+        {(["overview", "applications", "users", "stylists", "reviews"] as const).map((t) => (
+          <button key={t} className="tag-toggle" data-active={tab === t} onClick={() => setTab(t)} style={{ textTransform: "capitalize" }}>{t}</button>
+        ))}
       </div>
 
-      <h2 className="font-serif" style={{ fontSize: "1.6rem", fontWeight: 700, margin: "2.5rem 0 1rem" }}>
-        Stylist applications
-      </h2>
-      {pending.length === 0 ? (
-        <div className="card" style={{ padding: "2.5rem", textAlign: "center", color: "var(--dim)" }}>
-          No pending applications. You're all caught up.
-        </div>
-      ) : (
-        <div style={{ display: "grid", gap: "1rem" }}>
-          {pending.map((app) => (
-            <div key={app.id} className="card" style={{ padding: "1.5rem", display: "flex", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" }}>
-              <div style={{ flex: "1 1 320px" }}>
-                <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
-                  <strong style={{ fontSize: "1.1rem" }}>{app.full_name}</strong>
-                  <span style={{ color: "var(--faint)", fontSize: "0.85rem" }}>{app.email}</span>
-                </div>
-                <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
-                  {[app.city, app.country].filter(Boolean).join(", ")}
-                  {app.years_experience != null && ` · ${app.years_experience} yrs experience`}
-                </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.6rem" }}>
-                  {app.specialties.map((s) => (
-                    <span key={s} className="chip chip-muted">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                {app.about && <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.6rem" }}>{app.about}</p>}
-                {app.portfolio_url && (
-                  <a href={app.portfolio_url} target="_blank" rel="noreferrer" style={{ color: "var(--accent-dark)", fontWeight: 600, fontSize: "0.85rem" }}>
-                    View portfolio →
-                  </a>
-                )}
+      {tab === "overview" && stats && (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px,1fr))", gap: "1.25rem" }}>
+            <StatCard label="Total bookings" value={stats.totalBookings.toLocaleString()} />
+            <StatCard label="Confirmed" value={stats.confirmedBookings.toLocaleString()} />
+            <StatCard label="Gross revenue" value={formatGBP(stats.grossRevenue)} />
+            <StatCard label="Platform revenue" value={formatGBP(stats.platformRevenue)} accent />
+            <StatCard label="Active stylists" value={String(stats.activeStylists)} />
+            <StatCard label="Total users" value={String(stats.totalUsers)} />
+          </div>
+          {analytics && analytics.months.length > 0 && (
+            <div className="card" style={{ padding: "1.75rem", marginTop: "1.5rem" }}>
+              <h3 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Revenue (last 6 months)</h3>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "flex-end", height: 160, marginTop: "1rem" }}>
+                {analytics.months.map((m) => {
+                  const max = Math.max(...analytics.months.map((x) => x.revenue), 1);
+                  return (
+                    <div key={m.month} style={{ flex: 1, textAlign: "center" }}>
+                      <div style={{ height: `${(m.revenue / max) * 120}px`, background: "var(--accent)", borderRadius: "6px 6px 0 0", minHeight: 4 }} />
+                      <div style={{ fontSize: "0.72rem", color: "var(--faint)", marginTop: "0.4rem" }}>{m.month}</div>
+                    </div>
+                  );
+                })}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", justifyContent: "center" }}>
-                <button onClick={() => review(app.id, "approved")} className="btn btn-primary" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>
-                  Approve
-                </button>
-                <button onClick={() => review(app.id, "rejected")} className="btn btn-outline" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>
-                  Reject
-                </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === "applications" && (
+        <div style={{ display: "grid", gap: "1rem" }}>
+          {pending.length === 0 ? (
+            <div className="card" style={{ padding: "2.5rem", textAlign: "center", color: "var(--dim)" }}>No pending applications.</div>
+          ) : (
+            pending.map((app) => (
+              <div key={app.id} className="card" style={{ padding: "1.5rem", display: "flex", justifyContent: "space-between", gap: "1.5rem", flexWrap: "wrap" }}>
+                <div style={{ flex: "1 1 320px" }}>
+                  <strong style={{ fontSize: "1.1rem" }}>{app.full_name}</strong>{" "}
+                  <span style={{ color: "var(--faint)", fontSize: "0.85rem" }}>{app.email}</span>
+                  <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
+                    {[app.city, app.country].filter(Boolean).join(", ")}
+                    {app.years_experience != null && ` · ${app.years_experience} yrs`}
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.5rem" }}>
+                    {app.specialties.map((s) => <span key={s} className="chip chip-muted">{s}</span>)}
+                  </div>
+                  {app.about && <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.5rem" }}>{app.about}</p>}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", justifyContent: "center" }}>
+                  <button onClick={() => reviewApp(app.id, "approved")} className="btn btn-primary" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>Approve</button>
+                  <button onClick={() => reviewApp(app.id, "rejected")} className="btn btn-outline" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>Reject</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === "users" && (
+        <div style={{ display: "grid", gap: "0.6rem" }}>
+          {users.map((u) => (
+            <div key={u.id as string} className="card" style={{ padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div>
+                <strong>{(u.full_name as string) || "—"}</strong>
+                <div style={{ color: "var(--faint)", fontSize: "0.85rem" }}>{u.email as string}</div>
+              </div>
+              <select className="input" style={{ maxWidth: 140 }} value={u.role as string} onChange={(e) => setUserRole(u.id as string, e.target.value)}>
+                <option value="client">client</option>
+                <option value="stylist">stylist</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === "stylists" && (
+        <div style={{ display: "grid", gap: "0.6rem" }}>
+          {stylists.map((s) => (
+            <div key={s.id as string} className="card" style={{ padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div>
+                <strong>{s.display_name as string}</strong>
+                <div style={{ color: "var(--faint)", fontSize: "0.85rem" }}>
+                  {[s.city, s.country].filter(Boolean).join(", ")} · ★ {String(s.rating)} · {String(s.sessions_completed)} sessions
+                </div>
+              </div>
+              <span className="chip chip-muted">{s.status as string}{s.payouts_enabled ? " · payouts ✓" : ""}</span>
+            </div>
+          ))}
+          {stylists.length === 0 && <p style={{ color: "var(--dim)" }}>No stylist accounts yet.</p>}
+        </div>
+      )}
+
+      {tab === "reviews" && (
+        <div style={{ display: "grid", gap: "0.6rem" }}>
+          {reviews.map((r) => (
+            <div key={r.id as string} className="card" style={{ padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div style={{ flex: "1 1 320px" }}>
+                <span style={{ color: "var(--accent)" }}>{"★".repeat(Number(r.rating))}</span>
+                <p style={{ color: "var(--dim)", fontSize: "0.9rem" }}>{(r.comment as string) || "No comment"}</p>
+                <span className="chip chip-muted">{r.status as string}</span>
+              </div>
+              <div style={{ display: "flex", gap: "0.4rem" }}>
+                <button onClick={() => moderateReview(r.id as string, "published")} className="btn btn-outline" style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}>Publish</button>
+                <button onClick={() => moderateReview(r.id as string, "hidden")} className="btn btn-outline" style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}>Hide</button>
               </div>
             </div>
           ))}
+          {reviews.length === 0 && <p style={{ color: "var(--dim)" }}>No reviews to moderate.</p>}
         </div>
       )}
     </div>
@@ -200,12 +221,8 @@ export default function AdminPage() {
 function StatCard({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="card" style={{ padding: "1.25rem 1.5rem", borderTop: accent ? "3px solid var(--accent)" : undefined }}>
-      <div style={{ color: "var(--faint)", fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-        {label}
-      </div>
-      <div className="font-serif" style={{ fontSize: "1.8rem", fontWeight: 700, marginTop: "0.3rem" }}>
-        {value}
-      </div>
+      <div style={{ color: "var(--faint)", fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+      <div className="font-serif" style={{ fontSize: "1.8rem", fontWeight: 700, marginTop: "0.3rem" }}>{value}</div>
     </div>
   );
 }

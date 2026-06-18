@@ -1,0 +1,19 @@
+# Production-style single-service compose for StyleUp. Supabase and Stripe are
+# managed externally; provide their credentials via a .env file (see .env.example).
+services:
+  web:
+    build: .
+    image: styleup:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

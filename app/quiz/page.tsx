@@ -22,6 +22,12 @@ export default function QuizPage() {
     } else {
       const season = determineSeason(next);
       saveSeason(season);
+      // Persist to the account when signed in (ignored if not authenticated).
+      void fetch("/api/profile/color-season", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ season, answers: next }),
+      }).catch(() => {});
       setResult(season);
     }
   }

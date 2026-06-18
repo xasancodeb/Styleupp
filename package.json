@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:migrate": "bash scripts/migrate.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -14,7 +15,8 @@
     "next": "^16.2.9",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "stripe": "^17.5.0"
+    "stripe": "^17.5.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",

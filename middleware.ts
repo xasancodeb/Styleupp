@@ -1,32 +1,28 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PROTECTED = ["/dashboard", "/admin", "/booking"];
+const PROTECTED = ["/dashboard", "/admin", "/booking", "/stylist-dashboard", "/messages"];
 const ADMIN_ONLY = ["/admin"];
+const STYLIST_ONLY = ["/stylist-dashboard"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
   const needsAuth = PROTECTED.some((p) => pathname === p || pathname.startsWith(p + "/"));
   if (!needsAuth) return NextResponse.next();
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If auth isn't configured (e.g. local preview), don't lock the user out.
+  // If auth isn't configured (local preview), don't lock the user out.
   if (!url || !anonKey) return NextResponse.next();
 
   const response = NextResponse.next();
-
   const supabase = createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
       },
       setAll(cookies: { name: string; value: string; options?: Record<string, unknown> }[]) {
-        cookies.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
+        cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
       },
     },
   });
@@ -41,15 +37,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Admin routes additionally require an admin role.
   const isAdminRoute = ADMIN_ONLY.some((p) => pathname === p || pathname.startsWith(p + "/"));
-  if (isAdminRoute) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-    if (profile?.role !== "admin") {
+  const isStylistRoute = STYLIST_ONLY.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  if (isAdminRoute || isStylistRoute) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    const role = profile?.role as string | undefined;
+    if (isAdminRoute && role !== "admin") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    if (isStylistRoute && role !== "stylist" && role !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
@@ -58,5 +55,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/booking/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/booking/:path*",
+    "/stylist-dashboard/:path*",
+    "/messages/:path*",
+  ],
 };

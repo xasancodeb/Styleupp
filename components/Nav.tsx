@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/explore", label: "Find stylists" },
   { href: "/fitting", label: "Fitting room" },
   { href: "/for-stylists", label: "For stylists" },
+  { href: "/messages", label: "Messages" },
   { href: "/dashboard", label: "Dashboard" },
 ];
 
