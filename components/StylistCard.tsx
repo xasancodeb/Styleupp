@@ -8,48 +8,34 @@ export default function StylistCard({ stylist }: { stylist: Stylist }) {
     <Link href={`/stylist/${stylist.id}`} className="card fade-up" style={{ overflow: "hidden", display: "block" }}>
       <div
         style={{
-          height: 160,
-          backgroundImage: `linear-gradient(180deg, rgba(26,22,18,0) 40%, rgba(26,22,18,0.45)), url(${stylist.cover})`,
+          height: 210,
+          backgroundImage: `linear-gradient(180deg, rgba(23,20,15,0) 35%, rgba(23,20,15,0.62)), url(${stylist.cover})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
+          borderBottom: "1.5px solid var(--ink)",
         }}
       >
         {stylist.featured && (
-          <span
-            className="chip"
-            style={{ position: "absolute", top: 12, left: 12, background: "var(--accent)", color: "#fff" }}
-          >
+          <span className="chip" style={{ position: "absolute", top: 12, left: 12, background: "var(--accent)", color: "#fff" }}>
             ★ Featured
           </span>
         )}
         <SaveHeart slug={stylist.id} />
+        <div style={{ position: "absolute", left: 16, bottom: 12, right: 16, color: "#fff" }}>
+          <h3 className="font-serif" style={{ fontSize: "1.5rem", fontWeight: 600, lineHeight: 1.05 }}>{stylist.name}</h3>
+          <p style={{ fontSize: "0.66rem", marginTop: "0.3rem", textTransform: "uppercase", letterSpacing: "0.16em", opacity: 0.9 }}>
+            {stylist.city} · {stylist.country}
+          </p>
+        </div>
       </div>
-      <div style={{ padding: "1.1rem 1.25rem 1.35rem", marginTop: "-2.5rem", position: "relative" }}>
-        <img
-          src={stylist.avatar}
-          alt={stylist.name}
-          width={64}
-          height={64}
-          style={{
-            borderRadius: "50%",
-            border: "3px solid #fff",
-            objectFit: "cover",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-          }}
-        />
-        <h3 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700, marginTop: "0.6rem" }}>
-          {stylist.name}
-        </h3>
-        <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.15rem" }}>
-          {stylist.city}, {stylist.country}
+      <div style={{ padding: "1.1rem 1.25rem 1.3rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "var(--dark)", fontFamily: "var(--font-serif-stack)", fontStyle: "italic" }}>
+          “{stylist.tagline}”
         </p>
-        <p style={{ fontSize: "0.92rem", marginTop: "0.6rem", color: "var(--dark)" }}>{stylist.tagline}</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.85rem" }}>
           {stylist.specialties.slice(0, 2).map((s) => (
-            <span key={s} className="chip chip-muted">
-              {s}
-            </span>
+            <span key={s} className="chip chip-muted">{s}</span>
           ))}
         </div>
         <div
@@ -57,16 +43,16 @@ export default function StylistCard({ stylist }: { stylist: Stylist }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginTop: "1rem",
+            marginTop: "1.1rem",
             paddingTop: "0.9rem",
-            borderTop: "1px solid var(--border)",
+            borderTop: "1.5px solid var(--border)",
           }}
         >
-          <span style={{ fontSize: "0.9rem", color: "var(--dim)" }}>
-            <strong style={{ color: "var(--dark)" }}>★ {stylist.rating}</strong> ({stylist.reviewCount})
+          <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--dim)", fontWeight: 600 }}>
+            ★ {stylist.rating} <span style={{ color: "var(--faint)" }}>/ {stylist.reviewCount}</span>
           </span>
-          <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>
-            from {formatGBP(stylist.startingPrice)}
+          <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700 }}>
+            From {formatGBP(stylist.startingPrice)}
           </span>
         </div>
       </div>
