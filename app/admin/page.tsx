@@ -96,7 +96,8 @@ export default function AdminPage() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>Admin dashboard</h1>
+      <span className="eyebrow">Control room</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.4rem, 6vw, 3.8rem)", marginTop: "0.6rem" }}>Admin</h1>
       <div style={{ display: "flex", gap: "0.5rem", margin: "1.5rem 0", flexWrap: "wrap" }}>
         {(["overview", "applications", "users", "stylists", "reviews"] as const).map((t) => (
           <button key={t} className="tag-toggle" data-active={tab === t} onClick={() => setTab(t)} style={{ textTransform: "capitalize" }}>{t}</button>

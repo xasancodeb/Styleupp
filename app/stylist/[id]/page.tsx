@@ -46,13 +46,13 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
             style={{ borderRadius: "50%", border: "4px solid #fff", objectFit: "cover", boxShadow: "0 6px 18px rgba(0,0,0,0.15)" }}
           />
           <div style={{ flex: "1 1 280px" }}>
-            <h1 className="font-serif" style={{ fontSize: "2.2rem", fontWeight: 700 }}>
+            <span className="eyebrow">{stylist.city} · {stylist.country} · {stylist.yearsExperience} yrs</span>
+            <h1 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", marginTop: "0.5rem" }}>
               {stylist.name}
             </h1>
-            <p style={{ color: "var(--dim)" }}>
-              {stylist.city}, {stylist.country} · {stylist.yearsExperience} years experience
+            <p className="font-serif" style={{ marginTop: "0.5rem", fontStyle: "italic", fontSize: "1.15rem", color: "var(--dim)" }}>
+              “{stylist.tagline}”
             </p>
-            <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>{stylist.tagline}</p>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.85rem" }}>
               {stylist.specialties.map((s) => (
                 <span key={s} className="chip">

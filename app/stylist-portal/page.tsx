@@ -112,8 +112,8 @@ export default function StylistPortalPage() {
       <Link href="/for-stylists" style={{ color: "var(--accent-dark)", fontWeight: 600, fontSize: "0.9rem" }}>
         ← Back to For stylists
       </Link>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700, marginTop: "0.75rem" }}>
-        Stylist application
+      <h1 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", marginTop: "0.75rem" }}>
+        Stylist <em>application</em>
       </h1>
       <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
         Tell us about yourself and your work. All fields marked * are required.

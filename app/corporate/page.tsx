@@ -32,11 +32,11 @@ export default function CorporatePage() {
 
   return (
     <div>
-      <section style={{ background: "radial-gradient(900px 400px at 20% -10%, rgba(196,146,58,0.16), transparent), var(--bg)" }}>
-        <div className="section" style={{ padding: "5rem 1.5rem 3.5rem", maxWidth: 760 }}>
-          <span className="chip">For teams & companies</span>
-          <h1 className="font-serif" style={{ fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 700, marginTop: "1rem", lineHeight: 1.1 }}>
-            Style that scales with your team.
+      <section style={{ background: "radial-gradient(900px 400px at 20% -10%, rgba(224,67,31,0.16), transparent), var(--bg)" }}>
+        <div className="section" style={{ padding: "5rem 1.5rem 3.5rem", maxWidth: 820 }}>
+          <span className="eyebrow">For teams &amp; companies</span>
+          <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.4rem)", marginTop: "1rem" }}>
+            Style that <em>scales</em> with your team.
           </h1>
           <p style={{ fontSize: "1.15rem", color: "var(--dim)", marginTop: "1rem" }}>
             From leadership offsites to client-facing teams, StyleUp Corporate brings confident,

@@ -76,7 +76,8 @@ export default function StylistDashboard() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>Stylist studio</h1>
+      <span className="eyebrow">Your business</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.4rem, 6vw, 3.8rem)", marginTop: "0.6rem" }}>Stylist <em>studio</em></h1>
       <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
         {stylist ? `Welcome back, ${stylist.display_name}.` : "Let's set up your stylist profile."}
       </p>

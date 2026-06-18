@@ -30,10 +30,11 @@ export default function FittingPage() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>
-        Colour fitting room
+      <span className="eyebrow">Your palette</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.2rem)", marginTop: "0.85rem" }}>
+        Colour <em>fitting</em> room
       </h1>
-      <p style={{ color: "var(--dim)", marginTop: "0.4rem", maxWidth: 620 }}>
+      <p style={{ color: "var(--dim)", marginTop: "0.6rem", maxWidth: 620 }}>
         Your personal palette, ready to shop from. Explore the colours that make you glow — and the
         ones to leave on the rail.
       </p>

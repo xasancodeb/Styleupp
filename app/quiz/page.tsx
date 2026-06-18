@@ -42,9 +42,9 @@ export default function QuizPage() {
     const palette = PALETTES[result];
     return (
       <div className="section" style={{ padding: "4rem 1.5rem", maxWidth: 680, textAlign: "center" }}>
-        <span className="chip" style={{ margin: "0 auto" }}>Your result</span>
-        <h1 className="font-serif" style={{ fontSize: "2.8rem", fontWeight: 700, marginTop: "1rem" }}>
-          You're a {palette.name}
+        <span className="eyebrow" style={{ justifyContent: "center" }}>Your result</span>
+        <h1 className="display" style={{ fontSize: "clamp(2.8rem, 7vw, 4.4rem)", marginTop: "1rem" }}>
+          You're a<br /><em>{palette.name}</em>
         </h1>
         <p style={{ color: "var(--dim)", marginTop: "0.6rem", fontSize: "1.1rem" }}>{palette.tagline}</p>
         <p style={{ color: "var(--dark)", marginTop: "1rem", textAlign: "left" }}>{palette.description}</p>

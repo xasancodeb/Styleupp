@@ -59,10 +59,11 @@ export default function ExplorePage() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 2rem" }}>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>
-        Find your stylist
+      <span className="eyebrow">The roster — {STYLISTS.length} stylists</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.2rem)", marginTop: "0.85rem" }}>
+        Find your <em>stylist.</em>
       </h1>
-      <p style={{ color: "var(--dim)", marginTop: "0.5rem", maxWidth: 600 }}>
+      <p style={{ color: "var(--dim)", marginTop: "0.75rem", maxWidth: 600 }}>
         Browse our global roster of vetted personal stylists. Filter by specialty, session type and
         budget to find your perfect match.
       </p>

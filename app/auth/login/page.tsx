@@ -34,8 +34,9 @@ export default function LoginPage() {
   return (
     <div className="section" style={{ padding: "4rem 1.5rem", maxWidth: 440 }}>
       <div className="card" style={{ padding: "2rem" }}>
-        <h1 className="font-serif" style={{ fontSize: "2rem", fontWeight: 700 }}>
-          Welcome back
+        <span className="eyebrow">Members</span>
+        <h1 className="display" style={{ fontSize: "2.6rem", marginTop: "0.5rem" }}>
+          Welcome <em>back</em>
         </h1>
         <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
           Sign in to manage your bookings and style profile.

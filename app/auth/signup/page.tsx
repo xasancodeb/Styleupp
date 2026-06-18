@@ -53,8 +53,9 @@ function SignupForm() {
   return (
     <div className="section" style={{ padding: "4rem 1.5rem", maxWidth: 440 }}>
       <div className="card" style={{ padding: "2rem" }}>
-        <h1 className="font-serif" style={{ fontSize: "2rem", fontWeight: 700 }}>
-          Create your account
+        <span className="eyebrow">Join StyleUp</span>
+        <h1 className="display" style={{ fontSize: "2.4rem", marginTop: "0.5rem" }}>
+          Create your <em>account</em>
         </h1>
         <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
           Join StyleUp to book stylists and save your style profile.

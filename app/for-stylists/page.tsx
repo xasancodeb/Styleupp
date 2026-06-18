@@ -24,11 +24,11 @@ const BENEFITS = [
 export default function ForStylistsPage() {
   return (
     <div>
-      <section style={{ background: "radial-gradient(900px 400px at 80% -10%, rgba(196,146,58,0.18), transparent), var(--dark)", color: "var(--bg)" }}>
-        <div className="section" style={{ padding: "5rem 1.5rem 4rem", maxWidth: 760 }}>
-          <span className="chip" style={{ background: "rgba(196,146,58,0.25)", color: "var(--bg)" }}>For stylists</span>
-          <h1 className="font-serif" style={{ fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 700, marginTop: "1rem", lineHeight: 1.1 }}>
-            Build a styling business you love — we'll handle the rest.
+      <section style={{ background: "radial-gradient(900px 400px at 80% -10%, rgba(224,67,31,0.28), transparent), var(--ink)", color: "var(--paper)" }}>
+        <div className="section" style={{ padding: "5rem 1.5rem 4rem", maxWidth: 820 }}>
+          <span className="eyebrow" style={{ color: "rgba(244,240,231,0.7)" }}>For stylists</span>
+          <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.6rem)", marginTop: "1rem" }}>
+            Build a styling business you <em>love.</em>
           </h1>
           <p style={{ fontSize: "1.15rem", opacity: 0.85, marginTop: "1rem" }}>
             Join a global community of personal stylists. Reach new clients, set your own rates, and
