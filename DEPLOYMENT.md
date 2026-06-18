@@ -133,6 +133,23 @@ production.
 
 ---
 
+## 6b. Scheduled reminders (cron)
+
+24-hour booking reminders are sent by `GET /api/cron/reminders`, secured with
+`CRON_SECRET`.
+
+- **Vercel:** already wired in `vercel.json` (`crons`) to run hourly. Set
+  `CRON_SECRET`; Vercel sends it automatically as an `Authorization: Bearer`
+  header.
+- **Docker / other:** add a cron job, e.g.
+  ```
+  0 * * * * curl -fsS -H "x-cron-secret: $CRON_SECRET" https://<domain>/api/cron/reminders
+  ```
+
+The endpoint dedupes via existing reminder notifications, so re-runs are safe.
+
+---
+
 ## 7. Post-deploy checklist
 
 - [ ] Migrations applied (`npm run db:migrate`)

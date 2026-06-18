@@ -41,7 +41,8 @@ export default function DashboardPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [saved, setSaved] = useState<string[]>([]);
-  const [tab, setTab] = useState<"bookings" | "saved" | "profile">("bookings");
+  const [referrals, setReferrals] = useState<{ code: string | null; loyaltyPoints: number; referrals: { referred_email: string; status: string }[] } | null>(null);
+  const [tab, setTab] = useState<"bookings" | "saved" | "referrals" | "profile">("bookings");
   const [authError, setAuthError] = useState(false);
   const [rescheduleId, setRescheduleId] = useState<string | null>(null);
 
@@ -62,6 +63,10 @@ export default function DashboardPage() {
       setBookings(bd.bookings ?? []);
       setProfile(pd.profile ?? null);
       setSaved(sd.saved ?? []);
+      fetch("/api/referrals")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => d && setReferrals(d))
+        .catch(() => {});
     } catch {
       setAuthError(true);
     }
@@ -136,9 +141,9 @@ export default function DashboardPage() {
       </p>
 
       <div style={{ display: "flex", gap: "0.5rem", margin: "1.75rem 0 1.5rem", flexWrap: "wrap" }}>
-        {(["bookings", "saved", "profile"] as const).map((t) => (
+        {(["bookings", "saved", "referrals", "profile"] as const).map((t) => (
           <button key={t} className="tag-toggle" data-active={tab === t} onClick={() => setTab(t)} style={{ textTransform: "capitalize" }}>
-            {t === "saved" ? "Saved stylists" : t === "profile" ? "Profile & style" : "Bookings"}
+            {t === "saved" ? "Saved stylists" : t === "profile" ? "Profile & style" : t === "referrals" ? "Refer & earn" : "Bookings"}
           </button>
         ))}
       </div>
@@ -178,7 +183,7 @@ export default function DashboardPage() {
             ) : (
               <div style={{ display: "grid", gap: "1rem" }}>
                 {past.map((b) => (
-                  <BookingRow key={b.id} booking={b} onRebook />
+                  <BookingRow key={b.id} booking={b} onRebook reviewable={b.status === "completed"} />
                 ))}
               </div>
             )}
@@ -208,6 +213,10 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+      )}
+
+      {tab === "referrals" && (
+        <ReferralsPanel data={referrals} onChange={load} />
       )}
 
       {tab === "profile" && profile && (
@@ -261,6 +270,7 @@ function BookingRow({
   booking,
   onCancel,
   onRebook,
+  reviewable,
   rescheduling,
   onToggleReschedule,
   onRescheduled,
@@ -268,10 +278,13 @@ function BookingRow({
   booking: Booking;
   onCancel?: () => void;
   onRebook?: boolean;
+  reviewable?: boolean;
   rescheduling?: boolean;
   onToggleReschedule?: () => void;
   onRescheduled?: () => void;
 }) {
+  const [showReview, setShowReview] = useState(false);
+  const [reviewDone, setReviewDone] = useState(false);
   const colors: Record<string, string> = {
     confirmed: "var(--accent-dark)",
     pending: "var(--dim)",
@@ -301,6 +314,11 @@ function BookingRow({
             {onCancel && (
               <button onClick={onCancel} className="btn btn-outline" style={{ padding: "0.4rem 0.85rem", fontSize: "0.8rem" }}>Cancel</button>
             )}
+            {reviewable && !reviewDone && (
+              <button onClick={() => setShowReview((s) => !s)} className="btn btn-outline" style={{ padding: "0.4rem 0.85rem", fontSize: "0.8rem" }}>
+                {showReview ? "Close" : "Leave review"}
+              </button>
+            )}
             {onRebook && (
               <Link href={`/book?stylist=${booking.stylist_id}${booking.service_id ? `&service=${booking.service_id}` : ""}`} className="btn btn-primary" style={{ padding: "0.4rem 0.85rem", fontSize: "0.8rem" }}>Rebook</Link>
             )}
@@ -308,6 +326,139 @@ function BookingRow({
         </div>
       </div>
       {rescheduling && <ReschedulePanel booking={booking} onDone={onRescheduled!} />}
+      {showReview && !reviewDone && (
+        <ReviewForm
+          bookingId={booking.id}
+          onDone={() => {
+            setReviewDone(true);
+            setShowReview(false);
+          }}
+        />
+      )}
+      {reviewDone && <p style={{ color: "var(--accent-dark)", fontSize: "0.85rem", marginTop: "0.75rem" }}>Thanks for your review!</p>}
+    </div>
+  );
+}
+
+function ReviewForm({ bookingId, onDone }: { bookingId: string; onDone: () => void }) {
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit() {
+    setBusy(true);
+    setError(null);
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ bookingId, rating, comment: comment || undefined }),
+    });
+    setBusy(false);
+    if (res.ok) onDone();
+    else setError((await res.json()).error ?? "Could not submit review.");
+  }
+
+  return (
+    <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border)" }}>
+      <div style={{ display: "flex", gap: "0.25rem", marginBottom: "0.5rem" }}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            onClick={() => setRating(n)}
+            style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.4rem", color: n <= rating ? "var(--accent)" : "var(--border)" }}
+            aria-label={`${n} stars`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+      <textarea className="input" rows={2} style={{ resize: "vertical" }} placeholder="Share how your session went…" value={comment} onChange={(e) => setComment(e.target.value)} />
+      {error && <p style={{ color: "#b3261e", fontSize: "0.82rem", marginTop: "0.4rem" }}>{error}</p>}
+      <button onClick={submit} className="btn btn-primary" disabled={busy} style={{ marginTop: "0.6rem", padding: "0.45rem 1.1rem", fontSize: "0.85rem" }}>
+        {busy ? "Submitting…" : "Submit review"}
+      </button>
+    </div>
+  );
+}
+
+function ReferralsPanel({
+  data,
+  onChange,
+}: {
+  data: { code: string | null; loyaltyPoints: number; referrals: { referred_email: string; status: string }[] } | null;
+  onChange: () => void;
+}) {
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  async function invite(e: React.FormEvent) {
+    e.preventDefault();
+    setMsg(null);
+    const res = await fetch("/api/referrals", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (res.ok) {
+      setEmail("");
+      setMsg("Invite sent!");
+      onChange();
+    } else {
+      setMsg((await res.json()).error ?? "Could not send invite.");
+    }
+  }
+
+  const link = data?.code && typeof window !== "undefined" ? `${window.location.origin}/auth/signup?ref=${data.code}` : "";
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: "1.5rem" }} className="dash-grid">
+      <section className="card" style={{ padding: "1.75rem" }}>
+        <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700 }}>Refer & earn</h2>
+        <p style={{ color: "var(--dim)", marginTop: "0.5rem" }}>
+          Share your code — you and your friend both earn rewards on their first booking. You have{" "}
+          <strong>{data?.loyaltyPoints ?? 0}</strong> loyalty points.
+        </p>
+        {data?.code && (
+          <div style={{ marginTop: "1rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input className="input" readOnly value={data.code} />
+              <button
+                className="btn btn-outline"
+                onClick={() => {
+                  navigator.clipboard?.writeText(link || data.code!);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }}
+              >
+                {copied ? "Copied!" : "Copy link"}
+              </button>
+            </div>
+          </div>
+        )}
+        <form onSubmit={invite} style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
+          <input className="input" type="email" required placeholder="friend@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <button type="submit" className="btn btn-primary">Invite</button>
+        </form>
+        {msg && <p style={{ color: msg.includes("sent") ? "var(--accent-dark)" : "#b3261e", fontSize: "0.85rem", marginTop: "0.5rem" }}>{msg}</p>}
+      </section>
+
+      <section className="card" style={{ padding: "1.75rem" }}>
+        <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700 }}>Your invites</h2>
+        {!data || data.referrals.length === 0 ? (
+          <p style={{ color: "var(--dim)", marginTop: "0.5rem" }}>No invites sent yet.</p>
+        ) : (
+          <div style={{ display: "grid", gap: "0.5rem", marginTop: "1rem" }}>
+            {data.referrals.map((r, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
+                <span style={{ color: "var(--dim)" }}>{r.referred_email}</span>
+                <span className="chip chip-muted">{r.status}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
