@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ToastProvider from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "StyleUp — Personal styling, made personal",
@@ -27,9 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Nav />
-        <main style={{ minHeight: "70vh" }}>{children}</main>
-        <Footer />
+        <ToastProvider>
+          <Nav />
+          <main style={{ minHeight: "70vh" }}>{children}</main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

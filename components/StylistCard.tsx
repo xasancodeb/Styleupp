@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
+import SaveHeart from "@/components/SaveHeart";
 
 export default function StylistCard({ stylist }: { stylist: Stylist }) {
   return (
@@ -22,6 +23,7 @@ export default function StylistCard({ stylist }: { stylist: Stylist }) {
             ★ Featured
           </span>
         )}
+        <SaveHeart slug={stylist.id} />
       </div>
       <div style={{ padding: "1.1rem 1.25rem 1.35rem", marginTop: "-2.5rem", position: "relative" }}>
         <img

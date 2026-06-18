@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getStylist, STYLISTS } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import SaveStylistButton from "@/components/SaveStylistButton";
+import LiveReviews from "@/components/LiveReviews";
 
 export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
@@ -145,6 +146,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
               <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700 }}>
                 Reviews
               </h2>
+              <LiveReviews slug={stylist.id} />
               <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
                 {stylist.reviews.map((r) => (
                   <div key={r.id} style={{ borderBottom: "1px solid var(--border)", paddingBottom: "1rem" }}>

@@ -7,6 +7,43 @@ import { sanitizeText } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
+// GET /api/reviews?slug=... — published reviews for a stylist (public).
+export async function GET(request: Request) {
+  const slug = new URL(request.url).searchParams.get("slug");
+  if (!slug) return NextResponse.json({ reviews: [] });
+  try {
+    const { data } = await supabaseAdmin()
+      .from("reviews")
+      .select("id, rating, comment, created_at, client_id")
+      .eq("stylist_id", slug)
+      .eq("status", "published")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    const rows = data ?? [];
+    // Resolve first names for display without leaking full profiles.
+    const ids = Array.from(new Set(rows.map((r) => r.client_id)));
+    const names = new Map<string, string>();
+    if (ids.length > 0) {
+      const { data: profiles } = await supabaseAdmin().from("profiles").select("id, full_name").in("id", ids);
+      for (const p of profiles ?? []) {
+        const first = ((p.full_name as string) ?? "").trim().split(" ")[0] || "Client";
+        names.set(p.id as string, first);
+      }
+    }
+    const reviews = rows.map((r) => ({
+      id: r.id,
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at,
+      author: names.get(r.client_id as string) ?? "Client",
+    }));
+    return NextResponse.json({ reviews });
+  } catch {
+    return NextResponse.json({ reviews: [] });
+  }
+}
+
 // POST /api/reviews — leave a review for a completed booking.
 export async function POST(request: Request) {
   const limited = rateLimit(request, "reviews:create", 10);

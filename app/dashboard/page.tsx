@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatGBP } from "@/lib/stripe";
 import { PALETTES, type ColorSeason } from "@/lib/profile";
 import { getStylist } from "@/lib/data";
+import { useToast } from "@/components/Toast";
 
 interface Booking {
   id: string;
@@ -45,6 +46,7 @@ export default function DashboardPage() {
   const [tab, setTab] = useState<"bookings" | "saved" | "referrals" | "profile">("bookings");
   const [authError, setAuthError] = useState(false);
   const [rescheduleId, setRescheduleId] = useState<string | null>(null);
+  const { toast, confirm } = useToast();
 
   const load = useCallback(async () => {
     try {
@@ -77,7 +79,10 @@ export default function DashboardPage() {
   }, [load]);
 
   async function cancel(b: Booking) {
-    if (!window.confirm(`Cancel ${b.service_name}? Refund depends on how close the session is.`)) return;
+    const ok = await confirm(
+      `Cancel "${b.service_name}"? Your refund depends on how close the session is (full 48h+, 50% within 24–48h, none under 24h).`
+    );
+    if (!ok) return;
     const res = await fetch(`/api/bookings/${b.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -85,10 +90,10 @@ export default function DashboardPage() {
     });
     const data = await res.json();
     if (res.ok) {
-      window.alert(`Cancelled. Refund: ${formatGBP(data.refund?.amount ?? 0)}.`);
+      toast(`Booking cancelled. Refund: ${formatGBP(data.refund?.amount ?? 0)}.`, "success");
       void load();
     } else {
-      window.alert(data.error ?? "Could not cancel.");
+      toast(data.error ?? "Could not cancel.", "error");
     }
   }
 
@@ -468,6 +473,7 @@ function ReschedulePanel({ booking, onDone }: { booking: Booking; onDone: () => 
   const [slots, setSlots] = useState<string[]>([]);
   const [slot, setSlot] = useState("");
   const [busy, setBusy] = useState(false);
+  const { toast } = useToast();
 
   async function loadSlots(d: string) {
     setDate(d);
@@ -487,8 +493,12 @@ function ReschedulePanel({ booking, onDone }: { booking: Booking; onDone: () => 
       body: JSON.stringify({ action: "reschedule", scheduledFor }),
     });
     setBusy(false);
-    if (res.ok) onDone();
-    else window.alert((await res.json()).error ?? "Could not reschedule.");
+    if (res.ok) {
+      toast("Session rescheduled.", "success");
+      onDone();
+    } else {
+      toast((await res.json()).error ?? "Could not reschedule.", "error");
+    }
   }
 
   return (

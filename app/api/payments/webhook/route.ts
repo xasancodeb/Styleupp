@@ -59,12 +59,17 @@ async function onCheckoutCompleted(session: Stripe.Checkout.Session) {
     typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null;
 
   if (meta.bookingId) {
+    // Idempotency: only the transition out of `pending` does the side effects,
+    // so Stripe webhook retries won't double-count sessions or re-send emails.
     const { data: booking } = await admin
       .from("bookings")
       .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
       .eq("id", meta.bookingId)
+      .eq("status", "pending")
       .select()
-      .single();
+      .maybeSingle();
+
+    if (!booking) return;
 
     await admin
       .from("payments")
