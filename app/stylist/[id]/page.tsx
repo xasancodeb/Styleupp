@@ -4,6 +4,7 @@ import { getStylist, STYLISTS } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
+import StylistCard from "@/components/StylistCard";
 
 export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
@@ -23,6 +24,14 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const stylist = getStylist(id);
   if (!stylist) notFound();
+
+  // Related stylists: share at least one specialty, ranked by overlap.
+  const related = STYLISTS.filter((s) => s.id !== stylist.id)
+    .map((s) => ({ s, overlap: s.specialties.filter((sp) => stylist.specialties.includes(sp)).length }))
+    .filter((r) => r.overlap > 0)
+    .sort((a, b) => b.overlap - a.overlap || b.s.rating - a.s.rating)
+    .slice(0, 4)
+    .map((r) => r.s);
 
   return (
     <div>
@@ -185,6 +194,20 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
             </div>
           </aside>
         </div>
+
+        {related.length > 0 && (
+          <section style={{ marginTop: "3.5rem" }}>
+            <span className="eyebrow">More to explore</span>
+            <h2 className="display" style={{ fontSize: "1.9rem", marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+              You might also like
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.5rem" }}>
+              {related.map((s) => (
+                <StylistCard key={s.id} stylist={s} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       <style>{`

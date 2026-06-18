@@ -7,17 +7,9 @@ import { supabaseBrowser } from "@/lib/supabase";
 import NotificationBell from "@/components/NotificationBell";
 
 const LINKS = [
-  { href: "/explore", label: "Stylists" },
-  { href: "/fitting", label: "Fitting Room" },
-  { href: "/for-stylists", label: "For Stylists" },
-];
-
-const TICKER = [
-  "Personal styling, worldwide",
-  "13 cities · one wardrobe",
-  "Colour analysis · Capsule edits · Occasion",
-  "Book a vetted stylist in minutes",
-  "Est. MMXXVI",
+  { href: "/explore", label: "Find stylists" },
+  { href: "/fitting", label: "Fitting room" },
+  { href: "/for-stylists", label: "For stylists" },
 ];
 
 interface Me {
@@ -91,33 +83,18 @@ export default function Nav() {
 
   return (
     <header style={{ position: "sticky", top: 0, zIndex: 50 }}>
-      {/* Ticker */}
-      <div style={{ background: "var(--ink)", color: "var(--paper)", borderBottom: "1.5px solid var(--ink)", overflow: "hidden" }}>
-        <div className="marquee" style={{ height: 30, alignItems: "center" }}>
-          <div className="marquee__track" style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 500 }}>
-            {[...TICKER, ...TICKER, ...TICKER].map((t, i) => (
-              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "2.5rem" }}>
-                {t}
-                <span style={{ color: "var(--accent)" }}>✦</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div style={{ background: "rgba(244,240,231,0.9)", backdropFilter: "blur(10px)", borderBottom: "1.5px solid var(--ink)" }}>
-        <nav className="section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
-          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline", gap: "0.1rem" }}>
-            <span className="font-serif" style={{ fontSize: "1.7rem", fontWeight: 600, letterSpacing: "-0.03em", color: "var(--ink)", lineHeight: 1 }}>
+      <div style={{ background: "rgba(247,244,238,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--border)" }}>
+        <nav className="section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 70 }}>
+          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline" }}>
+            <span className="font-serif" style={{ fontSize: "1.55rem", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ink)", lineHeight: 1 }}>
               Style
             </span>
-            <span className="font-serif" style={{ fontSize: "1.7rem", fontWeight: 600, fontStyle: "italic", color: "var(--accent)", lineHeight: 1 }}>
+            <span className="font-serif" style={{ fontSize: "1.55rem", fontWeight: 600, fontStyle: "italic", color: "var(--accent)", lineHeight: 1 }}>
               Up
             </span>
-            <sup style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", marginLeft: 2 }}>®</sup>
           </Link>
 
-          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.85rem" }}>
             {LINKS.map((link) => {
               const active = pathname === link.href || pathname.startsWith(link.href + "/");
               return (
@@ -126,7 +103,7 @@ export default function Nav() {
                   href={link.href}
                   className="ul-link"
                   data-active={active}
-                  style={{ fontSize: "0.72rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.16em", color: active ? "var(--ink)" : "var(--dim)" }}
+                  style={{ fontSize: "0.95rem", fontWeight: active ? 600 : 500, color: active ? "var(--ink)" : "var(--dim)" }}
                 >
                   {link.label}
                 </Link>
@@ -140,18 +117,18 @@ export default function Nav() {
                   <button
                     onClick={() => setMenuOpen((o) => !o)}
                     aria-label="Account menu"
-                    style={{ width: 40, height: 40, borderRadius: 4, background: "var(--ink)", color: "var(--paper)", border: "1.5px solid var(--ink)", cursor: "pointer", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.05em" }}
+                    style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--ink)", color: "var(--paper)", border: "none", cursor: "pointer", fontWeight: 600, fontSize: "0.82rem" }}
                   >
                     {initials}
                   </button>
                   {menuOpen && (
-                    <div className="card" style={{ position: "absolute", right: 0, top: "3rem", width: 210, padding: "0.4rem", zIndex: 60 }}>
+                    <div className="card" style={{ position: "absolute", right: 0, top: "3rem", width: 200, padding: "0.4rem", zIndex: 60 }}>
                       {accountLinks.map((l) => (
-                        <Link key={l.href} href={l.href} style={{ display: "block", padding: "0.6rem 0.8rem", borderRadius: 4, fontSize: "0.78rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--ink)" }}>
+                        <Link key={l.href} href={l.href} style={{ display: "block", padding: "0.6rem 0.8rem", borderRadius: 8, fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)" }}>
                           {l.label}
                         </Link>
                       ))}
-                      <button onClick={signOut} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.6rem 0.8rem", borderRadius: 4, fontSize: "0.78rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}>
+                      <button onClick={signOut} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.6rem 0.8rem", borderRadius: 8, fontSize: "0.9rem", fontWeight: 500, background: "none", border: "none", cursor: "pointer", color: "var(--accent-dark)" }}>
                         Sign out
                       </button>
                     </div>
@@ -173,14 +150,14 @@ export default function Nav() {
         {open && (
           <div className="section" style={{ paddingBottom: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {LINKS.map((link) => (
-              <Link key={link.href} href={link.href} style={{ color: "var(--dim)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.8rem" }}>
+              <Link key={link.href} href={link.href} style={{ color: "var(--dim)", fontWeight: 500, fontSize: "0.95rem" }}>
                 {link.label}
               </Link>
             ))}
             {me ? (
               <>
                 {accountLinks.map((l) => (
-                  <Link key={l.href} href={l.href} style={{ color: "var(--dim)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.8rem" }}>
+                  <Link key={l.href} href={l.href} style={{ color: "var(--dim)", fontWeight: 500, fontSize: "0.95rem" }}>
                     {l.label}
                   </Link>
                 ))}

@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
-import { getStripe, priceBreakdown, toPence } from "@/lib/stripe";
+import { getStripe, isStripeConfigured, priceBreakdown, toPence, formatGBP } from "@/lib/stripe";
 import { commissionSplit } from "@/lib/commission";
 import { resolveStylist, getService } from "@/lib/stylists";
 import { requireUser } from "@/lib/auth";
-import { supabaseServer } from "@/lib/supabase/server";
+import { supabaseServer, supabaseAdmin } from "@/lib/supabase/server";
 import { parseBody, createBookingSchema } from "@/lib/validation";
 import { rateLimit } from "@/lib/rate-limit";
 import { sanitizeText } from "@/lib/sanitize";
+import { notify } from "@/lib/notifications";
+import { bookingConfirmedEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -114,6 +116,43 @@ export async function POST(request: Request) {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const usesConnect = Boolean(stylist.stripeAccountId && stylist.payoutsEnabled);
+  const whenLabel = new Date(scheduledFor).toLocaleString("en-GB");
+
+  // If Stripe isn't configured, confirm the booking directly so the flow still
+  // completes end-to-end. (Real card payments happen only when keys are set.)
+  if (!isStripeConfigured()) {
+    const admin = supabaseAdmin();
+    await admin
+      .from("bookings")
+      .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
+      .eq("id", booking.id);
+    if (payment?.id) await admin.from("payments").update({ status: "paid" }).eq("id", payment.id);
+    if (booking.stylist_account_id) {
+      await admin.rpc("increment_stylist_sessions", { stylist_uuid: booking.stylist_account_id });
+    }
+    await notify(admin, {
+      profileId: auth.user.id,
+      type: "booking_confirmed",
+      title: "Booking confirmed",
+      body: `${service.name} with ${stylist.name} on ${whenLabel}.`,
+      data: { bookingId: booking.id },
+      email: {
+        to: auth.user.email,
+        ...bookingConfirmedEmail({
+          name: auth.user.fullName ?? "",
+          stylist: stylist.name,
+          service: service.name,
+          when: whenLabel,
+          total: formatGBP(total),
+        }),
+      },
+    });
+    return NextResponse.json({
+      url: `${appUrl}/booking/success?stylist=${stylistId}&service=${serviceId}&when=${encodeURIComponent(scheduledFor)}`,
+      bookingId: booking.id,
+      mode: "free",
+    });
+  }
 
   try {
     const stripe = getStripe();

@@ -8,6 +8,11 @@ export const PLATFORM_FEE_RATE = 0.05; // 5% platform fee added on top
 
 let stripe: Stripe | null = null;
 
+/** Whether Stripe is configured (secret key present). */
+export function isStripeConfigured(): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY);
+}
+
 export function getStripe(): Stripe {
   if (stripe) return stripe;
   const key = process.env.STRIPE_SECRET_KEY;
