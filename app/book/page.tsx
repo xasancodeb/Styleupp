@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { STYLISTS, getStylist, type Service } from "@/lib/data";
+import { getStylist, type Service } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
-import { nextAvailableDates, formatDate } from "@/lib/booking";
+import { nextAvailableDates, formatDate, availableSlots } from "@/lib/booking";
 import { supabaseBrowser } from "@/lib/supabase";
+import StylistPicker from "@/components/StylistPicker";
 
 function BookingFlow() {
   const router = useRouter();
@@ -35,24 +36,27 @@ function BookingFlow() {
   }, [stylist]);
   useEffect(() => setSlot(null), [date]);
 
-  // Live availability from the server (custom rules minus booked slots).
-  const loadSlots = useCallback(async () => {
-    if (!stylistId || !date) return;
-    setLoadingSlots(true);
-    try {
-      const res = await fetch(`/api/availability?slug=${stylistId}&date=${date}`);
-      const data = (await res.json()) as { slots?: string[] };
-      setSlots(data.slots ?? []);
-    } catch {
-      setSlots([]);
-    } finally {
-      setLoadingSlots(false);
-    }
-  }, [stylistId, date]);
-
+  // Show sensible default time slots instantly (computed on the client), then
+  // quietly refine from the server to drop already-booked or blacked-out times.
   useEffect(() => {
-    void loadSlots();
-  }, [loadSlots]);
+    if (!stylistId || !date) {
+      setSlots([]);
+      return;
+    }
+    setSlots(availableSlots(date));
+    setLoadingSlots(false);
+
+    let cancelled = false;
+    fetch(`/api/availability?slug=${stylistId}&date=${date}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { slots?: string[] } | null) => {
+        if (!cancelled && data?.slots) setSlots(data.slots);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [stylistId, date]);
 
   async function handleConfirm() {
     if (!stylist || !service || !date || !slot) return;
@@ -90,10 +94,11 @@ function BookingFlow() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem", maxWidth: 900 }}>
-      <h1 className="font-serif" style={{ fontSize: "2.4rem", fontWeight: 700 }}>
-        Book a session
+      <span className="eyebrow">Booking</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.2rem, 5vw, 3.2rem)", marginTop: "0.5rem" }}>
+        Book a <em>session</em>
       </h1>
-      <p style={{ color: "var(--dim)", marginTop: "0.4rem" }}>
+      <p className="lede" style={{ marginTop: "0.5rem" }}>
         Four quick steps. Secure payment, free cancellation up to 48 hours before.
       </p>
 
@@ -112,21 +117,14 @@ function BookingFlow() {
         <div style={{ display: "grid", gap: "1.5rem" }}>
           <section className="card" style={{ padding: "1.5rem" }}>
             <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>1. Choose your stylist</h2>
-            <select
-              className="input"
-              style={{ marginTop: "0.75rem" }}
-              value={stylistId ?? ""}
-              onChange={(e) => {
-                setStylistId(e.target.value || null);
+            <StylistPicker
+              value={stylistId}
+              onChange={(id) => {
+                setStylistId(id);
                 setServiceId(null);
                 setDate(null);
               }}
-            >
-              <option value="">Select a stylist…</option>
-              {STYLISTS.map((s) => (
-                <option key={s.id} value={s.id}>{s.name} — {s.city}</option>
-              ))}
-            </select>
+            />
           </section>
 
           {stylist && (
@@ -141,8 +139,8 @@ function BookingFlow() {
                       onClick={() => setServiceId(svc.id)}
                       style={{
                         textAlign: "left",
-                        border: `1px solid ${active ? "var(--accent)" : "var(--border)"}`,
-                        background: active ? "rgba(196,146,58,0.07)" : "#fff",
+                        border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
+                        background: active ? "var(--accent-soft)" : "#fff",
                         borderRadius: "0.75rem",
                         padding: "0.9rem 1.1rem",
                         cursor: "pointer",

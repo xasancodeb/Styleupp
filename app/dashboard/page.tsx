@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatGBP } from "@/lib/stripe";
 import { PALETTES, type ColorSeason } from "@/lib/profile";
 import { getStylist } from "@/lib/data";
+import { availableSlots } from "@/lib/booking";
 import { useToast } from "@/components/Toast";
 
 interface Booking {
@@ -476,12 +477,18 @@ function ReschedulePanel({ booking, onDone }: { booking: Booking; onDone: () => 
   const [busy, setBusy] = useState(false);
   const { toast } = useToast();
 
-  async function loadSlots(d: string) {
+  function loadSlots(d: string) {
     setDate(d);
     setSlot("");
-    const res = await fetch(`/api/availability?slug=${booking.stylist_id}&date=${d}`);
-    const data = await res.json();
-    setSlots(data.slots ?? []);
+    if (!d) {
+      setSlots([]);
+      return;
+    }
+    setSlots(availableSlots(d)); // instant
+    fetch(`/api/availability?slug=${booking.stylist_id}&date=${d}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => data?.slots && setSlots(data.slots))
+      .catch(() => {});
   }
 
   async function confirm() {

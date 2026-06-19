@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { requireStylist } from "@/lib/auth";
 import { supabaseServer, supabaseAdmin } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import { parseBody, availabilitySchema } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULT_HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+function defaultSlots(weekday: number): string[] {
+  if (weekday === 0) return [];
+  return (weekday === 6 ? DEFAULT_HOURS.filter((h) => h <= 13) : DEFAULT_HOURS).map(
+    (h) => `${String(h).padStart(2, "0")}:00`
+  );
+}
 
 function timesBetween(start: string, end: string, slotMinutes: number): string[] {
   const [sh, sm] = start.split(":").map(Number);
@@ -28,10 +36,29 @@ export async function GET(request: Request) {
 
   const day = new Date(`${date}T00:00:00`);
   const weekday = day.getDay();
+
+  // Without a database we can't know custom rules or existing bookings, so
+  // return sensible default hours immediately (never hang on a missing DB).
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ open: weekday !== 0, slots: defaultSlots(weekday) });
+  }
+
   const admin = supabaseAdmin();
 
-  // Find the stylist account (if any) to read custom availability rules.
-  const { data: stylist } = await admin.from("stylists").select("id").eq("slug", slug).maybeSingle();
+  const dayStart = new Date(`${date}T00:00:00`).toISOString();
+  const dayEnd = new Date(`${date}T23:59:59`).toISOString();
+
+  // Fetch the stylist account and the day's bookings in parallel.
+  const [{ data: stylist }, { data: booked }] = await Promise.all([
+    admin.from("stylists").select("id").eq("slug", slug).maybeSingle(),
+    admin
+      .from("bookings")
+      .select("scheduled_for")
+      .eq("stylist_id", slug)
+      .gte("scheduled_for", dayStart)
+      .lte("scheduled_for", dayEnd)
+      .in("status", ["pending", "confirmed", "completed"]),
+  ]);
 
   let slots: string[] = [];
   let isOpen = weekday !== 0; // closed Sundays by default
@@ -62,16 +89,6 @@ export async function GET(request: Request) {
   }
 
   // Remove already-booked slots (active statuses hold the slot).
-  const dayStart = new Date(`${date}T00:00:00`).toISOString();
-  const dayEnd = new Date(`${date}T23:59:59`).toISOString();
-  const { data: booked } = await admin
-    .from("bookings")
-    .select("scheduled_for")
-    .eq("stylist_id", slug)
-    .gte("scheduled_for", dayStart)
-    .lte("scheduled_for", dayEnd)
-    .in("status", ["pending", "confirmed", "completed"]);
-
   const taken = new Set(
     (booked ?? []).map((b) =>
       new Date(b.scheduled_for).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })
