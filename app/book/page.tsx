@@ -95,7 +95,7 @@ function BookingFlow() {
   }
 
   return (
-    <div className="section" style={{ padding: "3rem 1.5rem 4rem", maxWidth: 900 }}>
+    <div className="section" style={{ padding: "3rem 1.5rem 4rem", maxWidth: 1040 }}>
       <span className="eyebrow">Booking</span>
       <h1 className="display" style={{ fontSize: "clamp(2.2rem, 5vw, 3.2rem)", marginTop: "0.5rem" }}>
         Book a <em>session</em>
@@ -115,8 +115,8 @@ function BookingFlow() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.6fr) minmax(0, 1fr)", gap: "1.5rem" }} className="book-grid">
-        <div style={{ display: "grid", gap: "1.5rem" }}>
+      <div className="book-grid" style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "grid", gap: "1.5rem" }}>
           {!stylistId || changingStylist ? (
             <section className="card" style={{ padding: "1.5rem" }}>
               <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>1. Choose your stylist</h2>
@@ -232,7 +232,7 @@ function BookingFlow() {
           )}
         </div>
 
-        <aside>
+        <aside className="book-aside" style={{ width: 340, flexShrink: 0 }}>
           <div className="card book-summary" style={{ padding: "1.5rem", position: "sticky", top: 90, maxHeight: "calc(100vh - 110px)", overflowY: "auto" }}>
             <h3 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Order summary</h3>
             {stylist ? (
@@ -285,7 +285,8 @@ function BookingFlow() {
 
       <style>{`
         @media (max-width: 900px) {
-          .book-grid { grid-template-columns: 1fr !important; }
+          .book-grid { flex-direction: column !important; }
+          .book-aside { width: 100% !important; }
           .book-summary { position: static !important; top: auto !important; max-height: none !important; overflow: visible !important; }
         }
       `}</style>
