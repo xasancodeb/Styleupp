@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getStylist, STYLISTS, getPortfolio } from "@/lib/data";
+import { getStylist, STYLISTS, getPortfolio, offersInPerson, offersInStoreShopping } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
@@ -90,7 +90,12 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
               <div style={{ display: "flex", gap: "2rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
                 <Stat label="Sessions" value={stylist.sessionsCompleted.toLocaleString()} />
                 <Stat label="Languages" value={stylist.languages.join(", ")} />
-                <Stat label="Formats" value={stylist.sessionTypes.map(cap).join(", ")} />
+                <Stat label="Based in" value={stylist.city} />
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "1.25rem" }}>
+                {stylist.sessionTypes.includes("virtual") && <span className="chip chip-muted">💻 Video, anywhere</span>}
+                {offersInPerson(stylist) && <span className="chip chip-muted">📍 In person in {stylist.city}</span>}
+                {offersInStoreShopping(stylist) && <span className="chip chip-muted">🛍️ Shops in store with you</span>}
               </div>
             </section>
 

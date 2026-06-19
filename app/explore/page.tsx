@@ -2,9 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { STYLISTS, SPECIALTIES, SESSION_TYPES, type SessionType } from "@/lib/data";
+import {
+  STYLISTS,
+  SPECIALTIES,
+  COUNTRIES,
+  offersInPerson,
+  offersInStoreShopping,
+  proximity,
+  proximityRank,
+  type Stylist,
+} from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
-import { loadProfile, PALETTES, type ColorSeason } from "@/lib/profile";
+import { loadProfile, saveLocation, PALETTES, type ColorSeason } from "@/lib/profile";
 
 const PRICE_BANDS = [
   { label: "Any price", min: 0, max: Infinity },
@@ -13,30 +22,60 @@ const PRICE_BANDS = [
   { label: "£110+", min: 110, max: Infinity },
 ];
 
+const FORMATS = [
+  { value: "any", label: "Any format" },
+  { value: "virtual", label: "Virtual — anywhere" },
+  { value: "in-person", label: "In person near me" },
+  { value: "shopping", label: "Shop with me in store" },
+] as const;
+type Format = (typeof FORMATS)[number]["value"];
+
 type SortKey = "featured" | "rating" | "price-asc" | "price-desc";
 
 export default function ExplorePage() {
   const [specialty, setSpecialty] = useState<string | null>(null);
-  const [session, setSession] = useState<SessionType | null>(null);
+  const [format, setFormat] = useState<Format>("any");
   const [priceBand, setPriceBand] = useState(0);
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("featured");
   const [season, setSeason] = useState<ColorSeason | null>(null);
   const [name, setName] = useState("");
+  const [country, setCountry] = useState<string>("");
 
-  // Reflect the visitor's saved quiz result back to them.
   useEffect(() => {
     const p = loadProfile();
     setSeason(p.season);
     setName(p.fullName);
+    if (p.location?.country) setCountry(p.location.country);
   }, []);
-  const [sort, setSort] = useState<SortKey>("featured");
+
+  function chooseCountry(c: string) {
+    setCountry(c);
+    saveLocation(c ? { city: "", country: c } : null);
+  }
+
+  function nearLabel(s: Stylist): string | undefined {
+    if (!country || !offersInPerson(s)) return undefined;
+    const p = proximity(s, country);
+    if (p === "same-country") return "In your country";
+    if (p === "same-region") return "In your region";
+    return undefined;
+  }
 
   const results = useMemo(() => {
     const band = PRICE_BANDS[priceBand];
     const filtered = STYLISTS.filter((s) => {
       if (specialty && !s.specialties.includes(specialty)) return false;
-      if (session && !s.sessionTypes.includes(session)) return false;
       if (s.startingPrice < band.min || s.startingPrice > band.max) return false;
+      if (format === "virtual" && !s.sessionTypes.includes("virtual")) return false;
+      if (format === "in-person") {
+        if (!offersInPerson(s)) return false;
+        if (country && proximity(s, country) === "remote") return false;
+      }
+      if (format === "shopping") {
+        if (!offersInStoreShopping(s)) return false;
+        if (country && proximity(s, country) === "remote") return false;
+      }
       if (query) {
         const q = query.toLowerCase();
         const hay = `${s.name} ${s.city} ${s.country} ${s.tagline} ${s.specialties.join(" ")}`.toLowerCase();
@@ -44,29 +83,40 @@ export default function ExplorePage() {
       }
       return true;
     });
+
+    const cmp = (a: Stylist, b: Stylist) => {
+      switch (sort) {
+        case "rating":
+          return b.rating - a.rating;
+        case "price-asc":
+          return a.startingPrice - b.startingPrice;
+        case "price-desc":
+          return b.startingPrice - a.startingPrice;
+        default:
+          return Number(b.featured) - Number(a.featured) || b.rating - a.rating;
+      }
+    };
+
     const sorted = [...filtered];
-    switch (sort) {
-      case "rating":
-        sorted.sort((a, b) => b.rating - a.rating);
-        break;
-      case "price-asc":
-        sorted.sort((a, b) => a.startingPrice - b.startingPrice);
-        break;
-      case "price-desc":
-        sorted.sort((a, b) => b.startingPrice - a.startingPrice);
-        break;
-      default:
-        sorted.sort((a, b) => Number(b.featured) - Number(a.featured) || b.rating - a.rating);
-    }
+    // When a location is known, surface the nearest stylists first.
+    sorted.sort((a, b) =>
+      country
+        ? proximityRank(proximity(a, country)) - proximityRank(proximity(b, country)) || cmp(a, b)
+        : cmp(a, b)
+    );
     return sorted;
-  }, [specialty, session, priceBand, query, sort]);
+  }, [specialty, format, priceBand, query, sort, country]);
 
   const clear = () => {
     setSpecialty(null);
-    setSession(null);
+    setFormat("any");
     setPriceBand(0);
     setQuery("");
   };
+
+  const nearCount = country
+    ? results.filter((s) => offersInPerson(s) && proximity(s, country) !== "remote").length
+    : 0;
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 2rem" }}>
@@ -74,13 +124,33 @@ export default function ExplorePage() {
       <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.2rem)", marginTop: "0.85rem" }}>
         Find your <em>stylist.</em>
       </h1>
-      <p style={{ color: "var(--dim)", marginTop: "0.75rem", maxWidth: 600 }}>
-        Browse our global roster of vetted personal stylists. Filter by specialty, session type and
-        budget to find your perfect match.
+      <p style={{ color: "var(--dim)", marginTop: "0.75rem", maxWidth: 620 }}>
+        Work with a stylist over video from anywhere — or find one near you for an in-person session
+        or a personal shopping trip where they shop the stores with you.
       </p>
 
-      {season ? (
-        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+      {/* Location prompt */}
+      <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontWeight: 600 }}>📍 Where are you based?</div>
+          <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.15rem" }}>
+            {country
+              ? nearCount > 0
+                ? `${nearCount} stylist${nearCount === 1 ? "" : "s"} can meet you in person near ${country}. Everyone else is available over video.`
+                : `No in-person stylists near ${country} yet — but every stylist works with you over video.`
+              : "Set your location and we'll show who can meet you in person — not just video."}
+          </div>
+        </div>
+        <select className="input" style={{ width: "auto", minWidth: 220 }} value={country} onChange={(e) => chooseCountry(e.target.value)}>
+          <option value="">Anywhere (virtual)</option>
+          {COUNTRIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+
+      {season && (
+        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
             <div style={{ display: "flex" }}>
               {PALETTES[season].bestColors.slice(0, 4).map((c, i) => (
@@ -91,129 +161,86 @@ export default function ExplorePage() {
               <div style={{ fontWeight: 600 }}>
                 {name ? `${name.split(" ")[0]}, you're a ${PALETTES[season].name}` : `You're a ${PALETTES[season].name}`}
               </div>
-              <div style={{ color: "var(--dim)", fontSize: "0.88rem" }}>
-                We'd start with a colour specialist to bring your palette to life.
-              </div>
+              <div style={{ color: "var(--dim)", fontSize: "0.88rem" }}>We'd start with a colour specialist to bring your palette to life.</div>
             </div>
           </div>
           <button onClick={() => setSpecialty(specialty === "Colour Analysis" ? null : "Colour Analysis")} className="btn btn-outline" style={{ padding: "0.5rem 1.1rem", fontSize: "0.85rem" }}>
             {specialty === "Colour Analysis" ? "Showing colour experts" : "Show colour experts"}
           </button>
         </div>
-      ) : (
-        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-          <div style={{ color: "var(--dim)", fontSize: "0.92rem" }}>
-            <strong style={{ color: "var(--dark)" }}>Not sure who to pick?</strong> Take the 2-minute quiz and we'll match you to your colours.
-          </div>
-          <Link href="/quiz" className="btn btn-outline" style={{ padding: "0.5rem 1.1rem", fontSize: "0.85rem" }}>
-            Take the quiz
-          </Link>
-        </div>
       )}
 
-      <div className="card" style={{ padding: "1.5rem", marginTop: "1.5rem", display: "grid", gap: "1.25rem" }}>
-        <input
-          className="input"
-          placeholder="Search by name, city or specialty…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <div className="card" style={{ padding: "1.5rem", marginTop: "1rem", display: "grid", gap: "1.25rem" }}>
+        <input className="input" placeholder="Search by name, city or specialty…" value={query} onChange={(e) => setQuery(e.target.value)} />
+
+        <div>
+          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>How do you want to work together?</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+            {FORMATS.map((f) => (
+              <button key={f.value} className="tag-toggle" data-active={format === f.value} onClick={() => setFormat(f.value)}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div>
           <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Specialty</label>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
             {SPECIALTIES.map((s) => (
-              <button
-                key={s}
-                className="tag-toggle"
-                data-active={specialty === s}
-                onClick={() => setSpecialty(specialty === s ? null : s)}
-              >
+              <button key={s} className="tag-toggle" data-active={specialty === s} onClick={() => setSpecialty(specialty === s ? null : s)}>
                 {s}
               </button>
             ))}
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-          <div>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Session type</label>
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-              {SESSION_TYPES.map((s) => (
-                <button
-                  key={s.value}
-                  className="tag-toggle"
-                  data-active={session === s.value}
-                  onClick={() => setSession(session === s.value ? null : s.value)}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Budget</label>
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-              {PRICE_BANDS.map((b, i) => (
-                <button
-                  key={b.label}
-                  className="tag-toggle"
-                  data-active={priceBand === i}
-                  onClick={() => setPriceBand(i)}
-                >
-                  {b.label}
-                </button>
-              ))}
-            </div>
+        <div>
+          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Budget</label>
+          <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
+            {PRICE_BANDS.map((b, i) => (
+              <button key={b.label} className="tag-toggle" data-active={priceBand === i} onClick={() => setPriceBand(i)}>
+                {b.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          margin: "1.75rem 0 1rem",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "1.75rem 0 1rem", flexWrap: "wrap", gap: "0.75rem" }}>
         <p style={{ color: "var(--dim)", fontWeight: 600 }}>
           {results.length} stylist{results.length === 1 ? "" : "s"}
+          {country && (format === "in-person" || format === "shopping") ? ` near ${country}` : ""}
         </p>
         <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
           <label style={{ fontSize: "0.85rem", color: "var(--faint)" }} htmlFor="sort">Sort</label>
-          <select
-            id="sort"
-            className="input"
-            style={{ width: "auto", padding: "0.45rem 0.7rem" }}
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
-          >
+          <select id="sort" className="input" style={{ width: "auto", padding: "0.45rem 0.7rem" }} value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
             <option value="featured">Featured</option>
             <option value="rating">Top rated</option>
             <option value="price-asc">Price: low to high</option>
             <option value="price-desc">Price: high to low</option>
           </select>
-          <button onClick={clear} className="btn btn-outline" style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}>
-            Clear
-          </button>
+          <button onClick={clear} className="btn btn-outline" style={{ padding: "0.45rem 1rem", fontSize: "0.85rem" }}>Clear</button>
         </div>
       </div>
 
       {results.length === 0 ? (
         <div className="card" style={{ padding: "3rem", textAlign: "center", color: "var(--dim)" }}>
-          No stylists match those filters yet. Try widening your search.
+          {(format === "in-person" || format === "shopping") && country ? (
+            <>
+              <p>No stylists near <strong>{country}</strong> for that yet.</p>
+              <button onClick={() => setFormat("virtual")} className="btn btn-primary" style={{ marginTop: "1rem" }}>
+                See stylists available over video
+              </button>
+            </>
+          ) : (
+            "No stylists match those filters yet. Try widening your search."
+          )}
         </div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "1.5rem",
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {results.map((stylist) => (
-            <StylistCard key={stylist.id} stylist={stylist} />
+            <StylistCard key={stylist.id} stylist={stylist} proximityLabel={nearLabel(stylist)} />
           ))}
         </div>
       )}

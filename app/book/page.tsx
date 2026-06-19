@@ -4,12 +4,20 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getStylist, type Service } from "@/lib/data";
+import { getStylist, offersInPerson, offersInStoreShopping, type Service } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import { formatDate, availableSlots } from "@/lib/booking";
 import { supabaseBrowser } from "@/lib/supabase";
 import StylistPicker from "@/components/StylistPicker";
 import Calendar from "@/components/Calendar";
+
+type MeetFormat = "virtual" | "in-person" | "shopping";
+
+const FORMAT_LABEL: Record<MeetFormat, string> = {
+  virtual: "Video call",
+  "in-person": "In person",
+  shopping: "Personal shopping trip",
+};
 
 function BookingFlow() {
   const router = useRouter();
@@ -18,6 +26,8 @@ function BookingFlow() {
   const [stylistId, setStylistId] = useState<string | null>(params.get("stylist"));
   const [serviceId, setServiceId] = useState<string | null>(params.get("service"));
   const [changingStylist, setChangingStylist] = useState(false);
+  const [format, setFormat] = useState<MeetFormat>("virtual");
+  const [meetNote, setMeetNote] = useState("");
   const [date, setDate] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [slots, setSlots] = useState<string[]>([]);
@@ -32,6 +42,24 @@ function BookingFlow() {
   const breakdown = service ? priceBreakdown(service.price) : null;
   const step = !stylist ? 1 : !service ? 2 : !date || !slot ? 3 : 4;
   const summaryRef = useRef<HTMLElement>(null);
+
+  const formatOptions = useMemo<MeetFormat[]>(() => {
+    if (!stylist) return [];
+    const opts: MeetFormat[] = [];
+    if (stylist.sessionTypes.includes("virtual")) opts.push("virtual");
+    if (offersInPerson(stylist)) opts.push("in-person");
+    if (offersInStoreShopping(stylist)) opts.push("shopping");
+    return opts;
+  }, [stylist]);
+
+  // Default the meeting format sensibly whenever the service changes.
+  useEffect(() => {
+    if (!service) return;
+    const pref: MeetFormat = service.sessionType === "virtual" ? "virtual" : "in-person";
+    setFormat(formatOptions.includes(pref) ? pref : formatOptions[0] ?? "virtual");
+    setMeetNote("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceId]);
 
   // Once everything's chosen, gently bring the summary + Pay button into view.
   useEffect(() => {
@@ -81,11 +109,15 @@ function BookingFlow() {
       return;
     }
 
+    const notes = [`Format: ${FORMAT_LABEL[format]}`, meetNote.trim() ? `Meeting: ${meetNote.trim()}` : ""]
+      .filter(Boolean)
+      .join(" · ");
+
     try {
       const res = await fetch("/api/payments/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stylistId: stylist.id, serviceId: service.id, scheduledFor }),
+        body: JSON.stringify({ stylistId: stylist.id, serviceId: service.id, scheduledFor, notes }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
       if (res.ok && data.url) {
@@ -186,9 +218,55 @@ function BookingFlow() {
             </section>
           )}
 
+          {service && stylist && formatOptions.length > 0 && (
+            <section className="card" style={{ padding: "1.5rem" }}>
+              <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>How would you like to meet?</h2>
+              <div style={{ display: "grid", gap: "0.6rem", marginTop: "0.85rem" }}>
+                {formatOptions.map((f) => {
+                  const active = format === f;
+                  const desc =
+                    f === "virtual"
+                      ? "Over video — from anywhere in the world."
+                      : f === "in-person"
+                      ? `Meet ${stylist.name.split(" ")[0]} in ${stylist.city}.`
+                      : `${stylist.name.split(" ")[0]} joins you to shop local stores & brands together.`;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => setFormat(f)}
+                      style={{
+                        textAlign: "left",
+                        border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
+                        background: active ? "var(--accent-soft)" : "#fff",
+                        borderRadius: "0.75rem",
+                        padding: "0.9rem 1.1rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span>{f === "virtual" ? "💻" : f === "in-person" ? "📍" : "🛍️"}</span>
+                        <strong>{FORMAT_LABEL[f]}</strong>
+                      </div>
+                      <p style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.25rem" }}>{desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+              {(format === "in-person" || format === "shopping") && (
+                <input
+                  className="input"
+                  style={{ marginTop: "0.85rem" }}
+                  placeholder={format === "shopping" ? "Which area or store would you like to shop? (optional)" : "Where should you meet? (optional)"}
+                  value={meetNote}
+                  onChange={(e) => setMeetNote(e.target.value)}
+                />
+              )}
+            </section>
+          )}
+
           {service && (
             <section className="card" style={{ padding: "1.5rem" }}>
-              <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>3. Pick a date & time</h2>
+              <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>Pick a date & time</h2>
               <Calendar value={date} onChange={setDate} />
 
               {date && (
@@ -231,6 +309,7 @@ function BookingFlow() {
               <div style={{ marginTop: "0.9rem", display: "grid", gap: "0.6rem", fontSize: "0.92rem" }}>
                 <Row label="Stylist" value={stylist.name} />
                 <Row label="Service" value={service?.name ?? "—"} />
+                {service && <Row label="Format" value={FORMAT_LABEL[format]} />}
                 <Row label="When" value={date && slot ? `${formatDate(date)} · ${slot}` : "—"} />
                 {breakdown && (
                   <>

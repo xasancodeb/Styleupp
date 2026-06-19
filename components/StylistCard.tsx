@@ -4,7 +4,7 @@ import type { Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
-export default function StylistCard({ stylist }: { stylist: Stylist }) {
+export default function StylistCard({ stylist, proximityLabel }: { stylist: Stylist; proximityLabel?: string }) {
   return (
     <Link href={`/stylist/${stylist.id}`} className="card fade-up" style={{ overflow: "hidden", display: "block" }}>
       <div className="photo" style={{ aspectRatio: "4 / 5" }}>
@@ -23,10 +23,16 @@ export default function StylistCard({ stylist }: { stylist: Stylist }) {
             background: "linear-gradient(180deg, rgba(29,26,21,0) 48%, rgba(29,26,21,0.62))",
           }}
         />
-        {stylist.featured && (
-          <span className="chip" style={{ position: "absolute", top: 12, left: 12, zIndex: 3, background: "var(--paper)", color: "var(--ink)" }}>
-            Featured
+        {proximityLabel ? (
+          <span className="chip" style={{ position: "absolute", top: 12, left: 12, zIndex: 3, background: "var(--ink)", color: "var(--paper)" }}>
+            📍 {proximityLabel}
           </span>
+        ) : (
+          stylist.featured && (
+            <span className="chip" style={{ position: "absolute", top: 12, left: 12, zIndex: 3, background: "var(--paper)", color: "var(--ink)" }}>
+              Featured
+            </span>
+          )
         )}
         <SaveHeart slug={stylist.id} />
         <div style={{ position: "absolute", left: 16, right: 16, bottom: 14, zIndex: 3, color: "#fff" }}>

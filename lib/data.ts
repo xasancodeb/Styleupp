@@ -536,3 +536,68 @@ export function getPortfolio(stylist: Stylist): string[] {
   return unique.map((id) => `https://images.unsplash.com/photo-${id}?w=640&h=800&fit=crop&auto=format&q=70`);
 }
 
+
+// ──────────────────────── Location & format helpers ─────────────────────────
+// Region groupings so "near me" is meaningful even with a global roster: a
+// client can realistically meet a stylist in person within the same region.
+const REGION_BY_COUNTRY: Record<string, string> = {
+  "United Kingdom": "Europe",
+  France: "Europe",
+  Italy: "Europe",
+  Spain: "Europe",
+  Sweden: "Europe",
+  "United States": "North America",
+  Canada: "North America",
+  Brazil: "South America",
+  "United Arab Emirates": "Middle East",
+  India: "South Asia",
+  Japan: "East Asia",
+  China: "East Asia",
+};
+
+export const COUNTRIES: string[] = Array.from(new Set(STYLISTS.map((s) => s.country))).sort();
+
+export function regionFor(country: string | null | undefined): string | null {
+  if (!country) return null;
+  return REGION_BY_COUNTRY[country] ?? null;
+}
+
+/** A stylist offers in-person sessions (in their city). */
+export function offersInPerson(s: Stylist): boolean {
+  return s.sessionTypes.includes("in-person") || s.sessionTypes.includes("hybrid");
+}
+
+/** A stylist will accompany you shopping in store (personal shopping). */
+export function offersInStoreShopping(s: Stylist): boolean {
+  return (
+    offersInPerson(s) &&
+    (s.specialties.includes("Personal Shopping") || s.services.some((v) => /shop/i.test(v.name)))
+  );
+}
+
+export type Proximity = "same-city" | "same-country" | "same-region" | "remote";
+
+/** How reachable a stylist is in person for a client in `country`/`city`. */
+export function proximity(
+  s: Stylist,
+  country: string | null,
+  city?: string | null
+): Proximity {
+  if (!country) return "remote";
+  if (city && s.city.toLowerCase() === city.toLowerCase()) return "same-city";
+  if (s.country.toLowerCase() === country.toLowerCase()) return "same-country";
+  const r = regionFor(country);
+  if (r && regionFor(s.country) === r) return "same-region";
+  return "remote";
+}
+
+const PROXIMITY_RANK: Record<Proximity, number> = {
+  "same-city": 0,
+  "same-country": 1,
+  "same-region": 2,
+  remote: 3,
+};
+
+export function proximityRank(p: Proximity): number {
+  return PROXIMITY_RANK[p];
+}

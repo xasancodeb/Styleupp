@@ -9,6 +9,7 @@ export interface ClientProfile {
   email: string;
   archetype: string | null;
   season: ColorSeason | null;
+  location: { city: string; country: string } | null;
   preferences: {
     budget: "value" | "mid" | "premium" | null;
     sessionType: "virtual" | "in-person" | "hybrid" | null;
@@ -238,6 +239,7 @@ function emptyProfile(): ClientProfile {
     email: "",
     archetype: null,
     season: null,
+    location: null,
     preferences: { budget: null, sessionType: null, goals: [] },
     updatedAt: new Date().toISOString(),
   };
@@ -268,4 +270,8 @@ export function saveProfile(profile: Partial<ClientProfile>): ClientProfile {
 
 export function saveSeason(season: ColorSeason): ClientProfile {
   return saveProfile({ season });
+}
+
+export function saveLocation(location: ClientProfile["location"]): ClientProfile {
+  return saveProfile({ location });
 }
