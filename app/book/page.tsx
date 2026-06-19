@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getStylist, type Service } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import { nextAvailableDates, formatDate, availableSlots } from "@/lib/booking";
@@ -15,6 +16,7 @@ function BookingFlow() {
 
   const [stylistId, setStylistId] = useState<string | null>(params.get("stylist"));
   const [serviceId, setServiceId] = useState<string | null>(params.get("service"));
+  const [changingStylist, setChangingStylist] = useState(false);
   const [date, setDate] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [slots, setSlots] = useState<string[]>([]);
@@ -115,17 +117,36 @@ function BookingFlow() {
 
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.6fr) minmax(0, 1fr)", gap: "1.5rem" }} className="book-grid">
         <div style={{ display: "grid", gap: "1.5rem" }}>
-          <section className="card" style={{ padding: "1.5rem" }}>
-            <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>1. Choose your stylist</h2>
-            <StylistPicker
-              value={stylistId}
-              onChange={(id) => {
-                setStylistId(id);
-                setServiceId(null);
-                setDate(null);
-              }}
-            />
-          </section>
+          {!stylistId || changingStylist ? (
+            <section className="card" style={{ padding: "1.5rem" }}>
+              <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>1. Choose your stylist</h2>
+              <StylistPicker
+                value={stylistId}
+                onChange={(id) => {
+                  setStylistId(id);
+                  setServiceId(null);
+                  setDate(null);
+                  setChangingStylist(false);
+                }}
+              />
+            </section>
+          ) : (
+            stylist && (
+              <section className="card" style={{ padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                <div style={{ position: "relative", width: 44, height: 52, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "var(--accent-soft)" }}>
+                  <Image src={stylist.avatar} alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: "0.72rem", color: "var(--faint)", textTransform: "uppercase", letterSpacing: "0.12em" }}>Your stylist</div>
+                  <div style={{ fontWeight: 600 }}>{stylist.name}</div>
+                  <div style={{ color: "var(--dim)", fontSize: "0.85rem" }}>{stylist.city}, {stylist.country}</div>
+                </div>
+                <button onClick={() => setChangingStylist(true)} className="btn btn-outline" style={{ padding: "0.45rem 1rem", fontSize: "0.82rem" }}>
+                  Change
+                </button>
+              </section>
+            )
+          )}
 
           {stylist && (
             <section className="card" style={{ padding: "1.5rem" }}>
@@ -212,7 +233,7 @@ function BookingFlow() {
         </div>
 
         <aside>
-          <div className="card" style={{ padding: "1.5rem", position: "sticky", top: 90 }}>
+          <div className="card book-summary" style={{ padding: "1.5rem", position: "sticky", top: 90, maxHeight: "calc(100vh - 110px)", overflowY: "auto" }}>
             <h3 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Order summary</h3>
             {stylist ? (
               <div style={{ marginTop: "0.9rem", display: "grid", gap: "0.6rem", fontSize: "0.92rem" }}>
@@ -262,7 +283,12 @@ function BookingFlow() {
         </aside>
       </div>
 
-      <style>{`@media (max-width: 820px){.book-grid{grid-template-columns:1fr !important;}}`}</style>
+      <style>{`
+        @media (max-width: 900px) {
+          .book-grid { grid-template-columns: 1fr !important; }
+          .book-summary { position: static !important; top: auto !important; max-height: none !important; overflow: visible !important; }
+        }
+      `}</style>
     </div>
   );
 }
