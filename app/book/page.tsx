@@ -1,14 +1,15 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getStylist, type Service } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
-import { nextAvailableDates, formatDate, availableSlots } from "@/lib/booking";
+import { formatDate, availableSlots } from "@/lib/booking";
 import { supabaseBrowser } from "@/lib/supabase";
 import StylistPicker from "@/components/StylistPicker";
+import Calendar from "@/components/Calendar";
 
 function BookingFlow() {
   const router = useRouter();
@@ -20,7 +21,6 @@ function BookingFlow() {
   const [date, setDate] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [slots, setSlots] = useState<string[]>([]);
-  const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,9 +29,16 @@ function BookingFlow() {
     () => stylist?.services.find((s) => s.id === serviceId) ?? null,
     [stylist, serviceId]
   );
-  const dates = useMemo(() => nextAvailableDates(10), []);
   const breakdown = service ? priceBreakdown(service.price) : null;
   const step = !stylist ? 1 : !service ? 2 : !date || !slot ? 3 : 4;
+  const summaryRef = useRef<HTMLElement>(null);
+
+  // Once everything's chosen, gently bring the summary + Pay button into view.
+  useEffect(() => {
+    if (step === 4) {
+      summaryRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [step]);
 
   useEffect(() => {
     setServiceId((current) => (stylist?.services.some((s) => s.id === current) ? current : null));
@@ -46,7 +53,6 @@ function BookingFlow() {
       return;
     }
     setSlots(availableSlots(date));
-    setLoadingSlots(false);
 
     let cancelled = false;
     fetch(`/api/availability?slug=${stylistId}&date=${date}`)
@@ -183,45 +189,34 @@ function BookingFlow() {
           {service && (
             <section className="card" style={{ padding: "1.5rem" }}>
               <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>3. Pick a date & time</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: "0.5rem", marginTop: "0.85rem" }}>
-                {dates.map((d) => {
-                  const active = date === d;
-                  const dt = new Date(d);
-                  return (
-                    <button
-                      key={d}
-                      onClick={() => setDate(d)}
-                      style={{
-                        border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
-                        background: active ? "var(--dark)" : "#fff",
-                        color: active ? "var(--bg)" : "var(--dark)",
-                        borderRadius: "0.7rem",
-                        padding: "0.6rem 0.4rem",
-                        cursor: "pointer",
-                        textAlign: "center",
-                      }}
-                    >
-                      <div style={{ fontSize: "0.72rem", opacity: 0.8 }}>{dt.toLocaleDateString("en-GB", { weekday: "short" })}</div>
-                      <div style={{ fontSize: "1.15rem", fontWeight: 700 }}>{dt.getDate()}</div>
-                      <div style={{ fontSize: "0.72rem", opacity: 0.8 }}>{dt.toLocaleDateString("en-GB", { month: "short" })}</div>
-                    </button>
-                  );
-                })}
-              </div>
+              <Calendar value={date} onChange={setDate} />
 
               {date && (
-                <div style={{ marginTop: "1rem" }}>
-                  {loadingSlots ? (
-                    <p style={{ color: "var(--dim)" }}>Loading availability…</p>
-                  ) : slots.length === 0 ? (
+                <div style={{ marginTop: "1.25rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--dim)", marginBottom: "0.6rem" }}>
+                    {formatDate(date)}
+                  </div>
+                  {slots.length === 0 ? (
                     <p style={{ color: "var(--dim)" }}>No availability on this day — try another date.</p>
                   ) : (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                      {slots.map((s) => (
-                        <button key={s} className="tag-toggle" data-active={slot === s} onClick={() => setSlot(s)}>
-                          {s}
-                        </button>
-                      ))}
+                    <div style={{ display: "grid", gap: "0.85rem" }}>
+                      {([
+                        ["Morning", slots.filter((s) => Number(s.slice(0, 2)) < 12)],
+                        ["Afternoon", slots.filter((s) => Number(s.slice(0, 2)) >= 12)],
+                      ] as const).map(([label, group]) =>
+                        group.length === 0 ? null : (
+                          <div key={label}>
+                            <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--faint)", marginBottom: "0.45rem" }}>{label}</div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: "0.5rem" }}>
+                              {group.map((s) => (
+                                <button key={s} className="tag-toggle" data-active={slot === s} onClick={() => setSlot(s)} style={{ textAlign: "center" }}>
+                                  {s}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      )}
                     </div>
                   )}
                 </div>
@@ -230,7 +225,7 @@ function BookingFlow() {
           )}
 
           {/* Order summary — full-width card at the end of the flow */}
-          <section className="card" style={{ padding: "1.5rem" }}>
+          <section ref={summaryRef} className="card" style={{ padding: "1.5rem" }}>
             <h3 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Order summary</h3>
             {stylist ? (
               <div style={{ marginTop: "0.9rem", display: "grid", gap: "0.6rem", fontSize: "0.92rem" }}>
