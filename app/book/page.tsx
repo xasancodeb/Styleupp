@@ -183,7 +183,7 @@ function BookingFlow() {
           {service && (
             <section className="card" style={{ padding: "1.5rem" }}>
               <h2 className="font-serif" style={{ fontSize: "1.25rem", fontWeight: 700 }}>3. Pick a date & time</h2>
-              <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", marginTop: "0.85rem", paddingBottom: "0.4rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: "0.5rem", marginTop: "0.85rem" }}>
                 {dates.map((d) => {
                   const active = date === d;
                   const dt = new Date(d);
@@ -192,8 +192,7 @@ function BookingFlow() {
                       key={d}
                       onClick={() => setDate(d)}
                       style={{
-                        minWidth: 78,
-                        border: `1px solid ${active ? "var(--accent)" : "var(--border)"}`,
+                        border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
                         background: active ? "var(--dark)" : "#fff",
                         color: active ? "var(--bg)" : "var(--dark)",
                         borderRadius: "0.7rem",
