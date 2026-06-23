@@ -3,15 +3,15 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ToastProvider from "@/components/Toast";
+import SeasonAccent from "@/components/SeasonAccent";
 
 export const metadata: Metadata = {
-  title: "StyleUp — Personal styling, made personal",
+  title: "StyleUp — a styling system",
   description:
-    "Book vetted personal stylists across the globe. Colour analysis, capsule wardrobes, occasion styling and more — virtually or in person.",
+    "An indexed atelier of vetted personal stylists. Colour analysis, capsule wardrobes, occasion styling, in-person shopping — virtual or near you.",
   openGraph: {
-    title: "StyleUp — Personal styling, made personal",
-    description:
-      "Book vetted personal stylists across the globe. Virtual and in-person sessions.",
+    title: "StyleUp — a styling system",
+    description: "An indexed atelier of vetted personal stylists, near you or over video.",
     type: "website",
   },
 };
@@ -23,11 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </head>
       <body>
+        <SeasonAccent />
         <ToastProvider>
           <Nav />
           <main style={{ minHeight: "70vh" }}>{children}</main>
@@ -37,3 +38,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+

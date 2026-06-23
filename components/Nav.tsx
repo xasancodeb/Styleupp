@@ -83,28 +83,27 @@ export default function Nav() {
 
   return (
     <header style={{ position: "sticky", top: 0, zIndex: 50 }}>
-      <div style={{ background: "rgba(247,244,238,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--border)" }}>
-        <nav className="section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 70 }}>
-          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline" }}>
-            <span className="font-serif" style={{ fontSize: "1.55rem", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ink)", lineHeight: 1 }}>
-              Style
+      <div style={{ background: "color-mix(in srgb, var(--bg) 86%, transparent)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--ink)" }}>
+        <nav className="section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 66 }}>
+          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline", gap: 2 }}>
+            <span style={{ fontFamily: "var(--font-grotesk)", fontSize: "1.4rem", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--ink)", lineHeight: 1, textTransform: "uppercase" }}>
+              Styleup
             </span>
-            <span className="font-serif" style={{ fontSize: "1.55rem", fontWeight: 600, fontStyle: "italic", color: "var(--accent)", lineHeight: 1 }}>
-              Up
-            </span>
+            <span className="mono" style={{ fontSize: "0.6rem", color: "var(--accent)" }}>®</span>
           </Link>
 
-          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.85rem" }}>
-            {LINKS.map((link) => {
+          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.9rem" }}>
+            {LINKS.map((link, i) => {
               const active = pathname === link.href || pathname.startsWith(link.href + "/");
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="ul-link"
+                  className="ul-link mono"
                   data-active={active}
-                  style={{ fontSize: "0.95rem", fontWeight: active ? 600 : 500, color: active ? "var(--ink)" : "var(--dim)" }}
+                  style={{ color: active ? "var(--ink)" : "var(--dim)", fontSize: "0.7rem" }}
                 >
+                  <span style={{ color: "var(--faint)", marginRight: 6 }}>{String(i + 1).padStart(2, "0")}</span>
                   {link.label}
                 </Link>
               );
@@ -117,18 +116,19 @@ export default function Nav() {
                   <button
                     onClick={() => setMenuOpen((o) => !o)}
                     aria-label="Account menu"
-                    style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--ink)", color: "var(--paper)", border: "none", cursor: "pointer", fontWeight: 600, fontSize: "0.82rem" }}
+                    className="mono"
+                    style={{ width: 38, height: 38, borderRadius: 2, background: "var(--ink)", color: "var(--bg)", border: "none", cursor: "pointer", fontSize: "0.72rem" }}
                   >
                     {initials}
                   </button>
                   {menuOpen && (
-                    <div className="card" style={{ position: "absolute", right: 0, top: "3rem", width: 200, padding: "0.4rem", zIndex: 60 }}>
+                    <div className="card" style={{ position: "absolute", right: 0, top: "3rem", width: 210, padding: "0.4rem", zIndex: 60 }}>
                       {accountLinks.map((l) => (
-                        <Link key={l.href} href={l.href} style={{ display: "block", padding: "0.6rem 0.8rem", borderRadius: 8, fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)" }}>
+                        <Link key={l.href} href={l.href} className="mono" style={{ display: "block", padding: "0.65rem 0.8rem", fontSize: "0.7rem", color: "var(--ink)" }}>
                           {l.label}
                         </Link>
                       ))}
-                      <button onClick={signOut} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.6rem 0.8rem", borderRadius: 8, fontSize: "0.9rem", fontWeight: 500, background: "none", border: "none", cursor: "pointer", color: "var(--accent-dark)" }}>
+                      <button onClick={signOut} className="mono" style={{ display: "block", width: "100%", textAlign: "left", padding: "0.65rem 0.8rem", fontSize: "0.7rem", background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}>
                         Sign out
                       </button>
                     </div>
@@ -136,28 +136,28 @@ export default function Nav() {
                 </div>
               </>
             ) : (
-              <Link href="/auth/login" className="btn btn-dark" style={{ padding: "0.6rem 1.3rem" }}>
+              <Link href="/auth/login" className="btn btn-dark" style={{ padding: "0.6rem 1.2rem" }}>
                 Sign in
               </Link>
             )}
           </div>
 
-          <button aria-label="Toggle menu" onClick={() => setOpen((o) => !o)} className="nav-toggle" style={{ display: "none", background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer" }}>
-            ☰
+          <button aria-label="Toggle menu" onClick={() => setOpen((o) => !o)} className="nav-toggle mono" style={{ display: "none", background: "none", border: "1px solid var(--ink)", borderRadius: 2, padding: "0.4rem 0.7rem", fontSize: "0.7rem", cursor: "pointer" }}>
+            Menu
           </button>
         </nav>
 
         {open && (
           <div className="section" style={{ paddingBottom: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {LINKS.map((link) => (
-              <Link key={link.href} href={link.href} style={{ color: "var(--dim)", fontWeight: 500, fontSize: "0.95rem" }}>
+              <Link key={link.href} href={link.href} className="mono" style={{ color: "var(--dim)", fontSize: "0.8rem" }}>
                 {link.label}
               </Link>
             ))}
             {me ? (
               <>
                 {accountLinks.map((l) => (
-                  <Link key={l.href} href={l.href} style={{ color: "var(--dim)", fontWeight: 500, fontSize: "0.95rem" }}>
+                  <Link key={l.href} href={l.href} className="mono" style={{ color: "var(--dim)", fontSize: "0.8rem" }}>
                     {l.label}
                   </Link>
                 ))}

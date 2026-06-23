@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 const FOOTER_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Browse stylists" },
+  { href: "/", label: "Index" },
+  { href: "/explore", label: "Stylists" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
   { href: "/corporate", label: "Corporate" },
@@ -10,40 +10,48 @@ const FOOTER_LINKS = [
 
 export default function Footer() {
   return (
-    <footer style={{ borderTop: "1px solid var(--border)", marginTop: "4rem", background: "#fff" }}>
-      <div className="section" style={{ padding: "3rem 1.5rem 2.25rem", display: "grid", gap: "2rem" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "2rem" }}>
-          <div style={{ maxWidth: 340 }}>
-            <div className="font-serif" style={{ fontSize: "1.6rem", fontWeight: 600 }}>
-              Style<span style={{ fontStyle: "italic", color: "var(--accent)" }}>Up</span>
-            </div>
-            <p style={{ color: "var(--dim)", marginTop: "0.75rem", fontSize: "0.95rem", lineHeight: 1.6 }}>
-              Personal styling, made personal. Book vetted stylists across the globe — virtually or
-              in person — and dress like the most confident version of yourself.
-            </p>
-          </div>
-          <nav style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", alignItems: "flex-start" }}>
-            {FOOTER_LINKS.map((link) => (
-              <Link key={link.href + link.label} href={link.href} className="ul-link" style={{ color: "var(--dim)", fontWeight: 500, fontSize: "0.95rem" }}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+    <footer style={{ borderTop: "1px solid var(--ink)", marginTop: "5rem", background: "var(--bg)" }}>
+      <div className="section" style={{ padding: "3.5rem 1.75rem 2rem" }}>
+        {/* oversized wordmark */}
         <div
+          aria-hidden
           style={{
-            borderTop: "1px solid var(--border)",
-            paddingTop: "1.5rem",
-            color: "var(--faint)",
-            fontSize: "0.85rem",
+            fontFamily: "var(--font-grotesk)",
+            fontWeight: 900,
+            fontSize: "clamp(3rem, 13vw, 11rem)",
+            lineHeight: 0.82,
+            letterSpacing: "-0.05em",
+            textTransform: "uppercase",
+            color: "var(--ink)",
+          }}
+        >
+          Styleup
+        </div>
+
+        <div
+          className="mono"
+          style={{
             display: "flex",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: "0.5rem",
+            gap: "1.5rem",
+            marginTop: "2rem",
+            paddingTop: "1.5rem",
+            borderTop: "1px solid var(--border)",
+            fontSize: "0.66rem",
+            color: "var(--dim)",
           }}
         >
-          <span>© {new Date().getFullYear()} StyleUp Ltd. All rights reserved.</span>
-          <span>Made for people who want to feel good in what they wear.</span>
+          <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+            {FOOTER_LINKS.map((l) => (
+              <Link key={l.href + l.label} href={l.href} className="ul-link" style={{ color: "var(--dim)" }}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+          <div style={{ color: "var(--faint)", textAlign: "right" }}>
+            A styling system · Est. MMXXVI · © {new Date().getFullYear()} StyleUp
+          </div>
         </div>
       </div>
     </footer>
