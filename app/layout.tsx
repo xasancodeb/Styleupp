@@ -6,11 +6,11 @@ import ToastProvider from "@/components/Toast";
 import SeasonAccent from "@/components/SeasonAccent";
 
 export const metadata: Metadata = {
-  title: "StyleUp — a styling system",
+  title: "StyleUp · a styling system",
   description:
-    "An indexed atelier of vetted personal stylists. Colour analysis, capsule wardrobes, occasion styling, in-person shopping — virtual or near you.",
+    "An indexed atelier of vetted personal stylists. Colour analysis, capsule wardrobes, occasion styling and in-person shopping, virtual or near you.",
   openGraph: {
-    title: "StyleUp — a styling system",
+    title: "StyleUp · a styling system",
     description: "An indexed atelier of vetted personal stylists, near you or over video.",
     type: "website",
   },

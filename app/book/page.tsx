@@ -226,7 +226,7 @@ function BookingFlow() {
                   const active = format === f;
                   const desc =
                     f === "virtual"
-                      ? "Over video — from anywhere in the world."
+                      ? "Over video, from anywhere in the world."
                       : f === "in-person"
                       ? `Meet ${stylist.name.split(" ")[0]} in ${stylist.city}.`
                       : `${stylist.name.split(" ")[0]} joins you to shop local stores & brands together.`;
@@ -275,7 +275,7 @@ function BookingFlow() {
                     {formatDate(date)}
                   </div>
                   {slots.length === 0 ? (
-                    <p style={{ color: "var(--dim)" }}>No availability on this day — try another date.</p>
+                    <p style={{ color: "var(--dim)" }}>Nothing free this day. Try another.</p>
                   ) : (
                     <div style={{ display: "grid", gap: "0.85rem" }}>
                       {([
@@ -338,7 +338,7 @@ function BookingFlow() {
               {[
                 ["✓", "Free cancellation up to 48 hours before"],
                 ["✓", "Every stylist is personally vetted"],
-                ["✓", "Secure payment — you're never charged twice"],
+                ["✓", "Secure payment. You're never charged twice."],
               ].map(([icon, text]) => (
                 <div key={text} style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", fontSize: "0.84rem", color: "var(--dim)" }}>
                   <span style={{ color: "var(--accent-dark)" }}>{icon}</span>
@@ -348,7 +348,7 @@ function BookingFlow() {
             </div>
             <p style={{ color: "var(--faint)", fontSize: "0.76rem", marginTop: "0.85rem", lineHeight: 1.5 }}>
               By booking you agree to our <Link href="/terms" style={{ textDecoration: "underline" }}>terms</Link>.
-              No pressure — you can reschedule or cancel any time from your dashboard.
+              No pressure. Reschedule or cancel any time from your dashboard.
             </p>
           </section>
       </div>

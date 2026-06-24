@@ -32,7 +32,7 @@ export default function CorporatePage() {
 
   return (
     <div>
-      <section style={{ background: "radial-gradient(900px 400px at 20% -10%, rgba(224,67,31,0.16), transparent), var(--bg)" }}>
+      <section style={{ background: "var(--bg)", borderBottom: "1px solid var(--ink)" }}>
         <div className="section" style={{ padding: "5rem 1.5rem 3.5rem", maxWidth: 820 }}>
           <span className="eyebrow">For teams &amp; companies</span>
           <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.4rem)", marginTop: "1rem" }}>
@@ -40,7 +40,7 @@ export default function CorporatePage() {
           </h1>
           <p style={{ fontSize: "1.15rem", color: "var(--dim)", marginTop: "1rem" }}>
             From leadership offsites to client-facing teams, StyleUp Corporate brings confident,
-            consistent personal styling to your whole organisation — anywhere in the world.
+            consistent personal styling to your whole organisation, anywhere in the world.
           </p>
         </div>
       </section>
@@ -85,7 +85,7 @@ export default function CorporatePage() {
           </p>
 
           {sent ? (
-            <div style={{ marginTop: "1.5rem", padding: "1.25rem", borderRadius: "0.75rem", background: "rgba(196,146,58,0.1)" }}>
+            <div className="card" style={{ marginTop: "1.5rem", padding: "1.25rem" }}>
               <strong>Thanks, {form.name.split(" ")[0] || "there"}!</strong>
               <p style={{ color: "var(--dim)", marginTop: "0.3rem" }}>
                 We've received your enquiry and will be in touch within one business day.

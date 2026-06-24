@@ -30,19 +30,19 @@ export default function FittingPage() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <span className="eyebrow">Index 003 — The fitting room</span>
+      <span className="eyebrow">Index 003 / The fitting room</span>
       <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.4rem)", marginTop: "0.85rem", textTransform: "uppercase", lineHeight: 0.9 }}>
         Colour <em>fitting</em> room
       </h1>
       <p style={{ color: "var(--dim)", marginTop: "0.6rem", maxWidth: 620 }}>
-        Your personal palette, ready to shop from. Explore the colours that make you glow — and the
-        ones to leave on the rail.
+        Your personal palette, ready to shop from. See the colours that make you glow, and the ones to
+        leave on the rail.
       </p>
 
       {!hasResult && (
         <div
           className="card"
-          style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", background: "rgba(196,146,58,0.08)", border: "1px solid rgba(196,146,58,0.25)" }}
+          style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem" }}
         >
           <strong>Haven't taken the quiz?</strong>{" "}
           <span style={{ color: "var(--dim)" }}>

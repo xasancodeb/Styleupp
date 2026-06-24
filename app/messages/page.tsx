@@ -42,7 +42,7 @@ export default function MessagesPage() {
       </p>
       {bookings.length === 0 ? (
         <div className="card" style={{ padding: "2.5rem", textAlign: "center", marginTop: "1.5rem" }}>
-          <p style={{ color: "var(--dim)" }}>No conversations yet — book a session to start chatting.</p>
+          <p style={{ color: "var(--dim)" }}>No conversations yet. Book a session to start chatting.</p>
           <Link href="/explore" className="btn btn-primary" style={{ marginTop: "1rem" }}>Find a stylist</Link>
         </div>
       ) : (

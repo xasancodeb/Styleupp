@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — StyleUp",
+  title: "Privacy Policy · StyleUp",
   description: "How StyleUp collects, uses and protects your personal data.",
 };
 
@@ -37,7 +37,7 @@ const SECTIONS: { heading: string; body: string[] }[] = [
   {
     heading: "5. Sharing your data",
     body: [
-      "We share necessary booking details with the stylist you book so they can deliver your session. We use trusted processors — including Supabase (data hosting) and Stripe (payments) — who are bound to protect your data.",
+      "We share the booking details a stylist needs to run your session. We use trusted processors, including Supabase for data hosting and Stripe for payments, and they are bound to protect your data.",
     ],
   },
   {

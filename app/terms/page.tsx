@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — StyleUp",
+  title: "Terms of Service · StyleUp",
   description: "The terms governing your use of StyleUp.",
 };
 

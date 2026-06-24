@@ -5,9 +5,9 @@ import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
 
 const STEPS = [
-  { n: "01", title: "Calibrate", body: "Take the two-minute index — discover your colour season and the stylists matched to your taste, budget and goals." },
-  { n: "02", title: "Commission", body: "Browse the catalogue. Choose a stylist, a service and a format — video, in person, or a personal shopping trip near you." },
-  { n: "03", title: "Wear it", body: "Receive a personalised plan and a shoppable palette. The system keeps your records, bookings and looks on file." },
+  { n: "01", title: "Calibrate", body: "Take the two minute index. It finds your colour season and the stylists who fit your taste, budget and goals." },
+  { n: "02", title: "Commission", body: "Pick a stylist, a service and a format. Video, in person, or a shopping trip near you." },
+  { n: "03", title: "Wear it", body: "You get a real plan and a palette you can shop. We keep your bookings and looks on file." },
 ];
 
 function Spec({ k, v }: { k: string; v: string }) {
@@ -26,7 +26,7 @@ export default function HomePage() {
     <div>
       {/* running spec bar */}
       <div className="mono section" style={{ display: "flex", justifyContent: "space-between", padding: "0.7rem 1.75rem", borderBottom: "1px solid var(--border)", fontSize: "0.62rem", color: "var(--faint)" }}>
-        <span>STYLEUP — A STYLING SYSTEM</span>
+        <span>STYLEUP / A STYLING SYSTEM</span>
         <span style={{ display: "inline-flex", gap: "1.5rem" }} className="spec-hide"><span>13 STYLISTS · 12 CITIES</span><span>EST. MMXXVI</span></span>
       </div>
 
@@ -35,7 +35,7 @@ export default function HomePage() {
         <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "3.5rem", alignItems: "stretch" }}>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Reveal>
-              <span className="eyebrow">Index 001 — Personal styling, systemised</span>
+              <span className="eyebrow">Index 001 / Personal styling, systemised</span>
             </Reveal>
             <Reveal delay={60}>
               <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(3.2rem, 9vw, 7rem)", lineHeight: 0.86, letterSpacing: "-0.05em", marginTop: "1.5rem" }}>
@@ -45,8 +45,8 @@ export default function HomePage() {
             <div>
               <Reveal delay={120}>
                 <p className="lede" style={{ marginTop: "1.75rem" }}>
-                  A curated index of vetted stylists — searchable by city, specialty and format.
-                  Work over video from anywhere, or find someone near you to meet in person or shop the stores with.
+                  Every stylist here is vetted. Search the index by city, specialty and format.
+                  Meet over video from anywhere, or find someone near you to style you in person or shop the stores with you.
                 </p>
               </Reveal>
               <Reveal delay={180}>
@@ -157,7 +157,7 @@ export default function HomePage() {
               Calibrate<br />your <span style={{ color: "var(--accent)" }}>colours.</span>
             </h2>
             <p style={{ maxWidth: 480, margin: "1.2rem auto 0", color: "color-mix(in srgb, var(--bg) 75%, transparent)", fontSize: "1rem" }}>
-              Once the system knows your season, the whole interface wears your palette — and your stylist matches sharpen.
+              Once we know your season, the whole site wears your palette and your stylist matches get sharper.
             </p>
             <Link href="/quiz" className="btn" style={{ marginTop: "2rem", background: "var(--bg)", color: "var(--ink)", borderColor: "var(--bg)" }}>
               Run the calibration <span className="arrow">→</span>

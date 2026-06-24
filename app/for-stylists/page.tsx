@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Become a StyleUp stylist — grow your styling business",
+  title: "Become a StyleUp stylist · grow your business",
   description:
     "Join StyleUp's global community of personal stylists. Reach new clients, set your own rates, get paid securely, and pay commission as low as 10%.",
 };
@@ -15,10 +15,10 @@ const TIERS = [
 ];
 
 const BENEFITS = [
-  { title: "Keep more of what you earn", body: "Commission drops as you grow — from 20% down to just 10% for our top stylists. The more you work, the more you keep." },
+  { title: "Keep more of what you earn", body: "Your commission drops as you grow, from 20% down to 10% for top stylists. The more you work, the more you keep." },
   { title: "Clients who are ready to book", body: "Our quiz and matching surface clients who already know what they want. Spend less time chasing and more time styling." },
   { title: "We handle the admin", body: "Payments, scheduling, reminders and refunds are all taken care of. You focus on the work you love." },
-  { title: "Work on your terms", body: "Set your own prices, services and availability. Offer virtual, in-person or hybrid sessions — anywhere in the world." },
+  { title: "Work on your terms", body: "Set your own prices, services and availability. Offer virtual, in person or hybrid sessions, anywhere in the world." },
 ];
 
 export default function ForStylistsPage() {
@@ -32,7 +32,7 @@ export default function ForStylistsPage() {
           </h1>
           <p style={{ fontSize: "1.15rem", opacity: 0.85, marginTop: "1rem" }}>
             Join a global community of personal stylists. Reach new clients, set your own rates, and
-            get paid securely — with commission as low as 10%.
+            get paid securely, with commission as low as 10%.
           </p>
           <div style={{ display: "flex", gap: "0.9rem", marginTop: "1.75rem", flexWrap: "wrap" }}>
             <Link href="/stylist-portal" className="btn btn-primary">

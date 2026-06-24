@@ -24,7 +24,7 @@ const PRICE_BANDS = [
 
 const FORMATS = [
   { value: "any", label: "Any format" },
-  { value: "virtual", label: "Virtual — anywhere" },
+  { value: "virtual", label: "Virtual, anywhere" },
   { value: "in-person", label: "In person near me" },
   { value: "shopping", label: "Shop with me in store" },
 ] as const;
@@ -124,12 +124,12 @@ export default function ExplorePage() {
         <span>THE CATALOGUE</span>
         <span>{results.length} / {STYLISTS.length} ENTRIES</span>
       </div>
-      <span className="eyebrow" style={{ marginTop: "1.5rem" }}>Index 002 — The roster</span>
+      <span className="eyebrow" style={{ marginTop: "1.5rem" }}>Index 002 / The roster</span>
       <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.6rem, 7vw, 5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, marginTop: "1rem" }}>
         The stylist<br />catalogue.
       </h1>
       <p className="lede" style={{ marginTop: "1.25rem" }}>
-        Filter the index by city, specialty and format. Work over video from anywhere — or find someone
+        Filter the index by city, specialty and format. Meet over video from anywhere, or find someone
         near you to meet in person, or shop the stores with.
       </p>
 
@@ -141,8 +141,8 @@ export default function ExplorePage() {
             {country
               ? nearCount > 0
                 ? `${nearCount} ${nearCount === 1 ? "entry" : "entries"} can meet you in person near ${country}. Everyone else works over video.`
-                : `No in-person entries near ${country} yet — but every stylist works with you over video.`
-              : "Set your location and the index surfaces who can meet you in person — not just video."}
+                : `No in-person entries near ${country} yet. Every stylist still works with you over video.`
+              : "Set your location and the index shows who can meet you in person, not just over video."}
           </div>
         </div>
         <select className="input" style={{ width: "auto", minWidth: 220 }} value={country} onChange={(e) => chooseCountry(e.target.value)}>
@@ -163,7 +163,7 @@ export default function ExplorePage() {
             </div>
             <div>
               <div className="mono" style={{ fontSize: "0.66rem", color: "var(--dim)" }}>
-                {name ? `CALIBRATED — ${name.split(" ")[0].toUpperCase()}` : "CALIBRATED"}
+                {name ? `CALIBRATED / ${name.split(" ")[0].toUpperCase()}` : "CALIBRATED"}
               </div>
               <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>You're a {PALETTES[season].name}.</div>
             </div>

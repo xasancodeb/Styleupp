@@ -15,9 +15,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const stylist = getStylist(id);
-  if (!stylist) return { title: "Stylist not found — StyleUp" };
+  if (!stylist) return { title: "Stylist not found · StyleUp" };
   return {
-    title: `${stylist.name} — StyleUp`,
+    title: `${stylist.name} · StyleUp`,
     description: stylist.tagline,
   };
 }
@@ -101,7 +101,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 <span style={{ color: "var(--faint)", fontSize: "0.82rem" }}>Tap any image to enlarge</span>
               </div>
               <p style={{ color: "var(--dim)", marginTop: "0.5rem", fontSize: "0.95rem" }}>
-                A taste of {stylist.name.split(" ")[0]}&apos;s styling — so you can see if the aesthetic feels like you.
+                A taste of {stylist.name.split(" ")[0]}&apos;s work, so you can see whether the look is right for you.
               </p>
               <PortfolioGallery images={getPortfolio(stylist)} name={stylist.name} />
             </section>

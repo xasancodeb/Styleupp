@@ -424,7 +424,7 @@ function ReferralsPanel({
       <section className="card" style={{ padding: "1.75rem" }}>
         <h2 className="font-serif" style={{ fontSize: "1.4rem", fontWeight: 700 }}>Refer & earn</h2>
         <p style={{ color: "var(--dim)", marginTop: "0.5rem" }}>
-          Share your code — you and your friend both earn rewards on their first booking. You have{" "}
+          Share your code. You and your friend both earn rewards on their first booking. You have{" "}
           <strong>{data?.loyaltyPoints ?? 0}</strong> loyalty points.
         </p>
         {data?.code && (
