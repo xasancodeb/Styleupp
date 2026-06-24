@@ -84,7 +84,7 @@ export default function Nav() {
   return (
     <header style={{ position: "sticky", top: 0, zIndex: 50, padding: "0.7rem 0" }}>
       <div className="section">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 58, padding: "0 0.5rem 0 1.1rem", background: "var(--card)", border: "1px solid var(--border)", borderRadius: 999, backdropFilter: "blur(22px) saturate(1.5)", WebkitBackdropFilter: "blur(22px) saturate(1.5)", boxShadow: "var(--shadow-soft)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 58, padding: "0 0.5rem 0 1.1rem", background: "color-mix(in srgb, var(--bg) 72%, transparent)", border: "1px solid var(--line)", borderRadius: 999, backdropFilter: "blur(20px) saturate(1.8)", WebkitBackdropFilter: "blur(20px) saturate(1.8)", boxShadow: "var(--shadow-soft)" }}>
           <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
             <span style={{ width: 9, height: 9, borderRadius: "50%", background: "linear-gradient(140deg, var(--accent), var(--accent-2))", boxShadow: "0 0 12px 1px color-mix(in srgb, var(--accent) 80%, transparent)" }} />
             <span style={{ fontFamily: "var(--font-grotesk)", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--ink)", lineHeight: 1 }}>
@@ -115,7 +115,7 @@ export default function Nav() {
                   <button
                     onClick={() => setMenuOpen((o) => !o)}
                     aria-label="Account menu"
-                    style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(150deg, var(--accent), var(--accent-2))", color: "#14111f", border: "none", cursor: "pointer", fontSize: "0.8rem", fontWeight: 700, boxShadow: "0 6px 18px -8px color-mix(in srgb, var(--accent) 85%, transparent)" }}
+                    style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--ink)", color: "#fff", border: "none", cursor: "pointer", fontSize: "0.78rem", fontWeight: 600 }}
                   >
                     {initials}
                   </button>

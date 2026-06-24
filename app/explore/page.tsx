@@ -10,10 +10,25 @@ import {
   offersInStoreShopping,
   proximity,
   proximityRank,
+  genderOf,
   type Stylist,
+  type Gender,
 } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
-import { loadProfile, saveLocation, PALETTES, type ColorSeason } from "@/lib/profile";
+import {
+  loadProfile,
+  saveLocation,
+  saveInternational,
+  saveStylistGender,
+  PALETTES,
+  type ColorSeason,
+} from "@/lib/profile";
+
+const GENDERS: { value: Gender | "any"; label: string }[] = [
+  { value: "any", label: "Any stylist" },
+  { value: "female", label: "Women stylists" },
+  { value: "male", label: "Men stylists" },
+];
 
 const PRICE_BANDS = [
   { label: "Any price", min: 0, max: Infinity },
@@ -41,17 +56,31 @@ export default function ExplorePage() {
   const [season, setSeason] = useState<ColorSeason | null>(null);
   const [name, setName] = useState("");
   const [country, setCountry] = useState<string>("");
+  const [international, setInternational] = useState(false);
+  const [gender, setGender] = useState<Gender | "any">("any");
 
   useEffect(() => {
     const p = loadProfile();
     setSeason(p.season);
     setName(p.fullName);
     if (p.location?.country) setCountry(p.location.country);
+    setInternational(p.international);
+    setGender(p.preferences.stylistGender ?? "any");
   }, []);
 
   function chooseCountry(c: string) {
     setCountry(c);
     saveLocation(c ? { city: "", country: c } : null);
+  }
+
+  function toggleInternational(v: boolean) {
+    setInternational(v);
+    saveInternational(v);
+  }
+
+  function chooseGender(g: Gender | "any") {
+    setGender(g);
+    saveStylistGender(g === "any" ? null : g);
   }
 
   function nearLabel(s: Stylist): string | undefined {
@@ -66,7 +95,11 @@ export default function ExplorePage() {
     const band = PRICE_BANDS[priceBand];
     const filtered = STYLISTS.filter((s) => {
       if (specialty && !s.specialties.includes(specialty)) return false;
+      if (gender !== "any" && genderOf(s) !== gender) return false;
       if (s.startingPrice < band.min || s.startingPrice > band.max) return false;
+      // Country-based by default: unless the visitor opts into international,
+      // only show stylists they can realistically reach (their country/region).
+      if (country && !international && proximity(s, country) === "remote") return false;
       if (format === "virtual" && !s.sessionTypes.includes("virtual")) return false;
       if (format === "in-person") {
         if (!offersInPerson(s)) return false;
@@ -105,13 +138,14 @@ export default function ExplorePage() {
         : cmp(a, b)
     );
     return sorted;
-  }, [specialty, format, priceBand, query, sort, country]);
+  }, [specialty, format, priceBand, query, sort, country, international, gender]);
 
   const clear = () => {
     setSpecialty(null);
     setFormat("any");
     setPriceBand(0);
     setQuery("");
+    chooseGender("any");
   };
 
   const nearCount = country
@@ -121,7 +155,7 @@ export default function ExplorePage() {
   return (
     <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
       <span className="eyebrow">{results.length} of {STYLISTS.length} stylists</span>
-      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
+      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
         Browse stylists
       </h1>
       <p className="lede" style={{ marginTop: "1.1rem" }}>
@@ -129,24 +163,36 @@ export default function ExplorePage() {
         near you to meet in person, or shop the stores with.
       </p>
 
-      {/* Location prompt */}
-      <div className="card" style={{ padding: "1.1rem 1.4rem", marginTop: "1.75rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-        <div>
-          <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)" }}>Location</div>
-          <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.35rem", maxWidth: 520 }}>
-            {country
-              ? nearCount > 0
-                ? `${nearCount} ${nearCount === 1 ? "entry" : "entries"} can meet you in person near ${country}. Everyone else works over video.`
-                : `No in-person entries near ${country} yet. Every stylist still works with you over video.`
-              : "Set your location and the index shows who can meet you in person, not just over video."}
+      {/* Location & scope */}
+      <div className="card" style={{ padding: "1.25rem 1.4rem", marginTop: "1.75rem", display: "grid", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)" }}>Where are you?</div>
+            <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.35rem", maxWidth: 540 }}>
+              {country
+                ? international
+                  ? `Showing stylists worldwide. ${nearCount} can also meet you in person near ${country}.`
+                  : nearCount > 0
+                    ? `${nearCount} stylist${nearCount === 1 ? "" : "s"} near ${country}, plus anyone there over video. Switch to international for the full roster.`
+                    : `No stylists near ${country} yet — switch to international to meet someone over video.`
+                : "Pick your country to see who's near you, or browse stylists internationally over video."}
+            </div>
           </div>
+          <select className="input" style={{ width: "auto", minWidth: 200 }} value={country} onChange={(e) => chooseCountry(e.target.value)}>
+            <option value="">Select country…</option>
+            {COUNTRIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
         </div>
-        <select className="input" style={{ width: "auto", minWidth: 220 }} value={country} onChange={(e) => chooseCountry(e.target.value)}>
-          <option value="">Anywhere (virtual)</option>
-          {COUNTRIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <button className="tag-toggle" data-active={!international} onClick={() => toggleInternational(false)} disabled={!country} style={{ opacity: country ? 1 : 0.5, cursor: country ? "pointer" : "not-allowed" }}>
+            Near me
+          </button>
+          <button className="tag-toggle" data-active={international || !country} onClick={() => toggleInternational(true)}>
+            International (over video)
+          </button>
+        </div>
       </div>
 
       {season && (
@@ -179,6 +225,17 @@ export default function ExplorePage() {
             {FORMATS.map((f) => (
               <button key={f.value} className="tag-toggle" data-active={format === f.value} onClick={() => setFormat(f.value)}>
                 {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Stylist gender</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+            {GENDERS.map((g) => (
+              <button key={g.value} className="tag-toggle" data-active={gender === g.value} onClick={() => chooseGender(g.value)}>
+                {g.label}
               </button>
             ))}
           </div>

@@ -471,6 +471,33 @@ export function getService(stylistId: string, serviceId: string): Service | unde
   return getStylist(stylistId)?.services.find((svc) => svc.id === serviceId);
 }
 
+// ───────────────────────────── Stylist gender ───────────────────────────────
+// Clients can choose the gender of their stylist. StyleUp's audience is mainly
+// women (men are welcome too), and the roster reflects that balance.
+export type Gender = "female" | "male";
+
+const STYLIST_GENDER: Record<string, Gender> = {
+  "amara-okafor": "female",
+  "kenji-mori": "male",
+  "isabella-rossi": "female",
+  "noah-bennett": "male",
+  "chloe-laurent": "female",
+  "diego-fernandez": "male",
+  "aisha-rahman": "female",
+  "lucas-silva": "male",
+  "freya-nilsson": "female",
+  "mei-lin": "female",
+  "olivia-grant": "female",
+  "raj-mehta": "male",
+  "sophie-dubois": "female",
+};
+
+/** The gender a stylist presents/styles as, used for the "stylist gender" filter. */
+export function genderOf(s: Stylist | string): Gender {
+  const id = typeof s === "string" ? s : s.id;
+  return STYLIST_GENDER[id] ?? "female";
+}
+
 // ─────────────────────────── Portfolio "looks" ──────────────────────────────
 // Each stylist shows a small lookbook so clients can judge whether the
 // aesthetic is right for them. Images are themed to the stylist's vibe and

@@ -10,9 +10,13 @@ export interface ClientProfile {
   archetype: string | null;
   season: ColorSeason | null;
   location: { city: string; country: string } | null;
+  /** Open to stylists anywhere over video, rather than only those near me. */
+  international: boolean;
   preferences: {
     budget: "value" | "mid" | "premium" | null;
     sessionType: "virtual" | "in-person" | "hybrid" | null;
+    /** Preferred gender of the stylist; null means no preference. */
+    stylistGender: "female" | "male" | null;
     goals: string[];
   };
   updatedAt: string;
@@ -240,7 +244,8 @@ function emptyProfile(): ClientProfile {
     archetype: null,
     season: null,
     location: null,
-    preferences: { budget: null, sessionType: null, goals: [] },
+    international: false,
+    preferences: { budget: null, sessionType: null, stylistGender: null, goals: [] },
     updatedAt: new Date().toISOString(),
   };
 }
@@ -274,4 +279,13 @@ export function saveSeason(season: ColorSeason): ClientProfile {
 
 export function saveLocation(location: ClientProfile["location"]): ClientProfile {
   return saveProfile({ location });
+}
+
+export function saveInternational(international: boolean): ClientProfile {
+  return saveProfile({ international });
+}
+
+export function saveStylistGender(stylistGender: "female" | "male" | null): ClientProfile {
+  const current = loadProfile();
+  return saveProfile({ preferences: { ...current.preferences, stylistGender } });
 }

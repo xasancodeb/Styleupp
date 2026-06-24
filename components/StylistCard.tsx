@@ -24,15 +24,15 @@ export default function StylistCard({ stylist, proximityLabel }: { stylist: Styl
               position: "absolute",
               top: 12,
               left: 12,
-              padding: "0.32rem 0.7rem",
+              padding: "0.32rem 0.72rem",
               borderRadius: 999,
-              fontSize: "0.72rem",
+              fontSize: "0.74rem",
               fontWeight: 600,
-              color: "#14111f",
-              background: stylist.featured && !proximityLabel ? "linear-gradient(180deg, var(--accent), var(--accent-2))" : "rgba(255,255,255,0.85)",
+              color: stylist.featured && !proximityLabel ? "var(--accent)" : "var(--ink)",
+              background: "rgba(255,255,255,0.92)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              boxShadow: "0 4px 14px -6px rgba(0,0,0,0.4)",
+              boxShadow: "0 2px 10px -4px rgba(0,0,0,0.25)",
             }}
           >
             {badge}
