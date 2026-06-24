@@ -135,7 +135,7 @@ const navBtn: React.CSSProperties = {
   height: 34,
   borderRadius: "50%",
   border: "1px solid var(--border)",
-  background: "#fff",
+  background: "var(--card)",
   fontSize: "1.1rem",
   display: "flex",
   alignItems: "center",

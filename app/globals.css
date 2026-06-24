@@ -8,19 +8,20 @@
    precise — a curated catalogue, not a template.
    ════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* chromatic accent — overridden per-visitor once their season is known */
-  --accent: #1a1814;
-  --accent-soft: #e7e3d8;
+  /* chromatic accent: a warm bone by default (monochrome), overridden by the
+     visitor's colour-season palette once calibrated. Glows against the ink. */
+  --accent: #ddd6c4;
+  --accent-soft: #221f1a;
 
-  --bg: #e9e6dd;          /* cool greige paper */
-  --paper: #e9e6dd;
-  --dark: #16140f;        /* primary ink (text) */
-  --ink: #16140f;
-  --dim: #5f5b50;
-  --faint: #97917f;
-  --border: #c9c4b6;      /* visible hairline for the structural grid */
-  --line: #c9c4b6;
-  --card: #f3f1ea;        /* light surface panel */
+  --bg: #0e0d0b;          /* warm near-black canvas */
+  --paper: #0e0d0b;
+  --dark: #ece6d8;        /* primary ink = warm off-white (text) */
+  --ink: #ece6d8;
+  --dim: #95907f;
+  --faint: #635e51;
+  --border: #2b2823;      /* low hairline for the structural grid */
+  --line: #2b2823;
+  --card: #16140f;        /* surface panel, a touch above the canvas */
 
   --font-grotesk: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;

@@ -69,7 +69,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
             key={t.id}
             className="fade-up"
             style={{
-              background: "#fff",
+              background: "var(--card)",
               borderLeft: `4px solid ${colors[t.type]}`,
               borderRadius: "0.6rem",
               boxShadow: "0 8px 28px rgba(26,22,18,0.15)",

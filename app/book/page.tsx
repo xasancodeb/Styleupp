@@ -198,7 +198,7 @@ function BookingFlow() {
                       style={{
                         textAlign: "left",
                         border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
-                        background: active ? "var(--accent-soft)" : "#fff",
+                        background: active ? "var(--accent-soft)" : "var(--card)",
                         borderRadius: "0.75rem",
                         padding: "0.9rem 1.1rem",
                         cursor: "pointer",
@@ -237,7 +237,7 @@ function BookingFlow() {
                       style={{
                         textAlign: "left",
                         border: `1px solid ${active ? "var(--ink)" : "var(--border)"}`,
-                        background: active ? "var(--accent-soft)" : "#fff",
+                        background: active ? "var(--accent-soft)" : "var(--card)",
                         borderRadius: "0.75rem",
                         padding: "0.9rem 1.1rem",
                         cursor: "pointer",

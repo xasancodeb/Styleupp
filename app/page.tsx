@@ -94,7 +94,7 @@ export default function HomePage() {
       </section>
 
       {/* marquee specialties strip */}
-      <section style={{ background: "var(--ink)", color: "var(--bg)", borderTop: "1px solid var(--ink)", borderBottom: "1px solid var(--ink)" }}>
+      <section style={{ background: "var(--card)", color: "var(--dim)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
         <div className="section mono" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.2rem 0", padding: "1.1rem 1.75rem", fontSize: "0.66rem" }}>
           {SPECIALTIES.map((s, i) => (
             <span key={s} style={{ padding: "0 0.85rem" }}>

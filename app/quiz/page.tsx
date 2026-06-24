@@ -103,7 +103,7 @@ export default function QuizPage() {
               style={{
                 textAlign: "left",
                 border: "1px solid var(--border)",
-                background: "#fff",
+                background: "var(--card)",
                 borderRadius: "0.75rem",
                 padding: "1rem 1.25rem",
                 cursor: "pointer",
@@ -112,11 +112,11 @@ export default function QuizPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "var(--accent)";
-                e.currentTarget.style.background = "rgba(196,146,58,0.06)";
+                e.currentTarget.style.background = "var(--accent-soft)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "#fff";
+                e.currentTarget.style.background = "var(--card)";
               }}
             >
               {opt.label}
