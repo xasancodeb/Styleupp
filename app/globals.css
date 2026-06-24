@@ -1,30 +1,41 @@
 @import "tailwindcss";
 
 /* ════════════════════════════════════════════════════════════════════════
-   STYLEUP ATELIER — a styling system.
-   Architectural grotesque + monospace. Crisp greige canvas, ink black, and a
-   single chromatic accent that becomes the visitor's colour-season palette
-   once known (set on :root by components/SeasonAccent). Structural, indexed,
-   precise — a curated catalogue, not a template.
+   STYLEUP — glossy premium.
+   A deep gradient-mesh canvas with frosted glass surfaces floating in depth,
+   soft glow, pill controls and fluid motion. The mesh and accent glow in the
+   visitor's colour-season palette once known (set on :root by SeasonAccent),
+   so the product's whole reason for being — colour — is alive in the UI.
    ════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* chromatic accent: a warm bone by default (monochrome), overridden by the
-     visitor's colour-season palette once calibrated. Glows against the ink. */
-  --accent: #ddd6c4;
-  --accent-soft: #221f1a;
+  /* the chromatic accent: a luminous lilac by default, overridden by the
+     visitor's colour-season palette once calibrated. It drives the mesh glow,
+     focus rings and highlights. */
+  --accent: #c7b3ff;
+  --accent-2: #8a7bff;
+  --accent-soft: rgba(199, 179, 255, 0.14);
 
-  --bg: #0e0d0b;          /* warm near-black canvas */
-  --paper: #0e0d0b;
-  --dark: #ece6d8;        /* primary ink = warm off-white (text) */
-  --ink: #ece6d8;
-  --dim: #95907f;
-  --faint: #635e51;
-  --border: #2b2823;      /* low hairline for the structural grid */
-  --line: #2b2823;
-  --card: #16140f;        /* surface panel, a touch above the canvas */
+  --bg: #08070f;            /* deep near-black base behind the mesh */
+  --paper: #08070f;
+  --dark: #f3f1fb;         /* primary text = soft luminous white */
+  --ink: #f3f1fb;
+  --dim: #a9a4c4;
+  --faint: #6d6889;
 
-  --font-grotesk: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  /* glass surfaces — translucent so the mesh shows through and blurs */
+  --border: rgba(255, 255, 255, 0.09);
+  --line: rgba(255, 255, 255, 0.07);
+  --card: rgba(255, 255, 255, 0.045);
+  --card-2: rgba(255, 255, 255, 0.07);
+
+  --radius: 22px;
+  --radius-sm: 14px;
+  --shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.75);
+  --shadow-soft: 0 12px 40px -22px rgba(0, 0, 0, 0.6);
+  --glow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 20px 50px -24px color-mix(in srgb, var(--accent) 55%, transparent);
+
+  --font-grotesk: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
 
   --ease: cubic-bezier(0.16, 0.84, 0.24, 1);
 }
@@ -58,194 +69,284 @@ body {
   text-rendering: optimizeLegibility;
   margin: 0;
   line-height: 1.6;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.011em;
+  min-height: 100vh;
 }
 
-::selection { background: var(--ink); color: var(--bg); }
+/* the gradient-mesh backdrop — fixed, glows in the accent + complements.
+   This is what the frosted glass blurs and refracts. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -10vh -10vw;
+  z-index: -2;
+  background:
+    radial-gradient(42% 38% at 12% 4%, color-mix(in srgb, var(--accent) 42%, transparent), transparent 72%),
+    radial-gradient(40% 34% at 92% 8%, color-mix(in srgb, var(--accent-2) 45%, transparent), transparent 70%),
+    radial-gradient(46% 40% at 84% 96%, rgba(255, 120, 170, 0.20), transparent 72%),
+    radial-gradient(40% 38% at 4% 92%, rgba(90, 200, 255, 0.16), transparent 72%);
+  filter: saturate(1.05);
+  pointer-events: none;
+  animation: meshDrift 26s ease-in-out infinite alternate;
+}
+/* a fine grain so the gradients never band */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+}
+@keyframes meshDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.06); }
+}
 
-* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--ink); }
+
+* { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.18) transparent; }
 *::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-thumb { background: var(--border); border: 3px solid var(--bg); border-radius: 0; }
+*::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border: 3px solid transparent; background-clip: padding-box; border-radius: 999px; }
 
 header, main, footer { position: relative; }
 
 a { color: inherit; text-decoration: none; }
 
-/* ───────────────────────── Type: display + mono ─────────────────────────── */
-/* Headings (existing markup uses .font-serif / .serif / .display) now render
-   as an architectural grotesque — no serif anywhere. */
+/* ───────────────────────── Type ─────────────────────────── */
 .font-serif,
 .serif,
 .display {
   font-family: var(--font-grotesk);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.0;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
 }
-.display { font-weight: 800; letter-spacing: -0.035em; }
+.display { font-weight: 800; letter-spacing: -0.04em; }
 .display em,
 .font-serif em,
 .serif em {
   font-style: normal;
-  color: var(--accent);
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Monospace system label — used by .eyebrow (kicker) and .mono everywhere. */
+/* soft sentence-case label (was a brutalist mono kicker) */
 .mono {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--font-grotesk);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  text-transform: none;
 }
 
+/* eyebrow → a frosted pill with a glowing accent dot */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
+  gap: 0.5rem;
+  font-family: var(--font-grotesk);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: var(--dim);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 .eyebrow::before {
-  content: "◆";
-  font-size: 0.55rem;
-  color: var(--accent);
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--accent) 80%, transparent);
 }
 
 .lede {
-  font-size: clamp(1.02rem, 1.5vw, 1.18rem);
-  line-height: 1.55;
+  font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+  line-height: 1.6;
   color: var(--dim);
   max-width: 56ch;
 }
 
 hr.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
 
-/* ─────────────────────── Imagery: gallery frames ────────────────────────── */
+/* ─────────────────────── Imagery ────────────────────────── */
 .photo {
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius);
   background: var(--accent-soft);
 }
 .photo img {
-  filter: grayscale(0.18) contrast(1.04);
-  transition: filter 0.6s var(--ease), transform 0.9s var(--ease);
+  filter: saturate(1.06) contrast(1.02);
+  transition: transform 0.9s var(--ease), filter 0.6s var(--ease);
 }
-.photo:hover img { filter: none; transform: scale(1.04); }
+.photo:hover img { transform: scale(1.045); filter: saturate(1.12) contrast(1.04); }
 
-/* ──────────────────────────── Panels (cards) ────────────────────────────── */
+/* ──────────────────────────── Glass panels ──────────────────────────── */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 3px;
-  box-shadow: none;
+  border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
-a.card { transition: border-color 0.3s var(--ease), transform 0.3s var(--ease); }
-a.card:hover { transform: translateY(-3px); border-color: var(--ink); }
+a.card { transition: transform 0.35s var(--ease), border-color 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+a.card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: var(--glow), var(--shadow);
+}
 
-/* ──────────────────────────── Buttons ───────────────────────────────────── */
+/* ──────────────────────────── Buttons ───────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-radius: 2px;
-  padding: 0.95rem 1.7rem;
-  transition: all 0.2s var(--ease);
+  gap: 0.55rem;
+  font-family: var(--font-grotesk);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem;
+  transition: transform 0.2s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease);
   cursor: pointer;
-  border: 1px solid var(--ink);
+  border: 1px solid transparent;
   line-height: 1;
 }
+.btn:active { transform: translateY(1px) scale(0.99); }
 .btn .arrow { display: inline-block; transition: transform 0.3s var(--ease); }
-.btn:hover .arrow { transform: translateX(5px); }
+.btn:hover .arrow { transform: translateX(4px); }
 
-.btn-primary { background: var(--ink); color: var(--bg); }
-.btn-primary:hover { background: transparent; color: var(--ink); }
+/* primary = a glossy light pill with an accent-coloured glow (safe on any accent hue) */
+.btn-primary {
+  background: linear-gradient(180deg, #ffffff, #efeafc);
+  color: #14111f;
+  box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 70%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 38px -12px color-mix(in srgb, var(--accent) 85%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.9); }
 
-.btn-dark { background: var(--ink); color: var(--bg); }
-.btn-dark:hover { background: transparent; color: var(--ink); }
+.btn-dark {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #14111f;
+  box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+.btn-dark:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--accent) 95%, transparent); }
 
-.btn-outline { background: transparent; color: var(--ink); border-color: var(--border); }
-.btn-outline:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+/* outline = frosted glass pill */
+.btn-outline {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--border);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.btn-outline:hover { background: var(--card-2); border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); transform: translateY(-2px); }
 
-/* ──────────────────────────── Inputs ────────────────────────────────────── */
+/* ──────────────────────────── Inputs ────────────────────────────────── */
 .input {
   width: 100%;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 0.8rem 0.95rem;
-  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  font-size: 0.96rem;
   font-family: var(--font-grotesk);
-  color: var(--dark);
-  transition: border-color 0.18s var(--ease);
+  color: var(--ink);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
-.input:focus { outline: none; border-color: var(--ink); }
+.input:focus {
+  outline: none;
+  background: var(--card-2);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
 .input::placeholder { color: var(--faint); }
 
-/* ──────────────────────────── Chips / toggles ───────────────────────────── */
+/* ──────────────────────────── Chips / toggles ───────────────────────── */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.32rem 0.6rem;
-  border-radius: 2px;
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: transparent;
+  padding: 0.34rem 0.75rem;
+  border-radius: 999px;
+  font-family: var(--font-grotesk);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  background: var(--card);
   border: 1px solid var(--border);
   color: var(--dim);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 .chip-muted { background: transparent; color: var(--faint); border-color: var(--border); }
 
 .tag-toggle {
   border: 1px solid var(--border);
-  background: transparent;
-  border-radius: 2px;
-  padding: 0.5rem 0.95rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  background: var(--card);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-family: var(--font-grotesk);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--dim);
   cursor: pointer;
-  transition: all 0.16s var(--ease);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: all 0.18s var(--ease);
 }
-.tag-toggle:hover { border-color: var(--ink); }
-.tag-toggle[data-active="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tag-toggle:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); color: var(--ink); }
+.tag-toggle[data-active="true"] {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #14111f;
+  border-color: transparent;
+  box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--accent) 80%, transparent);
+}
 
-.section { max-width: 1280px; margin: 0 auto; padding: 0 1.75rem; }
+.section { max-width: 1200px; margin: 0 auto; padding: 0 1.75rem; }
 
 a:focus-visible, button:focus-visible, .input:focus-visible, .tag-toggle:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* nav underline */
+/* nav underline → soft accent glow line */
 .ul-link { position: relative; }
 .ul-link::after {
-  content: ""; position: absolute; left: 0; bottom: -5px; width: 100%; height: 1px;
-  background: var(--ink); transform: scaleX(0); transform-origin: left;
-  transition: transform 0.28s var(--ease);
+  content: ""; position: absolute; left: 0; bottom: -6px; width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 2px;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s var(--ease);
 }
 .ul-link:hover::after, .ul-link[data-active="true"]::after { transform: scaleX(1); }
 
 /* scroll reveal */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }
-.fade-up { animation: fadeUp 0.5s var(--ease) both; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp 0.55s var(--ease) both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; }
+  body::before { animation: none !important; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }

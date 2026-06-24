@@ -6,12 +6,12 @@ import ToastProvider from "@/components/Toast";
 import SeasonAccent from "@/components/SeasonAccent";
 
 export const metadata: Metadata = {
-  title: "StyleUp · a styling system",
+  title: "StyleUp · personal styling, in colour",
   description:
-    "An indexed atelier of vetted personal stylists. Colour analysis, capsule wardrobes, occasion styling and in-person shopping, virtual or near you.",
+    "Vetted personal stylists for colour analysis, capsule wardrobes and occasion styling. Meet over video or find someone near you to style you in person or shop the stores with you.",
   openGraph: {
-    title: "StyleUp · a styling system",
-    description: "An indexed atelier of vetted personal stylists, near you or over video.",
+    title: "StyleUp · personal styling, in colour",
+    description: "Vetted personal stylists, near you or over video.",
     type: "website",
   },
 };
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>

@@ -27,7 +27,6 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
   const stylist = getStylist(id);
   if (!stylist) notFound();
 
-  const catalogueNo = String(STYLISTS.findIndex((s) => s.id === stylist.id) + 1).padStart(3, "0");
 
   // Related stylists: share at least one specialty, ranked by overlap.
   const related = STYLISTS.filter((s) => s.id !== stylist.id)
@@ -41,16 +40,11 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
     <div>
       {/* Entry header */}
       <div className="section" style={{ padding: "2.5rem 1.75rem 0" }}>
-        <div className="mono" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--ink)", paddingBottom: "0.75rem", fontSize: "0.62rem", color: "var(--faint)" }}>
-          <span>ENTRY N°{catalogueNo}</span>
-          <span>{stylist.city.toUpperCase()} · {stylist.country.toUpperCase()}</span>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)", gap: "0", marginTop: "1.75rem", border: "1px solid var(--ink)", borderRadius: 3, overflow: "hidden" }} className="entry-grid">
-          <div style={{ padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid var(--ink)" }} className="entry-info">
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)", gap: "1.25rem", marginTop: "0.5rem" }} className="entry-grid">
+          <div className="card entry-info" style={{ padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
-              <span className="eyebrow">{stylist.yearsExperience} yrs · {stylist.specialties[0]}</span>
-              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.2rem, 5vw, 3.6rem)", letterSpacing: "-0.04em", lineHeight: 0.9, marginTop: "1rem" }}>
+              <span className="eyebrow">{stylist.yearsExperience} yrs · {stylist.city}, {stylist.country}</span>
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2.1rem, 5vw, 3.4rem)", letterSpacing: "-0.04em", lineHeight: 1.0, marginTop: "1rem" }}>
                 {stylist.name}
               </h1>
               <p style={{ marginTop: "1rem", fontSize: "1.05rem", color: "var(--dim)", maxWidth: "46ch" }}>“{stylist.tagline}”</p>
@@ -61,8 +55,8 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
               ))}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginTop: "1.5rem", flexWrap: "wrap" }}>
-              <Link href={`/book?stylist=${stylist.id}`} className="btn btn-primary">Commission a session <span className="arrow">→</span></Link>
-              <span className="mono" style={{ fontSize: "0.7rem", color: "var(--dim)" }}>★ {stylist.rating} / {stylist.reviewCount} REVIEWS</span>
+              <Link href={`/book?stylist=${stylist.id}`} className="btn btn-primary">Book a session <span className="arrow">→</span></Link>
+              <span style={{ fontSize: "0.9rem", color: "var(--dim)" }}><span style={{ color: "var(--accent)" }}>★</span> {stylist.rating} · {stylist.reviewCount} reviews</span>
             </div>
           </div>
           <div className="photo entry-photo" style={{ position: "relative", minHeight: 320 }}>
@@ -220,7 +214,6 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
         @media (max-width: 860px) {
           .profile-grid { grid-template-columns: 1fr !important; }
           .entry-grid { grid-template-columns: 1fr !important; }
-          .entry-info { border-right: none !important; border-bottom: 1px solid var(--ink); }
           .entry-photo { min-height: 360px !important; }
         }
       `}</style>
@@ -231,7 +224,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div style={{ color: "var(--faint)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+      <div style={{ color: "var(--faint)", fontSize: "0.82rem" }}>
         {label}
       </div>
       <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>{value}</div>

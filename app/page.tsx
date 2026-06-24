@@ -13,8 +13,8 @@ const STEPS = [
 function Spec({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <div className="mono" style={{ fontSize: "0.6rem", color: "var(--faint)" }}>{k}</div>
-      <div style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "1.7rem", letterSpacing: "-0.03em", marginTop: "0.2rem" }}>{v}</div>
+      <div style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "1.9rem", letterSpacing: "-0.03em", lineHeight: 1 }}>{v}</div>
+      <div style={{ fontSize: "0.82rem", color: "var(--dim)", marginTop: "0.3rem" }}>{k}</div>
     </div>
   );
 }
@@ -24,72 +24,57 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* running spec bar */}
-      <div className="mono section" style={{ display: "flex", justifyContent: "space-between", padding: "0.7rem 1.75rem", borderBottom: "1px solid var(--border)", fontSize: "0.62rem", color: "var(--faint)" }}>
-        <span>STYLEUP / A STYLING SYSTEM</span>
-        <span style={{ display: "inline-flex", gap: "1.5rem" }} className="spec-hide"><span>13 STYLISTS · 12 CITIES</span><span>EST. MMXXVI</span></span>
-      </div>
-
       {/* ───────────────────────────── Hero ───────────────────────────── */}
-      <section className="section" style={{ paddingTop: "3.5rem", paddingBottom: "3.5rem" }}>
-        <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "3.5rem", alignItems: "stretch" }}>
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+      <section className="section" style={{ paddingTop: "3rem", paddingBottom: "3.5rem" }}>
+        <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: "3rem", alignItems: "center" }}>
+          <div>
             <Reveal>
-              <span className="eyebrow">Index 001 / Personal styling, systemised</span>
+              <span className="eyebrow">Personal styling, in colour</span>
             </Reveal>
             <Reveal delay={60}>
-              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(3.2rem, 9vw, 7rem)", lineHeight: 0.86, letterSpacing: "-0.05em", marginTop: "1.5rem" }}>
-                Personal<br />styling,<br /><span style={{ color: "var(--accent)" }}>indexed.</span>
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2.9rem, 7vw, 5.4rem)", lineHeight: 1.0, letterSpacing: "-0.045em", marginTop: "1.4rem" }}>
+                Find your colour.<br />
+                <span style={{ background: "linear-gradient(120deg, var(--accent), var(--accent-2))", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Then wear it</span>{" "}with confidence.
               </h1>
             </Reveal>
-            <div>
-              <Reveal delay={120}>
-                <p className="lede" style={{ marginTop: "1.75rem" }}>
-                  Every stylist here is vetted. Search the index by city, specialty and format.
-                  Meet over video from anywhere, or find someone near you to style you in person or shop the stores with you.
-                </p>
-              </Reveal>
-              <Reveal delay={180}>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.8rem", marginTop: "1.9rem" }}>
-                  <Link href="/explore" className="btn btn-primary">Open the catalogue <span className="arrow">→</span></Link>
-                  <Link href="/quiz" className="btn btn-outline">Calibrate your colours</Link>
-                </div>
-              </Reveal>
-            </div>
+            <Reveal delay={120}>
+              <p className="lede" style={{ marginTop: "1.6rem" }}>
+                Every stylist here is vetted. Meet over video from anywhere, or find someone near
+                you to style you in person or shop the stores with you.
+              </p>
+            </Reveal>
+            <Reveal delay={180}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.8rem", marginTop: "1.9rem" }}>
+                <Link href="/explore" className="btn btn-primary">Browse stylists <span className="arrow">→</span></Link>
+                <Link href="/quiz" className="btn btn-outline">Find your colours</Link>
+              </div>
+            </Reveal>
+            <Reveal delay={240}>
+              <div style={{ display: "flex", gap: "2.2rem", marginTop: "2.6rem", flexWrap: "wrap" }}>
+                {[
+                  { k: "Stylists", v: "13" },
+                  { k: "Avg. rating", v: "4.9" },
+                  { k: "Sessions", v: "10K+" },
+                ].map((m) => (
+                  <Spec key={m.k} k={m.k} v={m.v} />
+                ))}
+              </div>
+            </Reveal>
           </div>
 
           {/* image plate */}
           <Reveal delay={140} className="hero-visual">
-            <div style={{ border: "1px solid var(--ink)", borderRadius: 3, overflow: "hidden", height: "100%", minHeight: 440, display: "flex", flexDirection: "column" }}>
-              <div className="mono" style={{ display: "flex", justifyContent: "space-between", padding: "0.55rem 0.85rem", borderBottom: "1px solid var(--ink)", fontSize: "0.6rem", color: "var(--dim)" }}>
-                <span>FIG. 01</span><span>EDITORIAL / SS26</span>
-              </div>
-              <div className="photo" style={{ flex: 1, position: "relative" }}>
-                <Image
-                  src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1000&q=80"
-                  alt="A styled editorial look"
-                  fill
-                  priority
-                  sizes="(max-width: 860px) 100vw, 560px"
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
+            <div className="photo" style={{ aspectRatio: "4 / 5", minHeight: 420, boxShadow: "var(--glow), var(--shadow)" }}>
+              <Image
+                src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1000&q=80"
+                alt="A styled editorial look"
+                fill
+                priority
+                sizes="(max-width: 860px) 100vw, 540px"
+                style={{ objectFit: "cover" }}
+              />
             </div>
           </Reveal>
-        </div>
-
-        {/* spec ledger */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", borderTop: "1px solid var(--ink)", marginTop: "3rem" }} className="spec-ledger">
-          {[
-            { k: "Cities", v: "12" },
-            { k: "Avg. rating", v: "4.9" },
-            { k: "Sessions", v: "10K+" },
-            { k: "Lowest fee", v: "10%" },
-          ].map((m, i) => (
-            <div key={m.k} style={{ padding: "1.5rem 1.25rem", borderRight: i < 3 ? "1px solid var(--border)" : "none" }}>
-              <Spec k={m.k} v={m.v} />
-            </div>
-          ))}
         </div>
       </section>
 
@@ -106,20 +91,20 @@ export default function HomePage() {
       </section>
 
       {/* ──────────────────────────── How it works ─────────────────────────── */}
-      <section className="section" style={{ padding: "5rem 1.75rem" }}>
+      <section className="section" style={{ padding: "4.5rem 1.75rem" }}>
         <Reveal>
-          <span className="eyebrow">The method</span>
-          <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.2rem, 5vw, 3.6rem)", letterSpacing: "-0.04em", marginTop: "1rem", lineHeight: 0.95 }}>
-            Three movements.
+          <span className="eyebrow">How it works</span>
+          <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2rem, 5vw, 3.2rem)", letterSpacing: "-0.04em", marginTop: "1rem", lineHeight: 1.02 }}>
+            Three simple steps.
           </h2>
         </Reveal>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0", marginTop: "2.5rem", borderTop: "1px solid var(--ink)" }} className="method-grid">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem", marginTop: "2.5rem" }} className="method-grid">
           {STEPS.map((step, i) => (
             <Reveal key={step.n} delay={i * 90}>
-              <div style={{ padding: "1.9rem 1.5rem 1.9rem 0", borderRight: i < STEPS.length - 1 ? "1px solid var(--border)" : "none", height: "100%" }} className="method-cell">
-                <div className="mono" style={{ fontSize: "0.7rem", color: "var(--accent)" }}>STEP / {step.n}</div>
-                <h3 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "1.6rem", textTransform: "uppercase", letterSpacing: "-0.03em", marginTop: "1rem" }}>{step.title}</h3>
-                <p style={{ color: "var(--dim)", marginTop: "0.7rem", fontSize: "0.95rem" }}>{step.body}</p>
+              <div className="card" style={{ padding: "1.8rem", height: "100%" }}>
+                <div style={{ width: 44, height: 44, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1.05rem", color: "#14111f", background: "linear-gradient(150deg, var(--accent), var(--accent-2))", boxShadow: "0 8px 22px -10px color-mix(in srgb, var(--accent) 80%, transparent)" }}>{step.n}</div>
+                <h3 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "1.4rem", letterSpacing: "-0.025em", marginTop: "1.1rem" }}>{step.title}</h3>
+                <p style={{ color: "var(--dim)", marginTop: "0.6rem", fontSize: "0.95rem" }}>{step.body}</p>
               </div>
             </Reveal>
           ))}
@@ -129,14 +114,14 @@ export default function HomePage() {
       {/* ──────────────────────────── Featured ─────────────────────────────── */}
       <section className="section" style={{ padding: "1rem 1.75rem 5rem" }}>
         <Reveal>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", borderTop: "1px solid var(--ink)", paddingTop: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <span className="eyebrow">From the catalogue</span>
-              <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2rem, 4.5vw, 3rem)", letterSpacing: "-0.04em", marginTop: "0.8rem" }}>
-                Featured entries
+              <span className="eyebrow">Featured stylists</span>
+              <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.04em", marginTop: "0.9rem" }}>
+                Meet a few of them
               </h2>
             </div>
-            <Link href="/explore" className="btn btn-outline">All 13 <span className="arrow">→</span></Link>
+            <Link href="/explore" className="btn btn-outline">See all 13 <span className="arrow">→</span></Link>
           </div>
         </Reveal>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(265px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
@@ -149,31 +134,28 @@ export default function HomePage() {
       </section>
 
       {/* ────────────────────────────── Quiz CTA ───────────────────────────── */}
-      <section style={{ background: "var(--ink)", color: "var(--bg)" }}>
-        <div className="section" style={{ padding: "5rem 1.75rem", textAlign: "center" }}>
-          <Reveal>
-            <span className="eyebrow" style={{ color: "var(--bg)", justifyContent: "center" }}>Free · two minutes</span>
-            <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.4rem, 6vw, 4.5rem)", letterSpacing: "-0.05em", marginTop: "1.2rem", lineHeight: 0.9 }}>
-              Calibrate<br />your <span style={{ color: "var(--accent)" }}>colours.</span>
+      <section className="section" style={{ padding: "0 1.75rem 5rem" }}>
+        <Reveal>
+          <div className="card" style={{ padding: "clamp(2.5rem, 6vw, 4.5rem) 1.75rem", textAlign: "center", overflow: "hidden", position: "relative" }}>
+            <span className="eyebrow">Free · two minutes</span>
+            <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2.2rem, 6vw, 4rem)", letterSpacing: "-0.045em", marginTop: "1.2rem", lineHeight: 1.0 }}>
+              Find your{" "}
+              <span style={{ background: "linear-gradient(120deg, var(--accent), var(--accent-2))", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>colours</span>
+              <br />in two minutes.
             </h2>
-            <p style={{ maxWidth: 480, margin: "1.2rem auto 0", color: "color-mix(in srgb, var(--bg) 75%, transparent)", fontSize: "1rem" }}>
+            <p style={{ maxWidth: 480, margin: "1.2rem auto 0", color: "var(--dim)", fontSize: "1.02rem" }}>
               Once we know your season, the whole site wears your palette and your stylist matches get sharper.
             </p>
-            <Link href="/quiz" className="btn" style={{ marginTop: "2rem", background: "var(--bg)", color: "var(--ink)", borderColor: "var(--bg)" }}>
-              Run the calibration <span className="arrow">→</span>
+            <Link href="/quiz" className="btn btn-primary" style={{ marginTop: "2rem" }}>
+              Take the quiz <span className="arrow">→</span>
             </Link>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </section>
 
       <style>{`
         @media (max-width: 860px) {
           .hero-grid { grid-template-columns: 1fr !important; }
-          .spec-ledger { grid-template-columns: repeat(2, 1fr) !important; }
-          .spec-ledger > div:nth-child(2) { border-right: none !important; }
-          .spec-ledger > div:nth-child(1), .spec-ledger > div:nth-child(2) { border-bottom: 1px solid var(--border); }
-          .method-cell { border-right: none !important; border-bottom: 1px solid var(--border); padding-left: 0 !important; }
-          .spec-hide { display: none !important; }
         }
       `}</style>
     </div>

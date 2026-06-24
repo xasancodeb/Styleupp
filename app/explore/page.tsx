@@ -120,23 +120,19 @@ export default function ExplorePage() {
 
   return (
     <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
-      <div className="mono" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--ink)", paddingBottom: "0.75rem", fontSize: "0.62rem", color: "var(--faint)" }}>
-        <span>THE CATALOGUE</span>
-        <span>{results.length} / {STYLISTS.length} ENTRIES</span>
-      </div>
-      <span className="eyebrow" style={{ marginTop: "1.5rem" }}>Index 002 / The roster</span>
-      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.6rem, 7vw, 5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, marginTop: "1rem" }}>
-        The stylist<br />catalogue.
+      <span className="eyebrow">{results.length} of {STYLISTS.length} stylists</span>
+      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
+        Browse stylists
       </h1>
-      <p className="lede" style={{ marginTop: "1.25rem" }}>
-        Filter the index by city, specialty and format. Meet over video from anywhere, or find someone
+      <p className="lede" style={{ marginTop: "1.1rem" }}>
+        Filter by city, specialty and format. Meet over video from anywhere, or find someone
         near you to meet in person, or shop the stores with.
       </p>
 
       {/* Location prompt */}
       <div className="card" style={{ padding: "1.1rem 1.4rem", marginTop: "1.75rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
         <div>
-          <div className="mono" style={{ fontSize: "0.66rem", color: "var(--accent)" }}>◆ LOCATION</div>
+          <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)" }}>Location</div>
           <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.35rem", maxWidth: 520 }}>
             {country
               ? nearCount > 0
@@ -158,12 +154,12 @@ export default function ExplorePage() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
             <div style={{ display: "flex" }}>
               {PALETTES[season].bestColors.slice(0, 5).map((c) => (
-                <span key={c.hex} style={{ width: 22, height: 28, background: c.hex, border: "1px solid var(--ink)", marginLeft: -1 }} />
+                <span key={c.hex} style={{ width: 24, height: 30, borderRadius: 7, background: c.hex, border: "2px solid var(--bg)", marginLeft: -6, boxShadow: "0 2px 8px -2px rgba(0,0,0,0.5)" }} />
               ))}
             </div>
             <div>
-              <div className="mono" style={{ fontSize: "0.66rem", color: "var(--dim)" }}>
-                {name ? `CALIBRATED / ${name.split(" ")[0].toUpperCase()}` : "CALIBRATED"}
+              <div style={{ fontSize: "0.8rem", color: "var(--dim)" }}>
+                {name ? `Your palette, ${name.split(" ")[0]}` : "Your palette"}
               </div>
               <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>You're a {PALETTES[season].name}.</div>
             </div>
