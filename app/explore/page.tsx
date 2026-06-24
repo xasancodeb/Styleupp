@@ -119,26 +119,30 @@ export default function ExplorePage() {
     : 0;
 
   return (
-    <div className="section" style={{ padding: "3rem 1.5rem 2rem" }}>
-      <span className="eyebrow">The roster — {STYLISTS.length} stylists</span>
-      <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.2rem)", marginTop: "0.85rem" }}>
-        Find your <em>stylist.</em>
+    <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
+      <div className="mono" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--ink)", paddingBottom: "0.75rem", fontSize: "0.62rem", color: "var(--faint)" }}>
+        <span>THE CATALOGUE</span>
+        <span>{results.length} / {STYLISTS.length} ENTRIES</span>
+      </div>
+      <span className="eyebrow" style={{ marginTop: "1.5rem" }}>Index 002 — The roster</span>
+      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.6rem, 7vw, 5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, marginTop: "1rem" }}>
+        The stylist<br />catalogue.
       </h1>
-      <p style={{ color: "var(--dim)", marginTop: "0.75rem", maxWidth: 620 }}>
-        Work with a stylist over video from anywhere — or find one near you for an in-person session
-        or a personal shopping trip where they shop the stores with you.
+      <p className="lede" style={{ marginTop: "1.25rem" }}>
+        Filter the index by city, specialty and format. Work over video from anywhere — or find someone
+        near you to meet in person, or shop the stores with.
       </p>
 
       {/* Location prompt */}
-      <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+      <div className="card" style={{ padding: "1.1rem 1.4rem", marginTop: "1.75rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
         <div>
-          <div style={{ fontWeight: 600 }}>📍 Where are you based?</div>
-          <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.15rem" }}>
+          <div className="mono" style={{ fontSize: "0.66rem", color: "var(--accent)" }}>◆ LOCATION</div>
+          <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.35rem", maxWidth: 520 }}>
             {country
               ? nearCount > 0
-                ? `${nearCount} stylist${nearCount === 1 ? "" : "s"} can meet you in person near ${country}. Everyone else is available over video.`
-                : `No in-person stylists near ${country} yet — but every stylist works with you over video.`
-              : "Set your location and we'll show who can meet you in person — not just video."}
+                ? `${nearCount} ${nearCount === 1 ? "entry" : "entries"} can meet you in person near ${country}. Everyone else works over video.`
+                : `No in-person entries near ${country} yet — but every stylist works with you over video.`
+              : "Set your location and the index surfaces who can meet you in person — not just video."}
           </div>
         </div>
         <select className="input" style={{ width: "auto", minWidth: 220 }} value={country} onChange={(e) => chooseCountry(e.target.value)}>
@@ -150,22 +154,22 @@ export default function ExplorePage() {
       </div>
 
       {season && (
-        <div className="card" style={{ padding: "1.25rem 1.5rem", marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+        <div className="card" style={{ padding: "1.1rem 1.4rem", marginTop: "0.85rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
             <div style={{ display: "flex" }}>
-              {PALETTES[season].bestColors.slice(0, 4).map((c, i) => (
-                <span key={c.hex} style={{ width: 26, height: 26, borderRadius: "50%", background: c.hex, border: "2px solid var(--card)", marginLeft: i ? -8 : 0 }} />
+              {PALETTES[season].bestColors.slice(0, 5).map((c) => (
+                <span key={c.hex} style={{ width: 22, height: 28, background: c.hex, border: "1px solid var(--ink)", marginLeft: -1 }} />
               ))}
             </div>
             <div>
-              <div style={{ fontWeight: 600 }}>
-                {name ? `${name.split(" ")[0]}, you're a ${PALETTES[season].name}` : `You're a ${PALETTES[season].name}`}
+              <div className="mono" style={{ fontSize: "0.66rem", color: "var(--dim)" }}>
+                {name ? `CALIBRATED — ${name.split(" ")[0].toUpperCase()}` : "CALIBRATED"}
               </div>
-              <div style={{ color: "var(--dim)", fontSize: "0.88rem" }}>We'd start with a colour specialist to bring your palette to life.</div>
+              <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>You're a {PALETTES[season].name}.</div>
             </div>
           </div>
-          <button onClick={() => setSpecialty(specialty === "Colour Analysis" ? null : "Colour Analysis")} className="btn btn-outline" style={{ padding: "0.5rem 1.1rem", fontSize: "0.85rem" }}>
-            {specialty === "Colour Analysis" ? "Showing colour experts" : "Show colour experts"}
+          <button onClick={() => setSpecialty(specialty === "Colour Analysis" ? null : "Colour Analysis")} className="btn btn-outline" style={{ padding: "0.6rem 1.1rem" }}>
+            {specialty === "Colour Analysis" ? "Showing colour" : "Colour experts"}
           </button>
         </div>
       )}

@@ -30,8 +30,8 @@ export default function FittingPage() {
 
   return (
     <div className="section" style={{ padding: "3rem 1.5rem 4rem" }}>
-      <span className="eyebrow">Your palette</span>
-      <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.2rem)", marginTop: "0.85rem" }}>
+      <span className="eyebrow">Index 003 — The fitting room</span>
+      <h1 className="display" style={{ fontSize: "clamp(2.6rem, 6vw, 4.4rem)", marginTop: "0.85rem", textTransform: "uppercase", lineHeight: 0.9 }}>
         Colour <em>fitting</em> room
       </h1>
       <p style={{ color: "var(--dim)", marginTop: "0.6rem", maxWidth: 620 }}>

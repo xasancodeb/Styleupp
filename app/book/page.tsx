@@ -243,9 +243,9 @@ function BookingFlow() {
                         cursor: "pointer",
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <span>{f === "virtual" ? "💻" : f === "in-person" ? "📍" : "🛍️"}</span>
-                        <strong>{FORMAT_LABEL[f]}</strong>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                        <span className="mono" style={{ fontSize: "0.62rem", color: "var(--accent)" }}>{f === "virtual" ? "VID" : f === "in-person" ? "IRL" : "SHOP"}</span>
+                        <strong style={{ fontFamily: "var(--font-grotesk)", textTransform: "uppercase", letterSpacing: "-0.02em" }}>{FORMAT_LABEL[f]}</strong>
                       </div>
                       <p style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.25rem" }}>{desc}</p>
                     </button>

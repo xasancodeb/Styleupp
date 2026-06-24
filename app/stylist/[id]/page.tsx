@@ -27,6 +27,8 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
   const stylist = getStylist(id);
   if (!stylist) notFound();
 
+  const catalogueNo = String(STYLISTS.findIndex((s) => s.id === stylist.id) + 1).padStart(3, "0");
+
   // Related stylists: share at least one specialty, ranked by overlap.
   const related = STYLISTS.filter((s) => s.id !== stylist.id)
     .map((s) => ({ s, overlap: s.specialties.filter((sp) => stylist.specialties.includes(sp)).length }))
@@ -37,47 +39,39 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
 
   return (
     <div>
-      {/* Cover */}
-      <div className="photo" style={{ height: 280 }}>
-        <Image src={stylist.cover} alt="" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(29,26,21,0.12), rgba(29,26,21,0.5))" }} />
-      </div>
+      {/* Entry header */}
+      <div className="section" style={{ padding: "2.5rem 1.75rem 0" }}>
+        <div className="mono" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--ink)", paddingBottom: "0.75rem", fontSize: "0.62rem", color: "var(--faint)" }}>
+          <span>ENTRY N°{catalogueNo}</span>
+          <span>{stylist.city.toUpperCase()} · {stylist.country.toUpperCase()}</span>
+        </div>
 
-      <div className="section" style={{ padding: "0 1.5rem 3rem", marginTop: "-78px", position: "relative" }}>
-        <div className="card" style={{ padding: "1.75rem", display: "flex", gap: "1.5rem", flexWrap: "wrap", alignItems: "center" }}>
-          <div className="photo" style={{ width: 108, height: 108, borderRadius: "50%", border: "4px solid var(--card)", flexShrink: 0, boxShadow: "0 6px 18px rgba(0,0,0,0.15)" }}>
-            <Image src={stylist.avatar} alt={stylist.name} fill sizes="108px" style={{ objectFit: "cover" }} />
-          </div>
-          <div style={{ flex: "1 1 280px" }}>
-            <span className="eyebrow">{stylist.city} · {stylist.country} · {stylist.yearsExperience} yrs</span>
-            <h1 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", marginTop: "0.5rem" }}>
-              {stylist.name}
-            </h1>
-            <p className="font-serif" style={{ marginTop: "0.5rem", fontStyle: "italic", fontSize: "1.15rem", color: "var(--dim)" }}>
-              “{stylist.tagline}”
-            </p>
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.85rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)", gap: "0", marginTop: "1.75rem", border: "1px solid var(--ink)", borderRadius: 3, overflow: "hidden" }} className="entry-grid">
+          <div style={{ padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid var(--ink)" }} className="entry-info">
+            <div>
+              <span className="eyebrow">{stylist.yearsExperience} yrs · {stylist.specialties[0]}</span>
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(2.2rem, 5vw, 3.6rem)", letterSpacing: "-0.04em", lineHeight: 0.9, marginTop: "1rem" }}>
+                {stylist.name}
+              </h1>
+              <p style={{ marginTop: "1rem", fontSize: "1.05rem", color: "var(--dim)", maxWidth: "46ch" }}>“{stylist.tagline}”</p>
+            </div>
+            <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
               {stylist.specialties.map((s) => (
-                <span key={s} className="chip">
-                  {s}
-                </span>
+                <span key={s} className="chip">{s}</span>
               ))}
             </div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div className="font-serif" style={{ fontSize: "1.6rem", fontWeight: 700 }}>
-              ★ {stylist.rating}
+            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginTop: "1.5rem", flexWrap: "wrap" }}>
+              <Link href={`/book?stylist=${stylist.id}`} className="btn btn-primary">Commission a session <span className="arrow">→</span></Link>
+              <span className="mono" style={{ fontSize: "0.7rem", color: "var(--dim)" }}>★ {stylist.rating} / {stylist.reviewCount} REVIEWS</span>
             </div>
-            <div style={{ color: "var(--faint)", fontSize: "0.85rem" }}>{stylist.reviewCount} reviews</div>
-            <Link
-              href={`/book?stylist=${stylist.id}`}
-              className="btn btn-primary"
-              style={{ marginTop: "0.85rem", width: "100%" }}
-            >
-              Book a session
-            </Link>
+          </div>
+          <div className="photo entry-photo" style={{ position: "relative", minHeight: 320 }}>
+            <Image src={stylist.avatar} alt={stylist.name} fill sizes="(max-width: 760px) 100vw, 460px" style={{ objectFit: "cover" }} />
           </div>
         </div>
+      </div>
+
+      <div className="section" style={{ padding: "0 1.75rem 3rem", marginTop: "1.5rem" }}>
 
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: "1.5rem", marginTop: "1.5rem" }} className="profile-grid">
           {/* Left column */}
@@ -93,9 +87,9 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 <Stat label="Based in" value={stylist.city} />
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "1.25rem" }}>
-                {stylist.sessionTypes.includes("virtual") && <span className="chip chip-muted">💻 Video, anywhere</span>}
-                {offersInPerson(stylist) && <span className="chip chip-muted">📍 In person in {stylist.city}</span>}
-                {offersInStoreShopping(stylist) && <span className="chip chip-muted">🛍️ Shops in store with you</span>}
+                {stylist.sessionTypes.includes("virtual") && <span className="chip">Video, anywhere</span>}
+                {offersInPerson(stylist) && <span className="chip">In person · {stylist.city}</span>}
+                {offersInStoreShopping(stylist) && <span className="chip">Shops in store with you</span>}
               </div>
             </section>
 
@@ -225,6 +219,9 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
       <style>{`
         @media (max-width: 860px) {
           .profile-grid { grid-template-columns: 1fr !important; }
+          .entry-grid { grid-template-columns: 1fr !important; }
+          .entry-info { border-right: none !important; border-bottom: 1px solid var(--ink); }
+          .entry-photo { min-height: 360px !important; }
         }
       `}</style>
     </div>
