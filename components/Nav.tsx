@@ -6,11 +6,11 @@ import { useCallback, useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase";
 import NotificationBell from "@/components/NotificationBell";
 
+// Five things. Nothing else earns a place in the header.
 const LINKS = [
   { href: "/explore", label: "Stylists" },
   { href: "/quiz", label: "Colour quiz" },
-  { href: "/fitting", label: "Fitting room" },
-  { href: "/for-stylists", label: "For stylists" },
+  { href: "/for-stylists", label: "Become a stylist" },
 ];
 
 interface Me {
@@ -70,7 +70,7 @@ export default function Nav() {
     ? [
         { href: "/dashboard", label: "Dashboard" },
         { href: "/messages", label: "Messages" },
-        ...(me.role === "stylist" || me.role === "admin" ? [{ href: "/stylist-dashboard", label: "Stylist Studio" }] : []),
+        ...(me.role === "stylist" || me.role === "admin" ? [{ href: "/stylist-dashboard", label: "Stylist studio" }] : []),
         ...(me.role === "admin" ? [{ href: "/admin", label: "Admin" }] : []),
       ]
     : [];
@@ -83,91 +83,89 @@ export default function Nav() {
     .toUpperCase();
 
   return (
-    <header style={{ position: "sticky", top: 0, zIndex: 50, padding: "0.7rem 0" }}>
-      <div className="section">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 60, padding: "0 0.6rem 0 1.2rem", background: "color-mix(in srgb, var(--card) 82%, transparent)", border: "1px solid var(--line)", borderRadius: 14, backdropFilter: "blur(18px) saturate(1.4)", WebkitBackdropFilter: "blur(18px) saturate(1.4)", boxShadow: "var(--shadow-soft)" }}>
-          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline", gap: 2 }}>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ink)", lineHeight: 1 }}>
-              StyleUp
-            </span>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block", marginLeft: 3 }} />
-          </Link>
+    <header style={{ position: "sticky", top: 0, zIndex: 50, background: "color-mix(in srgb, var(--bg) 90%, transparent)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid var(--line)" }}>
+      <nav className="section" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+        <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.45rem", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ink)", lineHeight: 1 }}>
+            StyleUp
+          </span>
+          <span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block", marginLeft: 4 }} />
+        </Link>
 
-          <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.7rem" }}>
-            {LINKS.map((link) => {
-              const active = pathname === link.href || pathname.startsWith(link.href + "/");
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="ul-link"
-                  data-active={active}
-                  style={{ color: active ? "var(--ink)" : "var(--dim)", fontSize: "0.9rem", fontWeight: 500 }}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-
-            {!ready ? null : me ? (
-              <>
-                <NotificationBell />
-                <div style={{ position: "relative" }}>
-                  <button
-                    onClick={() => setMenuOpen((o) => !o)}
-                    aria-label="Account menu"
-                    style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--ink)", color: "#fff", border: "none", cursor: "pointer", fontSize: "0.78rem", fontWeight: 600 }}
-                  >
-                    {initials}
-                  </button>
-                  {menuOpen && (
-                    <div className="card" style={{ position: "absolute", right: 0, top: "3.2rem", width: 214, padding: "0.4rem", zIndex: 60 }}>
-                      {accountLinks.map((l) => (
-                        <Link key={l.href} href={l.href} style={{ display: "block", padding: "0.7rem 0.85rem", borderRadius: 10, fontSize: "0.9rem", fontWeight: 500, color: "var(--ink)" }}>
-                          {l.label}
-                        </Link>
-                      ))}
-                      <button onClick={signOut} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.7rem 0.85rem", borderRadius: 10, fontSize: "0.9rem", fontWeight: 600, background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}>
-                        Sign out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <Link href="/auth/login" className="btn btn-dark" style={{ padding: "0.6rem 1.2rem" }}>
-                Sign in
-              </Link>
-            )}
-          </div>
-
-          <button aria-label="Toggle menu" onClick={() => setOpen((o) => !o)} className="nav-toggle" style={{ display: "none", background: "var(--card)", color: "var(--ink)", border: "1px solid var(--border)", borderRadius: 999, padding: "0.5rem 1rem", fontSize: "0.85rem", fontWeight: 500, cursor: "pointer" }}>
-            Menu
-          </button>
-        </div>
-
-        {open && (
-          <div className="card" style={{ marginTop: "0.6rem", padding: "1rem 1.1rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            {LINKS.map((link) => (
-              <Link key={link.href} href={link.href} style={{ color: "var(--dim)", fontSize: "0.95rem", fontWeight: 500, padding: "0.4rem 0" }}>
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.8rem" }}>
+          {LINKS.map((link) => {
+            const active = pathname === link.href || pathname.startsWith(link.href + "/");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="ul-link"
+                data-active={active}
+                style={{ color: active ? "var(--ink)" : "var(--dim)", fontSize: "0.92rem", fontWeight: 500 }}
+              >
                 {link.label}
               </Link>
-            ))}
-            {me ? (
-              <>
-                {accountLinks.map((l) => (
-                  <Link key={l.href} href={l.href} style={{ color: "var(--dim)", fontSize: "0.95rem", fontWeight: 500, padding: "0.4rem 0" }}>
-                    {l.label}
-                  </Link>
-                ))}
-                <button onClick={signOut} className="btn btn-outline" style={{ marginTop: "0.5rem" }}>Sign out</button>
-              </>
-            ) : (
-              <Link href="/auth/login" className="btn btn-dark" style={{ marginTop: "0.5rem" }}>Sign in</Link>
-            )}
-          </div>
-        )}
-      </div>
+            );
+          })}
+
+          {!ready ? null : me ? (
+            <>
+              <NotificationBell />
+              <div style={{ position: "relative" }}>
+                <button
+                  onClick={() => setMenuOpen((o) => !o)}
+                  aria-label="Account menu"
+                  style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--ink)", color: "#fffdf9", border: "none", cursor: "pointer", fontSize: "0.78rem", fontWeight: 600 }}
+                >
+                  {initials}
+                </button>
+                {menuOpen && (
+                  <div className="card" style={{ position: "absolute", right: 0, top: "3.1rem", width: 210, padding: "0.4rem", zIndex: 60 }}>
+                    {accountLinks.map((l) => (
+                      <Link key={l.href} href={l.href} style={{ display: "block", padding: "0.68rem 0.85rem", borderRadius: 8, fontSize: "0.92rem", fontWeight: 500, color: "var(--ink)" }}>
+                        {l.label}
+                      </Link>
+                    ))}
+                    <button onClick={signOut} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.68rem 0.85rem", borderRadius: 8, fontSize: "0.92rem", fontWeight: 600, background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}>
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <Link href="/auth/login" className="btn btn-primary" style={{ padding: "0.55rem 1.2rem", fontSize: "0.9rem" }}>
+              Sign in
+            </Link>
+          )}
+        </div>
+
+        <button aria-label="Toggle menu" onClick={() => setOpen((o) => !o)} className="nav-toggle" style={{ display: "none", background: "none", color: "var(--ink)", border: "1px solid var(--border)", borderRadius: 8, padding: "0.5rem 0.95rem", fontSize: "0.88rem", fontWeight: 500, cursor: "pointer" }}>
+          Menu
+        </button>
+      </nav>
+
+      {open && (
+        <div className="section" style={{ paddingBottom: "1.1rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          {LINKS.map((link) => (
+            <Link key={link.href} href={link.href} style={{ color: "var(--dim)", fontSize: "1rem", fontWeight: 500, padding: "0.45rem 0" }}>
+              {link.label}
+            </Link>
+          ))}
+          {me ? (
+            <>
+              {accountLinks.map((l) => (
+                <Link key={l.href} href={l.href} style={{ color: "var(--dim)", fontSize: "1rem", fontWeight: 500, padding: "0.45rem 0" }}>
+                  {l.label}
+                </Link>
+              ))}
+              <button onClick={signOut} className="btn btn-outline" style={{ marginTop: "0.5rem" }}>Sign out</button>
+            </>
+          ) : (
+            <Link href="/auth/login" className="btn btn-primary" style={{ marginTop: "0.5rem" }}>Sign in</Link>
+          )}
+        </div>
+      )}
 
       <style>{`
         @media (max-width: 860px) {

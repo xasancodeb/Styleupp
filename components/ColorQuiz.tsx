@@ -12,12 +12,9 @@ import {
   type ColorSeason,
 } from "@/lib/profile";
 
-/**
- * The colour-season quiz, fully playable inline. Used both on the landing page
- * (front and centre) and on the dedicated /quiz route. One question at a time
- * with a progress bar, then a result card the visitor can act on.
- */
-export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
+// The colour room. One question at a time, swatches where words fall short,
+// and a result worth keeping for life.
+export default function ColorQuiz() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<ColorSeason | null>(null);
@@ -33,8 +30,6 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
     } else {
       const season = determineSeason(next);
       saveSeason(season);
-      // Store the styling goal (the non-scoring final question) so stylist
-      // matching and recommendations can use it.
       const goalQ = SEASON_QUIZ.find((q) => q.goal);
       const goalChoice = goalQ ? goalQ.options[next[goalQ.id]]?.label : undefined;
       if (goalChoice) {
@@ -59,54 +54,50 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
   if (result) {
     const palette = PALETTES[result];
     return (
-      <div className="card fade-up" style={{ padding: compact ? "1.75rem" : "2.5rem", textAlign: "center" }}>
-        <span className="eyebrow" style={{ margin: "0 auto" }}>Your result</span>
-        <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 800, fontSize: compact ? "1.9rem" : "clamp(2rem, 5vw, 3rem)", letterSpacing: "-0.035em", marginTop: "1rem", lineHeight: 1.05 }}>
-          You&apos;re a{" "}
-          <span style={{ background: "linear-gradient(120deg, var(--accent), var(--accent-2))", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{palette.name}</span>
+      <div className="card fade-up" style={{ padding: "2.25rem", textAlign: "center" }}>
+        <span className="eyebrow" style={{ justifyContent: "center" }}>Your season</span>
+        <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(2.1rem, 5vw, 3rem)", letterSpacing: "-0.01em", marginTop: "0.8rem", lineHeight: 1.05 }}>
+          You are a <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{palette.name}</em>
         </h2>
         <p style={{ color: "var(--dim)", marginTop: "0.6rem", fontSize: "1.02rem" }}>{palette.tagline}</p>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1.5rem", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1.6rem", flexWrap: "wrap" }}>
           {palette.bestColors.map((c) => (
             <span
               key={c.hex}
               title={c.name}
-              style={{ width: 38, height: 38, borderRadius: "50%", background: c.hex, border: "2px solid var(--bg)", boxShadow: "0 4px 12px -4px rgba(0,0,0,0.5)" }}
+              style={{ width: 44, height: 58, borderRadius: "999px 999px 8px 8px", background: c.hex, border: "2px solid var(--card)", boxShadow: "0 4px 12px -4px rgba(30,49,40,0.35)" }}
             />
           ))}
         </div>
 
-        {!compact && (
-          <>
-            <p style={{ color: "var(--dim)", marginTop: "1.5rem", textAlign: "left", lineHeight: 1.7 }}>{palette.description}</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginTop: "1.25rem", textAlign: "left" }}>
-              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
-                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your metals</div>
-                <div style={{ fontWeight: 600, marginTop: "0.25rem", fontSize: "0.95rem" }}>{palette.metals.join(" · ")}</div>
-              </div>
-              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
-                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your neutrals</div>
-                <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
-                  {palette.neutrals.map((n) => (
-                    <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)" }} />
-                  ))}
-                </div>
-              </div>
-              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
-                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Leave on the rail</div>
-                <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
-                  {palette.avoidColors.map((n) => (
-                    <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)", opacity: 0.55 }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        <p style={{ color: "var(--dim)", marginTop: "1.5rem", textAlign: "left", lineHeight: 1.7 }}>{palette.description}</p>
 
-        <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", marginTop: "1.75rem", flexWrap: "wrap" }}>
-          <Link href="/explore" className="btn btn-primary">Find a matching stylist <span className="arrow">→</span></Link>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginTop: "1.25rem", textAlign: "left" }}>
+          <div style={{ background: "var(--bg-2)", borderRadius: 12, padding: "0.9rem 1rem" }}>
+            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your metals</div>
+            <div style={{ fontWeight: 600, marginTop: "0.25rem", fontSize: "0.95rem" }}>{palette.metals.join(" · ")}</div>
+          </div>
+          <div style={{ background: "var(--bg-2)", borderRadius: 12, padding: "0.9rem 1rem" }}>
+            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your neutrals</div>
+            <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
+              {palette.neutrals.map((n) => (
+                <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)" }} />
+              ))}
+            </div>
+          </div>
+          <div style={{ background: "var(--bg-2)", borderRadius: 12, padding: "0.9rem 1rem" }}>
+            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Leave on the rail</div>
+            <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
+              {palette.avoidColors.map((n) => (
+                <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)", opacity: 0.55 }} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", marginTop: "1.9rem", flexWrap: "wrap" }}>
+          <Link href="/explore" className="btn btn-primary">Find a colour stylist <span className="arrow">→</span></Link>
           <Link href="/fitting" className="btn btn-outline">Open your fitting room</Link>
           <button onClick={restart} className="btn btn-outline">Retake</button>
         </div>
@@ -115,19 +106,19 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <div className="card" style={{ padding: compact ? "1.6rem" : "2rem" }}>
+    <div className="card" style={{ padding: "2rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ color: "var(--dim)", fontSize: "0.85rem", fontWeight: 600 }}>
           Question {step + 1} of {SEASON_QUIZ.length}
         </span>
-        <span style={{ color: "var(--faint)", fontSize: "0.85rem" }}>~2 min</span>
+        <span style={{ color: "var(--faint)", fontSize: "0.85rem" }}>about 2 minutes</span>
       </div>
-      <div style={{ height: 6, borderRadius: 9999, background: "var(--border)", marginTop: "0.75rem", overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg, var(--accent), var(--accent-2))", borderRadius: 9999, transition: "width 0.35s var(--ease)" }} />
+      <div style={{ height: 5, borderRadius: 9999, background: "var(--bg-2)", marginTop: "0.75rem", overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${progress}%`, background: "var(--forest)", borderRadius: 9999, transition: "width 0.35s var(--ease)" }} />
       </div>
 
       <div className="fade-up" key={question.id} style={{ marginTop: "1.5rem" }}>
-        <h3 style={{ fontFamily: "var(--font-grotesk)", fontSize: compact ? "1.3rem" : "1.55rem", fontWeight: 700, lineHeight: 1.25, letterSpacing: "-0.02em" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.65rem", fontWeight: 400, lineHeight: 1.2, letterSpacing: "-0.01em" }}>
           {question.question}
         </h3>
         {question.helper && (
@@ -143,7 +134,7 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
                 border: "1px solid var(--border)",
                 background: "var(--card)",
                 color: "var(--ink)",
-                borderRadius: 14,
+                borderRadius: 12,
                 padding: "0.95rem 1.15rem",
                 cursor: "pointer",
                 fontSize: "0.98rem",
@@ -155,14 +146,12 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
                 gap: "0.9rem",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "color-mix(in srgb, var(--accent) 60%, var(--border))";
-                e.currentTarget.style.background = "var(--accent-soft)";
-                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.borderColor = "var(--forest)";
+                e.currentTarget.style.background = "var(--bg-2)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "var(--border)";
                 e.currentTarget.style.background = "var(--card)";
-                e.currentTarget.style.transform = "none";
               }}
             >
               <span>{opt.label}</span>
@@ -178,7 +167,7 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
                         background: hex,
                         border: "2px solid var(--card)",
                         marginLeft: -7,
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.18)",
+                        boxShadow: "0 1px 4px rgba(30,49,40,0.25)",
                       }}
                     />
                   ))}
