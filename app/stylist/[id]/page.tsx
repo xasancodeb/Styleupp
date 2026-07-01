@@ -7,6 +7,7 @@ import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
 import StylistCard from "@/components/StylistCard";
 import PortfolioGallery from "@/components/PortfolioGallery";
+import StickyBookBar, { AskQuestionButton } from "@/components/StickyBookBar";
 
 export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
@@ -219,6 +220,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 Book a session
               </Link>
               <SaveStylistButton slug={stylist.id} />
+              <AskQuestionButton name={stylist.name} />
               <Link href="/explore" className="btn btn-outline" style={{ width: "100%", marginTop: "0.6rem" }}>
                 Compare stylists
               </Link>
@@ -263,6 +265,8 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
           </section>
         )}
       </div>
+
+      <StickyBookBar stylistId={stylist.id} name={stylist.name} fromPrice={formatGBP(stylist.startingPrice)} />
 
       <style>{`
         @media (max-width: 860px) {

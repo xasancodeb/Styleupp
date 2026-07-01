@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getFeatured, SERVICE_MENU } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
@@ -68,7 +67,7 @@ export default function HomePage() {
             <Reveal delay={240}>
               <div style={{ display: "flex", gap: "2.2rem", marginTop: "2rem", flexWrap: "wrap" }}>
                 {[
-                  { k: "Stylists", v: "13" },
+                  { k: "Stylists", v: "12" },
                   { k: "Avg. rating", v: "4.9" },
                   { k: "Sessions", v: "10K+" },
                 ].map((m) => (
@@ -159,7 +158,7 @@ export default function HomePage() {
                 Meet a few of them
               </h2>
             </div>
-            <Link href="/explore" className="btn btn-outline">See all 13 <span className="arrow">→</span></Link>
+            <Link href="/explore" className="btn btn-outline">See everyone <span className="arrow">→</span></Link>
           </div>
         </Reveal>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(265px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
@@ -189,34 +188,6 @@ export default function HomePage() {
         <div style={{ textAlign: "center", marginTop: "1.75rem" }}>
           <Link href="/quiz" className="btn btn-primary">Take the free colour quiz <span className="arrow">→</span></Link>
         </div>
-      </section>
-
-      {/* ──────────────────────── Editorial statement ──────────────────────── */}
-      <section className="section" style={{ padding: "0 1.75rem 4.5rem" }}>
-        <Reveal>
-          <div style={{ position: "relative", borderRadius: 28, overflow: "hidden", minHeight: "min(76vh, 620px)", display: "flex", alignItems: "flex-end" }}>
-            <Image
-              src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80"
-              alt="A woman in a striking, colour-matched outfit"
-              fill
-              sizes="(max-width: 1180px) 100vw, 1120px"
-              style={{ objectFit: "cover" }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.06) 55%)" }} />
-            <div style={{ position: "relative", padding: "clamp(1.75rem, 5vw, 3.5rem)", color: "#fff", maxWidth: 640 }}>
-              <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.4rem)", letterSpacing: "-0.035em", lineHeight: 1.04 }}>
-                Wear what makes you glow.
-              </h2>
-              <p style={{ marginTop: "0.9rem", fontSize: "1.05rem", color: "rgba(255,255,255,0.85)", maxWidth: 460 }}>
-                Not what the trend cycle says. Your palette is decided by your skin, hair and eyes,
-                and it never goes out of season.
-              </p>
-              <Link href="/fitting" className="btn" style={{ marginTop: "1.5rem", background: "#fff", color: "var(--ink)" }}>
-                Open the fitting room <span className="arrow">→</span>
-              </Link>
-            </div>
-          </div>
-        </Reveal>
       </section>
 
       {/* ─────────────────────── See the difference ────────────────────────── */}
