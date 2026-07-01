@@ -6,12 +6,12 @@ import ToastProvider from "@/components/Toast";
 import SeasonAccent from "@/components/SeasonAccent";
 
 export const metadata: Metadata = {
-  title: "StyleUp · personal styling, in colour",
+  title: "StyleUp · a personal stylist, near you",
   description:
-    "Vetted personal stylists for colour analysis, capsule wardrobes and occasion styling. Meet over video or find someone near you to style you in person or shop the stores with you.",
+    "Tell us what you need — an occasion, a wardrobe that works, help shopping — and get matched with a vetted personal stylist in your city, or over video if you prefer.",
   openGraph: {
-    title: "StyleUp · personal styling, in colour",
-    description: "Vetted personal stylists, near you or over video.",
+    title: "StyleUp · a personal stylist, near you",
+    description: "Get matched with a vetted personal stylist in your city.",
     type: "website",
   },
 };

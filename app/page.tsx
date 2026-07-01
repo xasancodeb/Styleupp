@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getFeatured, SERVICE_MENU } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
-import ColorQuiz from "@/components/ColorQuiz";
+import MatchRequest from "@/components/MatchRequest";
 import PaletteRail from "@/components/PaletteRail";
 import LiveTicker from "@/components/LiveTicker";
 import PromiseStrip from "@/components/PromiseStrip";
@@ -11,9 +11,9 @@ import Transformations from "@/components/Transformations";
 import FAQ from "@/components/FAQ";
 
 const STEPS = [
-  { n: "1", title: "Take the quiz", body: "Two minutes, no sign-up. It finds your colour season — the shades that make you look rested, radiant and expensive." },
-  { n: "2", title: "Meet your stylist", body: "Choose who you work with: a woman or man stylist, near you or over video, at a price that suits." },
-  { n: "3", title: "Wear it", body: "You leave with a real plan and a palette you can shop from. We keep your looks and bookings on file." },
+  { n: "1", title: "Tell us what you need", body: "A big occasion, a wardrobe that finally works, help shopping, your colours. Thirty seconds, no sign-up." },
+  { n: "2", title: "Get matched nearby", body: "We show you vetted stylists in your city first — a woman or a man, your choice. Video only if you want it." },
+  { n: "3", title: "Meet and transform", body: "Book and pay securely through StyleUp. You keep the plan, the palette and the confidence." },
 ];
 
 const QUOTES = [
@@ -41,24 +41,23 @@ export default function HomePage() {
         <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.02fr 1fr", gap: "3rem", alignItems: "center" }}>
           <div>
             <Reveal>
-              <span className="eyebrow">Personal styling for women · men welcome too</span>
+              <span className="eyebrow">Personal styling, on demand · women first, men welcome</span>
             </Reveal>
             <Reveal delay={60}>
               <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.7rem, 6.5vw, 5rem)", lineHeight: 1.04, letterSpacing: "-0.045em", marginTop: "1.4rem" }}>
-                Find your <span className="gradient-word">colour</span>.<br />
-                Then wear it<br />with confidence.
+                A personal <span className="gradient-word">stylist</span>,<br />
+                near you,<br />on your budget.
               </h1>
             </Reveal>
             <Reveal delay={120}>
               <p className="lede" style={{ marginTop: "1.5rem" }}>
-                Start with the free colour quiz on the right. Then book a vetted stylist near you, or
-                over video from anywhere. Choose who you work with, including a woman or man stylist.
+                Tell us what you need — a big occasion, a wardrobe that finally works, help shopping —
+                and we match you with a vetted stylist in your city. Over video only if you prefer it.
               </p>
             </Reveal>
             <Reveal delay={180}>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.8rem", marginTop: "1.8rem" }}>
-                <Link href="/explore" className="btn btn-primary">Browse stylists <span className="arrow">→</span></Link>
-                <Link href="/explore" className="btn btn-outline">Find someone near me</Link>
+                <Link href="/explore" className="btn btn-outline">Or browse all stylists</Link>
               </div>
             </Reveal>
             <Reveal delay={220}>
@@ -79,31 +78,21 @@ export default function HomePage() {
             </Reveal>
           </div>
 
-          {/* the quiz, front and centre */}
+          {/* the request flow, front and centre — the "hail a stylist" card */}
           <Reveal delay={140} className="hero-visual">
             <div style={{ position: "relative" }}>
               <div style={{ marginBottom: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)" }} />
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Start here · free colour quiz</span>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Get matched · takes 30 seconds</span>
               </div>
-              <ColorQuiz compact />
+              <MatchRequest />
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* the palette rail — every colour we can dress you in */}
-      <section style={{ padding: "1.5rem 0 0" }}>
-        <Reveal>
-          <p style={{ textAlign: "center", color: "var(--dim)", fontSize: "0.95rem", marginBottom: "1.5rem", padding: "0 1.75rem" }}>
-            Twenty-four colours across four seasons. <span style={{ color: "var(--ink)", fontWeight: 600 }}>One row of these is yours.</span>
-          </p>
-        </Reveal>
-        <PaletteRail />
-      </section>
-
       {/* the promise */}
-      <section className="section" style={{ padding: "3.5rem 1.75rem 0" }}>
+      <section className="section" style={{ padding: "3rem 1.75rem 0" }}>
         <Reveal>
           <div style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", padding: "2rem 0" }}>
             <PromiseStrip />
@@ -179,6 +168,26 @@ export default function HomePage() {
               <StylistCard stylist={stylist} />
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* ─────────── Not ready to book? The free colour tool ──────────────── */}
+      <section style={{ padding: "1rem 0 4.5rem" }}>
+        <Reveal>
+          <div style={{ textAlign: "center", padding: "0 1.75rem", marginBottom: "1.5rem" }}>
+            <span className="eyebrow">Not ready to book?</span>
+            <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.7rem, 4vw, 2.4rem)", letterSpacing: "-0.03em", marginTop: "0.6rem" }}>
+              Start free: find your colours
+            </h2>
+            <p style={{ color: "var(--dim)", marginTop: "0.5rem", maxWidth: 520, marginLeft: "auto", marginRight: "auto" }}>
+              Two minutes, no card, no sign-up. One of these rows is yours — and when you do book,
+              your stylist starts from it.
+            </p>
+          </div>
+        </Reveal>
+        <PaletteRail />
+        <div style={{ textAlign: "center", marginTop: "1.75rem" }}>
+          <Link href="/quiz" className="btn btn-primary">Take the free colour quiz <span className="arrow">→</span></Link>
         </div>
       </section>
 
