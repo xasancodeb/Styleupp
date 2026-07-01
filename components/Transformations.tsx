@@ -4,25 +4,26 @@ import { useState } from "react";
 import Image from "next/image";
 
 // "Same person. Right colours." — the product's whole pitch in one gesture.
-// Each card starts drained of colour; hovering (or tapping) floods it back in.
+// Each look starts drained of colour; hovering (or tapping) floods it back in.
+// These are styled looks illustrating each service, not client photographs.
 const STORIES = [
   {
     img: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=800&h=1000&fit=crop&auto=format&q=75",
-    name: "Elena, 34",
-    service: "Colour analysis · Warm Spring",
-    line: "“I stopped wearing black near my face. People ask if I've been on holiday.”",
+    name: "Colour analysis",
+    service: "Sessions from £95",
+    line: "The right palette makes you look rested and expensive. The wrong one washes you out — most people wear the wrong one.",
   },
   {
     img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&h=1000&fit=crop&auto=format&q=75",
-    name: "Margot, 41",
-    service: "Capsule wardrobe · Cool Summer",
-    line: "“Twenty-eight pieces. I get dressed in three minutes and look better than ever.”",
+    name: "Capsule wardrobe",
+    service: "Sessions from £70",
+    line: "Around thirty pieces where everything goes with everything. Getting dressed takes three minutes, and all of it suits you.",
   },
   {
     img: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=800&h=1000&fit=crop&auto=format&q=75",
-    name: "Alicia, 29",
-    service: "Occasion styling · Deep Autumn",
-    line: "“My sister's wedding. I've never felt that confident walking into a room.”",
+    name: "Occasion styling",
+    service: "Sessions from £80",
+    line: "The wedding, the interview, the milestone birthday. Walk in feeling like the best-dressed version of yourself.",
   },
 ];
 
@@ -44,7 +45,7 @@ export default function Transformations() {
             <div className="photo" style={{ aspectRatio: "4 / 5", position: "relative" }}>
               <Image
                 src={s.img}
-                alt={`${s.name} after her session`}
+                alt={`A styled look illustrating ${s.name.toLowerCase()}`}
                 fill
                 sizes="(max-width: 700px) 100vw, 380px"
                 style={{
@@ -70,7 +71,7 @@ export default function Transformations() {
                   transition: "color 0.3s var(--ease)",
                 }}
               >
-                {on ? "In her colours" : "Hover to add colour"}
+                {on ? "In colour" : "Hover to add colour"}
               </span>
             </div>
             <figcaption style={{ marginTop: "0.9rem" }}>

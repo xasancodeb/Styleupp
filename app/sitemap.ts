@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/explore",
     "/fitting",
     "/quiz",
+    "/gift",
     "/for-stylists",
     "/stylist-portal",
     "/corporate",

@@ -557,14 +557,6 @@ export const SERVICE_MENU = [
   },
 ] as const;
 
-/** Deterministic "slots left this week" (2–5) so scarcity is stable per
-    stylist and identical between server and client renders. */
-export function slotsLeftThisWeek(id: string): number {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return 2 + (h % 4);
-}
-
 export function getStylist(id: string): Stylist | undefined {
   return STYLISTS.find((s) => s.id === id);
 }

@@ -2,22 +2,32 @@
 
 import { useState } from "react";
 
-// Email capture with a real lead magnet: the free colour guide.
+// Email capture, persisted via /api/leads.
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
+  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.includes("@")) return;
-    setDone(true);
+    setState("sending");
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "newsletter", email, payload: { source: "footer" } }),
+      });
+      setState(res.ok ? "done" : "error");
+    } catch {
+      setState("error");
+    }
   }
 
-  if (done) {
+  if (state === "done") {
     return (
       <p style={{ color: "var(--dim)", fontSize: "0.95rem", margin: 0 }}>
-        <span style={{ color: "var(--accent)", fontWeight: 600 }}>Check your inbox</span> — your
-        colour guide is on its way to {email}.
+        <span style={{ color: "var(--accent)", fontWeight: 600 }}>You&apos;re on the list.</span>{" "}
+        Style tips land in your inbox soon.
       </p>
     );
   }
@@ -34,9 +44,14 @@ export default function NewsletterForm() {
         style={{ flex: "1 1 220px", maxWidth: 340 }}
         aria-label="Email address"
       />
-      <button type="submit" className="btn btn-primary" style={{ padding: "0.72rem 1.3rem" }}>
-        Get the free guide
+      <button type="submit" className="btn btn-primary" disabled={state === "sending"} style={{ padding: "0.72rem 1.3rem" }}>
+        {state === "sending" ? "Joining…" : "Join the list"}
       </button>
+      {state === "error" && (
+        <p style={{ color: "#b3261e", fontSize: "0.85rem", width: "100%", margin: 0 }}>
+          Couldn&apos;t save that just now — please try again.
+        </p>
+      )}
     </form>
   );
 }

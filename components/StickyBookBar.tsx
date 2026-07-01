@@ -19,8 +19,33 @@ export function AskQuestionButton({ name }: { name: string }) {
 
 function AskSheet({ name, onClose }: { name: string; onClose: () => void }) {
   const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const first = name.split(" ")[0];
+
+  async function send() {
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "question",
+          email,
+          payload: { stylist: name, message },
+        }),
+      });
+      if (res.ok) setSent(true);
+      else setError("Couldn't send just now — please try again.");
+    } catch {
+      setError("Couldn't send just now — please check your connection.");
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div
@@ -37,9 +62,9 @@ function AskSheet({ name, onClose }: { name: string; onClose: () => void }) {
         {sent ? (
           <div style={{ textAlign: "center", padding: "0.5rem 0" }}>
             <div style={{ fontSize: "1.6rem" }}>✓</div>
-            <h3 style={{ fontWeight: 700, fontSize: "1.15rem", marginTop: "0.4rem" }}>Sent to {first}</h3>
+            <h3 style={{ fontWeight: 700, fontSize: "1.15rem", marginTop: "0.4rem" }}>Question sent</h3>
             <p style={{ color: "var(--dim)", fontSize: "0.92rem", marginTop: "0.4rem" }}>
-              Stylists usually reply within a day. We&apos;ll email you when {first} answers.
+              We&apos;ve passed it to {first} and will reply to {email}, usually within a day.
             </p>
             <button className="btn btn-outline" style={{ marginTop: "1rem" }} onClick={onClose}>
               Done
@@ -60,15 +85,24 @@ function AskSheet({ name, onClose }: { name: string; onClose: () => void }) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
+            <input
+              className="input"
+              type="email"
+              style={{ marginTop: "0.6rem" }}
+              placeholder="Your email, so we can reply"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {error && <p style={{ color: "#b3261e", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>{error}</p>}
             <div style={{ display: "flex", gap: "0.6rem", justifyContent: "flex-end", marginTop: "0.9rem" }}>
               <button className="btn btn-outline" onClick={onClose}>Cancel</button>
               <button
                 className="btn btn-primary"
-                style={{ opacity: message.trim().length > 5 ? 1 : 0.5 }}
-                disabled={message.trim().length <= 5}
-                onClick={() => setSent(true)}
+                style={{ opacity: message.trim().length > 5 && email.includes("@") ? 1 : 0.5 }}
+                disabled={message.trim().length <= 5 || !email.includes("@") || sending}
+                onClick={send}
               >
-                Send question
+                {sending ? "Sending…" : "Send question"}
               </button>
             </div>
           </>

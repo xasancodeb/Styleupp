@@ -127,7 +127,17 @@ export default function MatchRequest() {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (email.includes("@")) setWaitlisted(true);
+                    if (!email.includes("@")) return;
+                    void fetch("/api/leads", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        type: "waitlist",
+                        email,
+                        payload: { city, country, need: needDef?.key ?? "" },
+                      }),
+                    }).catch(() => {});
+                    setWaitlisted(true);
                   }}
                   style={{ display: "flex", gap: "0.5rem", marginTop: "0.7rem", flexWrap: "wrap" }}
                 >

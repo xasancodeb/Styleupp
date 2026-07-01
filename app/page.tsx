@@ -4,7 +4,6 @@ import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
 import MatchRequest from "@/components/MatchRequest";
 import PaletteRail from "@/components/PaletteRail";
-import LiveTicker from "@/components/LiveTicker";
 import PromiseStrip from "@/components/PromiseStrip";
 import Transformations from "@/components/Transformations";
 import FAQ from "@/components/FAQ";
@@ -15,11 +14,6 @@ const STEPS = [
   { n: "3", title: "Meet and transform", body: "Book and pay securely through StyleUp. You keep the plan, the palette and the confidence." },
 ];
 
-const QUOTES = [
-  { text: "I get compliments every single week now. I finally understand what suits me.", name: "Priya", detail: "Colour analysis, London" },
-  { text: "My stylist came shopping with me. Two hours, one bag, zero regrets.", name: "Claire", detail: "Shopping trip, Milan" },
-  { text: "I own half as much and look twice as good.", name: "Daniel", detail: "Capsule wardrobe, Tokyo" },
-];
 
 function Spec({ k, v }: { k: string; v: string }) {
   return (
@@ -59,17 +53,12 @@ export default function HomePage() {
                 <Link href="/explore" className="btn btn-outline">Or browse all stylists</Link>
               </div>
             </Reveal>
-            <Reveal delay={220}>
-              <div style={{ marginTop: "1.6rem" }}>
-                <LiveTicker />
-              </div>
-            </Reveal>
             <Reveal delay={240}>
-              <div style={{ display: "flex", gap: "2.2rem", marginTop: "2rem", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "2.2rem", marginTop: "2.2rem", flexWrap: "wrap" }}>
                 {[
                   { k: "Stylists", v: "12" },
-                  { k: "Avg. rating", v: "4.9" },
-                  { k: "Sessions", v: "10K+" },
+                  { k: "Cities", v: "10" },
+                  { k: "Sessions from", v: "£60" },
                 ].map((m) => (
                   <Spec key={m.k} k={m.k} v={m.v} />
                 ))}
@@ -193,7 +182,7 @@ export default function HomePage() {
       {/* ─────────────────────── See the difference ────────────────────────── */}
       <section className="section" style={{ padding: "0 1.75rem 4.5rem" }}>
         <Reveal>
-          <span className="eyebrow">Real transformations</span>
+          <span className="eyebrow">What a stylist changes</span>
           <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
             Same person. Right colours.
           </h2>
@@ -203,33 +192,6 @@ export default function HomePage() {
         </Reveal>
         <div style={{ marginTop: "2rem" }}>
           <Transformations />
-        </div>
-      </section>
-
-      {/* ─────────────────────────── Loved by clients ──────────────────────── */}
-      <section style={{ background: "var(--bg-2)" }}>
-        <div className="section" style={{ padding: "4.5rem 1.75rem" }}>
-          <Reveal>
-            <span className="eyebrow">From real sessions</span>
-            <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
-              People leave glowing
-            </h2>
-          </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem", marginTop: "2.25rem" }}>
-            {QUOTES.map((q, i) => (
-              <Reveal key={q.name} delay={i * 90}>
-                <figure className="card" style={{ padding: "1.8rem", margin: 0, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                  <blockquote style={{ margin: 0, fontSize: "1.1rem", fontWeight: 500, letterSpacing: "-0.015em", lineHeight: 1.45 }}>
-                    &ldquo;{q.text}&rdquo;
-                  </blockquote>
-                  <figcaption style={{ marginTop: "1.4rem", fontSize: "0.88rem" }}>
-                    <span style={{ fontWeight: 600 }}>{q.name}</span>
-                    <span style={{ color: "var(--faint)" }}> · {q.detail}</span>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 

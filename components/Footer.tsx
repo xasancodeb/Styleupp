@@ -36,9 +36,9 @@ export default function Footer() {
           </p>
 
           <div style={{ marginTop: "1.75rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
-            <div style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>The colour edit, free</div>
+            <div style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>The style list</div>
             <p style={{ color: "var(--dim)", fontSize: "0.9rem", margin: "0.3rem 0 0.9rem", maxWidth: 420 }}>
-              Get our 12-page guide to dressing in your season, plus one sharp styling tip a week.
+              One sharp styling tip a week, plus first access as we launch in new cities.
               No spam, unsubscribe anytime.
             </p>
             <NewsletterForm />

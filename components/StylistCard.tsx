@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { slotsLeftThisWeek, extrasOf, type Stylist } from "@/lib/data";
+import { extrasOf, type Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
@@ -14,7 +14,6 @@ export default function StylistCard({
   matchScore?: number;
 }) {
   const badge = proximityLabel || (stylist.featured ? "Featured" : stylist.country);
-  const slots = slotsLeftThisWeek(stylist.id);
 
   return (
     <Link href={`/stylist/${stylist.id}`} className="card fade-up" style={{ overflow: "hidden", display: "block", padding: "0.55rem" }}>
@@ -94,9 +93,6 @@ export default function StylistCard({
         >
           <span>{stylist.reviewCount} reviews</span>
           <span style={{ color: "var(--ink)", fontWeight: 600 }}>from {formatGBP(stylist.startingPrice)}</span>
-        </div>
-        <div style={{ fontSize: "0.8rem", color: slots <= 3 ? "var(--accent)" : "var(--faint)", fontWeight: 500, marginTop: "0.45rem" }}>
-          {slots} slot{slots === 1 ? "" : "s"} left this week
         </div>
       </div>
     </Link>
