@@ -172,7 +172,7 @@ export default function ExplorePage() {
   return (
     <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
       <span className="eyebrow">{results.length} of {STYLISTS.length} stylists</span>
-      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
+      <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
         Browse stylists
       </h1>
       <p className="lede" style={{ marginTop: "1.1rem" }}>
@@ -191,7 +191,7 @@ export default function ExplorePage() {
                   ? `Showing stylists worldwide. ${nearCount} can also meet you in person near ${country}.`
                   : nearCount > 0
                     ? `${nearCount} stylist${nearCount === 1 ? "" : "s"} near ${country}, plus anyone there over video. Switch to international for the full roster.`
-                    : `No stylists near ${country} yet — switch to international to meet someone over video.`
+                    : `No stylists near ${country} yet. Switch to international to meet someone over video.`
                 : "Pick your country to see who's near you, or browse stylists internationally over video."}
             </div>
           </div>

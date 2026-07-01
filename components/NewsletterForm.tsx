@@ -49,7 +49,7 @@ export default function NewsletterForm() {
       </button>
       {state === "error" && (
         <p style={{ color: "#b3261e", fontSize: "0.85rem", width: "100%", margin: 0 }}>
-          Couldn&apos;t save that just now — please try again.
+          Couldn&apos;t save that just now. Please try again.
         </p>
       )}
     </form>

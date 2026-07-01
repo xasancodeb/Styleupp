@@ -69,7 +69,7 @@ export default function MatchRequest() {
         const prox = proximity(s, country || null, city || null);
         const local = prox !== "remote" && offersInPerson(s);
         const reasons: string[] = [];
-        if (prox === "same-city") reasons.push(`In ${s.city} — can meet you this week`);
+        if (prox === "same-city") reasons.push(`In ${s.city}, can meet you this week`);
         else if (prox === "same-country") reasons.push(`In ${s.country}, in-person possible`);
         else if (prox === "same-region") reasons.push("In your region");
         else reasons.push("Works with you over video");
@@ -117,7 +117,7 @@ export default function MatchRequest() {
         {!hasLocal && country && (
           <div style={{ background: "var(--accent-soft)", borderRadius: 14, padding: "0.9rem 1.1rem", marginTop: "0.9rem", fontSize: "0.9rem", lineHeight: 1.55 }}>
             {waitlisted ? (
-              <span style={{ fontWeight: 600 }}>You&apos;re on the list — £20 credit when we launch in {city || country}. 🎉</span>
+              <span style={{ fontWeight: 600 }}>You&apos;re on the list. £20 credit when we launch in {city || country}.</span>
             ) : (
               <>
                 <span style={{ fontWeight: 600 }}>We&apos;re not in {city || country} yet.</span>{" "}

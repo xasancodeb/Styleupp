@@ -167,7 +167,7 @@ export default function AdminPage() {
           {users.map((u) => (
             <div key={u.id as string} className="card" style={{ padding: "1rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
               <div>
-                <strong>{(u.full_name as string) || "—"}</strong>
+                <strong>{(u.full_name as string) || "Unnamed"}</strong>
                 <div style={{ color: "var(--faint)", fontSize: "0.85rem" }}>{u.email as string}</div>
               </div>
               <select className="input" style={{ maxWidth: 140 }} value={u.role as string} onChange={(e) => setUserRole(u.id as string, e.target.value)}>

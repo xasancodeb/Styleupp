@@ -65,7 +65,7 @@ export const PALETTES: Record<ColorSeason, Palette> = {
     name: "Cool Summer",
     tagline: "Soft, cool and elegant.",
     description:
-      "Summer colouring is cool and gentle. Soft, dusky shades with blue undertones flatter you most. Think of a hazy summer evening — muted, romantic and never harsh.",
+      "Summer colouring is cool and gentle. Soft, dusky shades with blue undertones flatter you most. Think of a hazy summer evening: muted, romantic and never harsh.",
     bestColors: [
       { name: "Dusty Rose", hex: "#C9A0A6" },
       { name: "Soft Lavender", hex: "#B8A9D6" },
@@ -91,7 +91,7 @@ export const PALETTES: Record<ColorSeason, Palette> = {
     name: "Deep Autumn",
     tagline: "Rich, warm and earthy.",
     description:
-      "Autumn colouring is warm and muted with depth. You glow in rich, earthy shades — the colours of turning leaves, spice and warm metals. Steer clear of cool pastels and stark contrasts.",
+      "Autumn colouring is warm and muted with depth. You glow in rich, earthy shades: the colours of turning leaves, spice and warm metals. Steer clear of cool pastels and stark contrasts.",
     bestColors: [
       { name: "Rust", hex: "#B7410E" },
       { name: "Olive", hex: "#708238" },
@@ -117,7 +117,7 @@ export const PALETTES: Record<ColorSeason, Palette> = {
     name: "Cool Winter",
     tagline: "Bold, cool and high-contrast.",
     description:
-      "Winter colouring is cool and clear with high contrast. You can carry the boldest, purest shades and true neutrals like black and white. Embrace drama — muted, dusty tones will wash you out.",
+      "Winter colouring is cool and clear with high contrast. You can carry the boldest, purest shades and true neutrals like black and white. Embrace drama, because muted, dusty tones will wash you out.",
     bestColors: [
       { name: "True Red", hex: "#C8102E" },
       { name: "Royal Blue", hex: "#1F3FB5" },
@@ -202,8 +202,8 @@ export const SEASON_QUIZ: QuizQuestion[] = [
     id: "contrast",
     question: "How much contrast is there between your hair, skin and eyes?",
     options: [
-      { label: "High — dark hair, light skin or bright eyes", scores: { winter: 3 } },
-      { label: "Low and soft — everything blends", scores: { summer: 3 } },
+      { label: "High: dark hair, light skin or bright eyes", scores: { winter: 3 } },
+      { label: "Low and soft, everything blends", scores: { summer: 3 } },
       { label: "Warm and medium", scores: { autumn: 2, spring: 1 } },
       { label: "Light and bright", scores: { spring: 3 } },
     ],
@@ -241,7 +241,7 @@ export const SEASON_QUIZ: QuizQuestion[] = [
     id: "goal",
     goal: true,
     question: "Last one: what brings you here?",
-    helper: "This doesn't change your season — it helps us match you with the right stylist.",
+    helper: "This doesn't change your season. It helps us match you with the right stylist.",
     options: [
       { label: "I want to know my colours", scores: {} },
       { label: "Rebuild my wardrobe properly", scores: {} },

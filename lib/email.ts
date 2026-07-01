@@ -110,11 +110,11 @@ export function bookingReminderEmail(opts: {
 
 export function stylistApprovedEmail(opts: { name: string }): { subject: string; html: string } {
   return {
-    subject: "Welcome to StyleUp — your application is approved",
+    subject: "Welcome to StyleUp: your application is approved",
     html: layout(
       "You're in! 🎉",
       `<p>Hi ${opts.name || "there"},</p>
-       <p>Congratulations — your stylist application has been approved. Sign in to complete your onboarding, set your availability and connect payouts.</p>
+       <p>Congratulations! Your stylist application has been approved. Sign in to complete your onboarding, set your availability and connect payouts.</p>
        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? ""}/stylist-dashboard" style="color:#C4923A">Go to your stylist dashboard →</a></p>`
     ),
   };

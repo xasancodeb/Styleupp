@@ -309,15 +309,15 @@ function BookingFlow() {
             </section>
           )}
 
-          {/* Order summary — full-width card at the end of the flow */}
+          {/* Order summary: full-width card at the end of the flow */}
           <section ref={summaryRef} className="card" style={{ padding: "1.5rem" }}>
             <h3 className="font-serif" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Order summary</h3>
             {stylist ? (
               <div style={{ marginTop: "0.9rem", display: "grid", gap: "0.6rem", fontSize: "0.92rem" }}>
                 <Row label="Stylist" value={stylist.name} />
-                <Row label="Service" value={service?.name ?? "—"} />
+                <Row label="Service" value={service?.name ?? "Choose above"} />
                 {service && <Row label="Format" value={FORMAT_LABEL[format]} />}
-                <Row label="When" value={date && slot ? `${formatDate(date)} · ${slot}` : "—"} />
+                <Row label="When" value={date && slot ? `${formatDate(date)} · ${slot}` : "Pick a time"} />
                 {breakdown && (
                   <>
                     <hr style={{ border: "none", borderTop: "1px solid var(--border)", margin: "0.4rem 0" }} />

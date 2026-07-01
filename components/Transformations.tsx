@@ -11,7 +11,7 @@ const STORIES = [
     img: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=800&h=1000&fit=crop&auto=format&q=75",
     name: "Colour analysis",
     service: "Sessions from £95",
-    line: "The right palette makes you look rested and expensive. The wrong one washes you out — most people wear the wrong one.",
+    line: "The right palette makes you look rested and expensive. The wrong one washes you out, and most people wear the wrong one.",
   },
   {
     img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&h=1000&fit=crop&auto=format&q=75",

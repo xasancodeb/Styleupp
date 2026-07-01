@@ -106,7 +106,7 @@ export const STYLISTS: Stylist[] = [
     id: "maya-thompson",
     name: "Maya Thompson",
     tagline: "Your colours, your budget, your actual life.",
-    bio: "Maya spent eight years as a buyer before switching to styling people instead of racks. She's known for colour-led capsules that work in real Canadian weather and real budgets — school runs, office days and date nights included. Clients call her honest, warm and scarily accurate.",
+    bio: "Maya spent eight years as a buyer before switching to styling people instead of racks. She's known for colour-led capsules that work in real Canadian weather and real budgets, with school runs, office days and date nights included. Clients call her honest, warm and scarily accurate.",
     city: "Toronto",
     country: "Canada",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -123,7 +123,7 @@ export const STYLISTS: Stylist[] = [
     services: [
       svc("maya-colour", "Colour Analysis", "A 90-minute session that finds your season, with a digital palette you can shop from forever.", 90, 120, "virtual"),
       svc("maya-capsule", "Real-Life Capsule", "We audit what you own and build a 30-piece wardrobe that mixes into 100+ outfits.", 120, 195, "hybrid"),
-      svc("maya-refresh", "Season Refresh", "A quick tune-up before a new season — what to keep, add and skip.", 60, 85, "virtual"),
+      svc("maya-refresh", "Season Refresh", "A quick tune-up before a new season: what to keep, add and skip.", 60, 85, "virtual"),
     ],
     reviews: [
       { id: "r1", author: "Sarah M.", rating: 5, date: "2026-05-14", comment: "Maya found my colours and suddenly shopping is easy. Best money I've spent on myself in years." },
@@ -134,7 +134,7 @@ export const STYLISTS: Stylist[] = [
     id: "jess-carter",
     name: "Jess Carter",
     tagline: "Great style shouldn't require a big city.",
-    bio: "Jess styles real people in Winnipeg — teachers, nurses, new mums, retirees — and proves you don't need designer budgets or a downtown postcode to look put together. She's the stylist you text a fitting-room photo to. Practical, kind and allergic to fuss.",
+    bio: "Jess styles real people in Winnipeg, from teachers and nurses to new mums and retirees, and proves you don't need designer budgets or a downtown postcode to look put together. She's the stylist you text a fitting-room photo to. Practical, kind and allergic to fuss.",
     city: "Winnipeg",
     country: "Canada",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -150,7 +150,7 @@ export const STYLISTS: Stylist[] = [
     featured: true,
     services: [
       svc("jess-detox", "Closet Detox", "Two hours in your closet. We keep what works, release what doesn't, and list what's missing.", 120, 95, "in-person"),
-      svc("jess-confidence", "Confidence Reset", "For new chapters — new job, new body, new you. Gentle, practical, transformative.", 90, 80, "virtual"),
+      svc("jess-confidence", "Confidence Reset", "For new chapters: new job, new body, new you. Gentle, practical, transformative.", 90, 80, "virtual"),
       svc("jess-shop", "Shop Together", "We hit Polo Park or wherever you shop. You leave with outfits, not orphans.", 120, 110, "in-person"),
     ],
     reviews: [
@@ -189,7 +189,7 @@ export const STYLISTS: Stylist[] = [
     id: "andre-silva",
     name: "Andre Silva",
     tagline: "Menswear without the mystery.",
-    bio: "Andre helps men who 'don't care about clothes' discover they actually do — they just hated shopping. Fit-first, low-maintenance wardrobes for work, weekends and weddings. He'll meet you at the mall so you never have to go alone again.",
+    bio: "Andre helps men who 'don't care about clothes' discover they actually do. They just hated shopping. Fit-first, low-maintenance wardrobes for work, weekends and weddings. He'll meet you at the mall so you never have to go alone again.",
     city: "Toronto",
     country: "Canada",
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -216,7 +216,7 @@ export const STYLISTS: Stylist[] = [
     id: "emily-sinclair",
     name: "Emily Sinclair",
     tagline: "Dress like the promotion already happened.",
-    bio: "A former magazine market editor, Emily styles New York's rising professionals — first big job, first board seat, first time on stage. She builds authoritative wardrobes that stay comfortable through fourteen-hour days and travel without wrinkling.",
+    bio: "A former magazine market editor, Emily styles New York's rising professionals: first big job, first board seat, first time on stage. She builds authoritative wardrobes that stay comfortable through fourteen-hour days and travel without wrinkling.",
     city: "New York",
     country: "United States",
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -232,7 +232,7 @@ export const STYLISTS: Stylist[] = [
     featured: true,
     services: [
       svc("emily-presence", "Executive Presence", "Command the room. A head-to-toe working wardrobe for leaders.", 90, 185, "virtual"),
-      svc("emily-interview", "Big Moment Prep", "Interview, keynote, press day — styled and camera-checked.", 60, 130, "virtual"),
+      svc("emily-interview", "Big Moment Prep", "Interview, keynote, press day. Styled and camera-checked.", 60, 130, "virtual"),
       svc("emily-shop", "Madison Ave in a Morning", "A ruthless, brilliant personal shopping sprint.", 180, 320, "in-person"),
     ],
     reviews: [
@@ -244,7 +244,7 @@ export const STYLISTS: Stylist[] = [
     id: "danielle-brooks",
     name: "Danielle Brooks",
     tagline: "Main-character energy, on demand.",
-    bio: "Danielle came up dressing music-video sets in LA and brings that eye to real people's big moments — birthdays, galas, engagement shoots, red-carpet-adjacent everything. If you want to be looked at, she's your girl. If you want to hide, she'll fix that too.",
+    bio: "Danielle came up dressing music-video sets in LA and brings that eye to real people's big moments: birthdays, galas, engagement shoots, red-carpet-adjacent everything. If you want to be looked at, she's your girl. If you want to hide, she'll fix that too.",
     city: "Los Angeles",
     country: "United States",
     avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -260,7 +260,7 @@ export const STYLISTS: Stylist[] = [
     featured: true,
     services: [
       svc("dani-event", "Event Styling", "Head-to-toe for the night that matters. Fittings included.", 120, 220, "hybrid"),
-      svc("dani-shoot", "Photoshoot Ready", "Engagement, branding, birthday shoot — styled for camera.", 90, 175, "virtual"),
+      svc("dani-shoot", "Photoshoot Ready", "Engagement, branding, birthday shoot. Styled for camera.", 90, 175, "virtual"),
     ],
     reviews: [
       { id: "r1", author: "Tiana W.", rating: 5, date: "2026-04-26", comment: "My 30th birthday outfit stopped the room. Danielle is a cheat code." },
@@ -271,7 +271,7 @@ export const STYLISTS: Stylist[] = [
     id: "marcus-reid",
     name: "Marcus Reid",
     tagline: "Sharp enough for the boardroom, easy enough for Sunday.",
-    bio: "A former college athlete who had to learn dressing a changing body the hard way, Marcus now does it for clients across Chicago. Suiting, smart-casual and the mysterious middle ground — decoded, fitted and photographed so you can repeat it.",
+    bio: "A former college athlete who had to learn dressing a changing body the hard way, Marcus now does it for clients across Chicago. Suiting, smart-casual and the mysterious middle ground, decoded, fitted and photographed so you can repeat it.",
     city: "Chicago",
     country: "United States",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -298,7 +298,7 @@ export const STYLISTS: Stylist[] = [
     id: "grace-adeyemi",
     name: "Grace Adeyemi",
     tagline: "London's colour whisperer.",
-    bio: "Grace trained in colour theory before it was a trend and has analysed over a thousand faces since. Her sessions are famous for the drape reveal — the moment the right colour goes up and the whole room says 'oh'. Warm, exact and completely addictive.",
+    bio: "Grace trained in colour theory before it was a trend and has analysed over a thousand faces since. Her sessions are famous for the drape reveal: the moment the right colour goes up and the whole room says 'oh'. Warm, exact and completely addictive.",
     city: "London",
     country: "United Kingdom",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -314,7 +314,7 @@ export const STYLISTS: Stylist[] = [
     featured: true,
     services: [
       svc("grace-colour", "Signature Colour Analysis", "The full drape experience, in person or over video, with a shoppable palette.", 90, 135, "hybrid"),
-      svc("grace-palette", "Palette Refresh", "Already know your season? We take it deeper — contrast, combinations, makeup tones.", 60, 95, "virtual"),
+      svc("grace-palette", "Palette Refresh", "Already know your season? We take it deeper: contrast, combinations, makeup tones.", 60, 95, "virtual"),
     ],
     reviews: [
       { id: "r1", author: "Charlotte E.", rating: 5, date: "2026-05-16", comment: "The drape moment is real. I gasped. My mum gasped. Book her." },
@@ -367,7 +367,7 @@ export const STYLISTS: Stylist[] = [
     startingPrice: 100,
     featured: false,
     services: [
-      svc("tom-groom", "Groom & Party", "The groom, the party, the fathers — coordinated and impeccable.", 150, 260, "in-person"),
+      svc("tom-groom", "Groom & Party", "The groom, the party, the fathers. Coordinated and impeccable.", 150, 260, "in-person"),
       svc("tom-tailoring", "Tailoring Consult", "What to buy, what to alter, and exactly what to ask your tailor for.", 60, 110, "virtual"),
     ],
     reviews: [
@@ -379,7 +379,7 @@ export const STYLISTS: Stylist[] = [
     id: "sofia-marchetti",
     name: "Sofia Marchetti",
     tagline: "Milanese elegance, wherever you are.",
-    bio: "Sofia has dressed brides and gala guests across Europe for fifteen years, and her video sessions are legendary — clients in Toronto and Texas book her for the Italian eye alone. If the moment is once-in-a-lifetime, this is who you fly in. Or video in.",
+    bio: "Sofia has dressed brides and gala guests across Europe for fifteen years, and her video sessions are legendary. Clients in Toronto and Texas book her for the Italian eye alone. If the moment is once-in-a-lifetime, this is who you fly in. Or video in.",
     city: "Milan",
     country: "Italy",
     avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=750&fit=crop&crop=faces&auto=format&q=70",
@@ -421,7 +421,7 @@ export const STYLISTS: Stylist[] = [
     startingPrice: 90,
     featured: false,
     services: [
-      svc("camille-capsule", "La Garde-Robe", "The classic French capsule — fewer, better, forever — built around your life.", 120, 200, "virtual"),
+      svc("camille-capsule", "La Garde-Robe", "The classic French capsule. Fewer, better, forever, built around your life.", 120, 200, "virtual"),
       svc("camille-edit", "The Edit", "A one-hour video edit of your closet with a Parisian eye.", 60, 90, "virtual"),
     ],
     reviews: [
@@ -570,8 +570,7 @@ export function getService(stylistId: string, serviceId: string): Service | unde
 }
 
 // ───────────────────────────── Stylist gender ───────────────────────────────
-// Clients can choose the gender of their stylist. StyleUp's audience is mainly
-// women (men are welcome too), and the roster reflects that balance.
+// Clients can choose the gender of the stylist they feel most comfortable with.
 export type Gender = "female" | "male";
 
 const STYLIST_GENDER: Record<string, Gender> = {

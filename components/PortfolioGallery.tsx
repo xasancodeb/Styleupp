@@ -39,7 +39,7 @@ export default function PortfolioGallery({ images, name }: { images: string[]; n
           >
             <Image
               src={src}
-              alt={`${name} — look ${i + 1}`}
+              alt={`${name}, look ${i + 1}`}
               fill
               sizes="(max-width: 700px) 45vw, 180px"
               style={{ objectFit: "cover" }}
@@ -83,7 +83,7 @@ export default function PortfolioGallery({ images, name }: { images: string[]; n
           </button>
           <img
             src={images[open]}
-            alt={`${name} — look ${open + 1}`}
+            alt={`${name}, look ${open + 1}`}
             onClick={(e) => e.stopPropagation()}
             style={{ maxWidth: "min(680px, 92vw)", maxHeight: "86vh", objectFit: "contain", borderRadius: 12, boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}
           />

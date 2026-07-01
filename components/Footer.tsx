@@ -5,7 +5,6 @@ import NewsletterForm from "@/components/NewsletterForm";
 const FOOTER_LINKS = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Stylists" },
-  { href: "/gift", label: "Gift cards" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
   { href: "/corporate", label: "Corporate" },

@@ -45,7 +45,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
           <div className="card entry-info" style={{ padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
               <span className="eyebrow">{stylist.yearsExperience} yrs · {stylist.city}, {stylist.country}</span>
-              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.1rem, 5vw, 3.4rem)", letterSpacing: "-0.04em", lineHeight: 1.0, marginTop: "1rem" }}>
+              <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "clamp(2.1rem, 5vw, 3.4rem)", letterSpacing: "-0.04em", lineHeight: 1.0, marginTop: "1rem" }}>
                 {stylist.name}
               </h1>
               <p style={{ marginTop: "1rem", fontSize: "1.05rem", color: "var(--dim)", maxWidth: "46ch" }}>“{stylist.tagline}”</p>
@@ -238,7 +238,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 </div>
                 <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.5rem", lineHeight: 1.55 }}>
                   Love {stylist.name.split(" ")[0]}&apos;s vibe? Book a video session from anywhere in the
-                  world — same stylist, same eye, your wardrobe on camera.
+                  world. Same stylist, same eye, your wardrobe on camera.
                 </p>
                 <p style={{ color: "var(--faint)", fontSize: "0.82rem", marginTop: "0.6rem" }}>
                   Speaks {stylist.languages.join(", ")} · based in {stylist.city}

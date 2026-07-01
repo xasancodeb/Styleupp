@@ -39,9 +39,9 @@ function AskSheet({ name, onClose }: { name: string; onClose: () => void }) {
         }),
       });
       if (res.ok) setSent(true);
-      else setError("Couldn't send just now — please try again.");
+      else setError("Couldn't send just now. Please try again.");
     } catch {
-      setError("Couldn't send just now — please check your connection.");
+      setError("Couldn't send just now. Please check your connection.");
     } finally {
       setSending(false);
     }
@@ -74,14 +74,14 @@ function AskSheet({ name, onClose }: { name: string; onClose: () => void }) {
           <>
             <h3 style={{ fontWeight: 700, fontSize: "1.15rem", letterSpacing: "-0.02em" }}>Ask {first} a question</h3>
             <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.3rem" }}>
-              Not sure which service fits, or whether {first} works with your situation? Just ask — no booking needed.
+              Not sure which service fits, or whether {first} works with your situation? Just ask. No booking needed.
             </p>
             <textarea
               className="input"
               rows={4}
               autoFocus
               style={{ resize: "vertical", marginTop: "0.9rem" }}
-              placeholder={`e.g. "Hi ${first} — I have a wedding in six weeks and no idea where to start. Is that something you do?"`}
+              placeholder={`e.g. "Hi ${first}, I have a wedding in six weeks and no idea where to start. Is that something you do?"`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />

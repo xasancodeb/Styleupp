@@ -230,11 +230,11 @@ export default function StylistPortalPage() {
           />
           <p style={{ color: "var(--faint)", fontSize: "0.8rem", marginTop: "0.4rem" }}>
             Clients book the vibe they see. Outfits you styled, editorial shots, happy clients (with
-            permission) — this gallery is your shop window.
+            permission). This gallery is your shop window.
           </p>
         </Field>
 
-        {/* Live profile strength — complete profiles get booked */}
+        {/* Live profile strength: complete profiles get booked */}
         {(() => {
           const { pct, missing } = profileStrength(form);
           return (
@@ -248,7 +248,7 @@ export default function StylistPortalPage() {
               </div>
               <p style={{ color: "var(--dim)", fontSize: "0.84rem", marginTop: "0.6rem", lineHeight: 1.5 }}>
                 {pct === 100
-                  ? "Complete. Profiles like this get booked first — especially for video sessions, where your profile is the meeting."
+                  ? "Complete. Profiles like this get booked first, especially for video sessions, where your profile is the meeting."
                   : `Complete profiles get roughly 3× more bookings. Still missing: ${missing.slice(0, 3).join(", ")}${missing.length > 3 ? "…" : "."}`}
               </p>
             </div>
