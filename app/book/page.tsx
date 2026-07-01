@@ -52,10 +52,18 @@ function BookingFlow() {
     return opts;
   }, [stylist]);
 
-  // Default the meeting format sensibly whenever the service changes.
+  // Default the meeting format sensibly whenever the service changes. A
+  // ?format=virtual deep link (e.g. "book a video session" on a profile)
+  // wins over the heuristic.
   useEffect(() => {
     if (!service) return;
-    const pref: MeetFormat = service.sessionType === "virtual" ? "virtual" : "in-person";
+    const wanted = params.get("format");
+    const pref: MeetFormat =
+      wanted === "virtual" || wanted === "in-person" || wanted === "shopping"
+        ? wanted
+        : service.sessionType === "virtual"
+        ? "virtual"
+        : "in-person";
     setFormat(formatOptions.includes(pref) ? pref : formatOptions[0] ?? "virtual");
     setMeetNote("");
     // eslint-disable-next-line react-hooks/exhaustive-deps

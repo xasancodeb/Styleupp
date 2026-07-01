@@ -107,6 +107,9 @@ export const stylistApplicationSchema = z.object({
   specialties: z.array(z.string().max(60)).max(20).default([]),
   portfolio_url: z.string().url().nullish().or(z.literal("")),
   about: z.string().max(3000).nullish(),
+  philosophy: z.string().max(200).nullish(),
+  vibes: z.string().max(120).nullish(),
+  look_photos: z.array(z.string().max(500)).max(24).default([]),
 });
 
 export const colorResultSchema = z.object({

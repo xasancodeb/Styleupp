@@ -459,6 +459,95 @@ export const STYLISTS: Stylist[] = [
   },
 ];
 
+// ───────────────────────── Profile extras (the vibe) ────────────────────────
+// The parts of a complete profile that let a client feel a stylist's aesthetic
+// before booking — especially for international video sessions, where the
+// profile IS the meeting.
+export interface StylistExtras {
+  vibes: string[];
+  philosophy: string;
+  brands: string[];
+}
+
+const EXTRAS: Record<string, StylistExtras> = {
+  "amara-okafor": {
+    vibes: ["Colour-brave", "Sharp tailoring", "Statement-making"],
+    philosophy: "Colour is confidence you can put on. Wear it like you mean it.",
+    brands: ["Roksanda", "COS", "Christopher John Rogers", "Arket"],
+  },
+  "kenji-mori": {
+    vibes: ["Quiet luxury", "Minimal", "Fit-obsessed"],
+    philosophy: "Own fewer, better things — and make every one of them fit perfectly.",
+    brands: ["Auralee", "Lemaire", "Margaret Howell", "Uniqlo U"],
+  },
+  "isabella-rossi": {
+    vibes: ["Old-world glamour", "Romantic", "Occasion-ready"],
+    philosophy: "An occasion is a stage. Dress for the memory, not the mirror.",
+    brands: ["Max Mara", "Alessandra Rich", "Self-Portrait", "Zimmermann"],
+  },
+  "noah-bennett": {
+    vibes: ["Modern classic", "Sharp", "Low-maintenance"],
+    philosophy: "A man needs one great suit, three great shirts and zero excuses.",
+    brands: ["Suitsupply", "Drake's", "Sunspel", "J.Crew"],
+  },
+  "chloe-laurent": {
+    vibes: ["Parisian ease", "Effortless", "Sustainable"],
+    philosophy: "Style is what remains when you stop trying so hard.",
+    brands: ["Sézane", "A.P.C.", "Rouje", "Veja"],
+  },
+  "diego-fernandez": {
+    vibes: ["Joyful colour", "Playful", "Confidence-first"],
+    philosophy: "Nobody ever changed their life in beige.",
+    brands: ["Paloma Wool", "Zara Studio", "Adolfo Domínguez", "Camper"],
+  },
+  "aisha-rahman": {
+    vibes: ["Modest luxury", "Elegant", "Occasion-ready"],
+    philosophy: "Modesty and glamour were never opposites. I prove it daily.",
+    brands: ["The Modist edit", "Bouguessa", "Max Mara", "Dior"],
+  },
+  "lucas-silva": {
+    vibes: ["Relaxed", "Warm-weather smart", "Travel-light"],
+    philosophy: "Look sharp at 35 degrees. Linen is a lifestyle.",
+    brands: ["Osklen", "Percival", "Orlebar Brown", "Havaianas"],
+  },
+  "freya-nilsson": {
+    vibes: ["Scandi calm", "Neutral palette", "Built to last"],
+    philosophy: "Buy the coat you'll still love in ten winters.",
+    brands: ["Toteme", "Filippa K", "Acne Studios", "& Other Stories"],
+  },
+  "mei-lin": {
+    vibes: ["Creative", "Proportion-play", "Statement pieces"],
+    philosophy: "One bold piece, styled with restraint, beats ten safe ones.",
+    brands: ["Shushu/Tong", "COS", "Marni", "Uma Wang"],
+  },
+  "olivia-grant": {
+    vibes: ["Feel-good", "Every body", "Real life"],
+    philosophy: "Dress the body you have today, and watch what it does for you.",
+    brands: ["Whistles", "ASOS Edition", "Universal Standard", "M&S"],
+  },
+  "raj-mehta": {
+    vibes: ["Heritage-modern", "Artisan textiles", "Festive"],
+    philosophy: "Tradition isn't a costume. It's a superpower, tailored.",
+    brands: ["Sabyasachi", "Fabindia", "Kartik Research", "Uniqlo"],
+  },
+  "sophie-dubois": {
+    vibes: ["Executive polish", "Travel-proof", "Understated power"],
+    philosophy: "Walk in looking like the decision has already gone your way.",
+    brands: ["Theory", "Aritzia Babaton", "Hugo Boss", "Everlane"],
+  },
+};
+
+export function extrasOf(s: Stylist | string): StylistExtras {
+  const id = typeof s === "string" ? s : s.id;
+  return (
+    EXTRAS[id] ?? {
+      vibes: ["Personal", "Considered"],
+      philosophy: "Great style is personal. Let's find yours.",
+      brands: [],
+    }
+  );
+}
+
 // ─────────────────────────── Service menu ───────────────────────────────
 // The marketplace-level menu of what you can book, shown on the landing page.
 // Each entry deep-links into explore pre-filtered to the matching specialty.

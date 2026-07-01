@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getStylist, STYLISTS, getPortfolio, offersInPerson, offersInStoreShopping } from "@/lib/data";
+import { getStylist, STYLISTS, getPortfolio, offersInPerson, offersInStoreShopping, extrasOf } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
 import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
@@ -48,6 +48,12 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 {stylist.name}
               </h1>
               <p style={{ marginTop: "1rem", fontSize: "1.05rem", color: "var(--dim)", maxWidth: "46ch" }}>“{stylist.tagline}”</p>
+              <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", marginTop: "1rem", alignItems: "center" }}>
+                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--faint)" }}>The vibe:</span>
+                {extrasOf(stylist).vibes.map((v) => (
+                  <span key={v} className="chip" style={{ background: "var(--accent-soft)", color: "var(--accent)", fontWeight: 600 }}>{v}</span>
+                ))}
+              </div>
             </div>
             <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
               {stylist.specialties.map((s) => (
@@ -85,6 +91,35 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 {offersInPerson(stylist) && <span className="chip">In person · {stylist.city}</span>}
                 {offersInStoreShopping(stylist) && <span className="chip">Shops in store with you</span>}
               </div>
+
+              <blockquote
+                style={{
+                  margin: "1.5rem 0 0",
+                  padding: "1.1rem 1.3rem",
+                  background: "var(--bg-2)",
+                  borderRadius: 14,
+                  fontSize: "1.05rem",
+                  fontWeight: 500,
+                  letterSpacing: "-0.015em",
+                  lineHeight: 1.5,
+                }}
+              >
+                “{extrasOf(stylist).philosophy}”
+                <footer style={{ fontSize: "0.82rem", fontWeight: 400, color: "var(--faint)", marginTop: "0.4rem" }}>
+                  {stylist.name.split(" ")[0]}&apos;s styling philosophy
+                </footer>
+              </blockquote>
+
+              {extrasOf(stylist).brands.length > 0 && (
+                <div style={{ marginTop: "1.25rem" }}>
+                  <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Brands {stylist.name.split(" ")[0]} loves to style</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.6rem" }}>
+                    {extrasOf(stylist).brands.map((b) => (
+                      <span key={b} className="chip">{b}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </section>
 
             <section className="card" style={{ padding: "1.75rem" }}>
@@ -192,6 +227,25 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
                 the booking flow.
               </p>
             </div>
+
+            {stylist.sessionTypes.includes("virtual") && (
+              <div className="card" style={{ padding: "1.5rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#34c759", flexShrink: 0 }} />
+                  <strong style={{ letterSpacing: "-0.015em" }}>Not near {stylist.city}? No problem.</strong>
+                </div>
+                <p style={{ color: "var(--dim)", fontSize: "0.9rem", marginTop: "0.5rem", lineHeight: 1.55 }}>
+                  Love {stylist.name.split(" ")[0]}&apos;s vibe? Book a video session from anywhere in the
+                  world — same stylist, same eye, your wardrobe on camera.
+                </p>
+                <p style={{ color: "var(--faint)", fontSize: "0.82rem", marginTop: "0.6rem" }}>
+                  Speaks {stylist.languages.join(", ")} · based in {stylist.city}
+                </p>
+                <Link href={`/book?stylist=${stylist.id}&format=virtual`} className="btn btn-outline" style={{ width: "100%", marginTop: "0.9rem" }}>
+                  Book a video session
+                </Link>
+              </div>
+            )}
           </aside>
         </div>
 

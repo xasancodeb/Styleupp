@@ -13,6 +13,9 @@ interface FormState {
   specialties: string[];
   portfolioUrl: string;
   about: string;
+  philosophy: string;
+  vibes: string;
+  lookPhotos: string;
 }
 
 const EMPTY: FormState = {
@@ -24,7 +27,33 @@ const EMPTY: FormState = {
   specialties: [],
   portfolioUrl: "",
   about: "",
+  philosophy: "",
+  vibes: "",
+  lookPhotos: "",
 };
+
+// Clients book vibes, not CVs — a complete profile is the product. This
+// mirrors what we surface on stylist pages: photos, philosophy, vibe words.
+function profileStrength(f: FormState): { pct: number; missing: string[] } {
+  const photoCount = f.lookPhotos.split("\n").map((l) => l.trim()).filter(Boolean).length;
+  const checks: [boolean, string][] = [
+    [Boolean(f.fullName), "your name"],
+    [Boolean(f.email), "your email"],
+    [Boolean(f.city && f.country), "your city & country"],
+    [Boolean(f.yearsExperience), "years of experience"],
+    [f.specialties.length > 0, "at least one specialty"],
+    [f.about.trim().length >= 80, "a proper bio (a few sentences)"],
+    [Boolean(f.philosophy.trim()), "your styling philosophy"],
+    [f.vibes.trim().length > 0, "three vibe words"],
+    [photoCount >= 4, "at least 4 photos of your looks"],
+    [Boolean(f.portfolioUrl), "a portfolio link or Instagram"],
+  ];
+  const passed = checks.filter(([ok]) => ok).length;
+  return {
+    pct: Math.round((passed / checks.length) * 100),
+    missing: checks.filter(([ok]) => !ok).map(([, label]) => label),
+  };
+}
 
 export default function StylistPortalPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -66,6 +95,9 @@ export default function StylistPortalPage() {
           specialties: form.specialties,
           portfolio_url: form.portfolioUrl || null,
           about: form.about || null,
+          philosophy: form.philosophy || null,
+          vibes: form.vibes || null,
+          look_photos: form.lookPhotos.split("\n").map((l) => l.trim()).filter(Boolean),
         }),
       }).catch(() => null);
     } finally {
@@ -164,9 +196,64 @@ export default function StylistPortalPage() {
             style={{ resize: "vertical" }}
             value={form.about}
             onChange={(e) => setForm({ ...form, about: e.target.value })}
-            placeholder="Your styling philosophy, the clients you love working with, and what makes your approach unique…"
+            placeholder="The clients you love working with, and what makes your approach unique…"
           />
         </Field>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }} className="form-grid">
+          <Field label="Your styling philosophy, in one line">
+            <input
+              className="input"
+              value={form.philosophy}
+              onChange={(e) => setForm({ ...form, philosophy: e.target.value })}
+              placeholder='e.g. "Nobody ever changed their life in beige."'
+            />
+          </Field>
+          <Field label="Your vibe, in three words">
+            <input
+              className="input"
+              value={form.vibes}
+              onChange={(e) => setForm({ ...form, vibes: e.target.value })}
+              placeholder="e.g. Quiet luxury · Minimal · Fit-obsessed"
+            />
+          </Field>
+        </div>
+
+        <Field label="Photos of your looks (one image link per line, at least 4)">
+          <textarea
+            className="input"
+            rows={4}
+            style={{ resize: "vertical" }}
+            value={form.lookPhotos}
+            onChange={(e) => setForm({ ...form, lookPhotos: e.target.value })}
+            placeholder={"https://…/look-1.jpg\nhttps://…/look-2.jpg"}
+          />
+          <p style={{ color: "var(--faint)", fontSize: "0.8rem", marginTop: "0.4rem" }}>
+            Clients book the vibe they see. Outfits you styled, editorial shots, happy clients (with
+            permission) — this gallery is your shop window.
+          </p>
+        </Field>
+
+        {/* Live profile strength — complete profiles get booked */}
+        {(() => {
+          const { pct, missing } = profileStrength(form);
+          return (
+            <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "1rem 1.2rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>Profile strength</span>
+                <span style={{ fontWeight: 700, color: pct === 100 ? "#1d7a3c" : "var(--ink)" }}>{pct}%</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 999, background: "var(--border)", marginTop: "0.6rem", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${pct}%`, borderRadius: 999, background: pct === 100 ? "#34c759" : "var(--ink)", transition: "width 0.35s var(--ease)" }} />
+              </div>
+              <p style={{ color: "var(--dim)", fontSize: "0.84rem", marginTop: "0.6rem", lineHeight: 1.5 }}>
+                {pct === 100
+                  ? "Complete. Profiles like this get booked first — especially for video sessions, where your profile is the meeting."
+                  : `Complete profiles get roughly 3× more bookings. Still missing: ${missing.slice(0, 3).join(", ")}${missing.length > 3 ? "…" : "."}`}
+              </p>
+            </div>
+          );
+        })()}
 
         {error && <p style={{ color: "#b3261e", fontSize: "0.9rem" }}>{error}</p>}
 

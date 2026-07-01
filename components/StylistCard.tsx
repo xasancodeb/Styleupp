@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { slotsLeftThisWeek, type Stylist } from "@/lib/data";
+import { slotsLeftThisWeek, extrasOf, type Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
@@ -77,7 +77,7 @@ export default function StylistCard({
           </span>
         </div>
         <div style={{ fontSize: "0.85rem", color: "var(--dim)", marginTop: "0.3rem" }}>
-          {stylist.city} · {stylist.specialties[0]}
+          {stylist.city} · {extrasOf(stylist).vibes[0]}
         </div>
         <p style={{ fontSize: "0.9rem", color: "var(--dim)", lineHeight: 1.45, marginTop: "0.6rem", minHeight: "2.6em" }}>{stylist.tagline}</p>
         <div
