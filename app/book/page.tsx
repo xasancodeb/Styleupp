@@ -335,6 +335,7 @@ function BookingFlow() {
             </button>
             <div style={{ marginTop: "1.1rem", paddingTop: "1.1rem", borderTop: "1px solid var(--border)", display: "grid", gap: "0.55rem" }}>
               {[
+                ["♥", "Love your first session or it's free"],
                 ["✓", "Free cancellation up to 48 hours before"],
                 ["✓", "Every stylist is personally vetted"],
                 ["✓", "Secure payment. You're never charged twice."],

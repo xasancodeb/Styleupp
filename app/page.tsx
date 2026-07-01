@@ -1,10 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFeatured } from "@/lib/data";
+import { getFeatured, SERVICE_MENU } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
 import ColorQuiz from "@/components/ColorQuiz";
 import PaletteRail from "@/components/PaletteRail";
+import LiveTicker from "@/components/LiveTicker";
+import PromiseStrip from "@/components/PromiseStrip";
+import Transformations from "@/components/Transformations";
+import FAQ from "@/components/FAQ";
 
 const STEPS = [
   { n: "1", title: "Take the quiz", body: "Two minutes, no sign-up. It finds your colour season — the shades that make you look rested, radiant and expensive." },
@@ -57,8 +61,13 @@ export default function HomePage() {
                 <Link href="/explore" className="btn btn-outline">Find someone near me</Link>
               </div>
             </Reveal>
+            <Reveal delay={220}>
+              <div style={{ marginTop: "1.6rem" }}>
+                <LiveTicker />
+              </div>
+            </Reveal>
             <Reveal delay={240}>
-              <div style={{ display: "flex", gap: "2.2rem", marginTop: "2.6rem", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "2.2rem", marginTop: "2rem", flexWrap: "wrap" }}>
                 {[
                   { k: "Stylists", v: "13" },
                   { k: "Avg. rating", v: "4.9" },
@@ -93,6 +102,15 @@ export default function HomePage() {
         <PaletteRail />
       </section>
 
+      {/* the promise */}
+      <section className="section" style={{ padding: "3.5rem 1.75rem 0" }}>
+        <Reveal>
+          <div style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", padding: "2rem 0" }}>
+            <PromiseStrip />
+          </div>
+        </Reveal>
+      </section>
+
       {/* ──────────────────────────── How it works ─────────────────────────── */}
       <section style={{ background: "var(--bg-2)", marginTop: "2rem" }}>
         <div className="section" style={{ padding: "4.5rem 1.75rem" }}>
@@ -116,8 +134,34 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ──────────────────────────── Services ─────────────────────────────── */}
+      <section className="section" style={{ padding: "4.5rem 1.75rem 1rem" }}>
+        <Reveal>
+          <span className="eyebrow">What you can book</span>
+          <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
+            Six ways to level up
+          </h2>
+        </Reveal>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
+          {SERVICE_MENU.map((svc, i) => (
+            <Reveal key={svc.name} delay={(i % 3) * 80}>
+              <Link href={`/explore?specialty=${encodeURIComponent(svc.specialty)}`} className="card" style={{ display: "block", padding: "1.6rem", height: "100%" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "0.8rem" }}>
+                  <h3 style={{ fontWeight: 600, fontSize: "1.15rem", letterSpacing: "-0.02em" }}>{svc.name}</h3>
+                  <span style={{ fontSize: "0.84rem", color: "var(--faint)", whiteSpace: "nowrap" }}>from £{svc.from}</span>
+                </div>
+                <p style={{ color: "var(--dim)", fontSize: "0.92rem", marginTop: "0.5rem", lineHeight: 1.5 }}>{svc.blurb}</p>
+                <span style={{ display: "inline-block", marginTop: "0.9rem", fontSize: "0.88rem", fontWeight: 600, color: "var(--accent)" }}>
+                  See stylists →
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
       {/* ──────────────────────────── Featured ─────────────────────────────── */}
-      <section className="section" style={{ padding: "1rem 1.75rem 5rem" }}>
+      <section className="section" style={{ padding: "3.5rem 1.75rem 5rem" }}>
         <Reveal>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
             <div>
@@ -166,6 +210,22 @@ export default function HomePage() {
         </Reveal>
       </section>
 
+      {/* ─────────────────────── See the difference ────────────────────────── */}
+      <section className="section" style={{ padding: "0 1.75rem 4.5rem" }}>
+        <Reveal>
+          <span className="eyebrow">Real transformations</span>
+          <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
+            Same person. Right colours.
+          </h2>
+          <p style={{ color: "var(--dim)", marginTop: "0.6rem", maxWidth: 560 }}>
+            Hover over each photo to see what happens when someone starts wearing their season.
+          </p>
+        </Reveal>
+        <div style={{ marginTop: "2rem" }}>
+          <Transformations />
+        </div>
+      </section>
+
       {/* ─────────────────────────── Loved by clients ──────────────────────── */}
       <section style={{ background: "var(--bg-2)" }}>
         <div className="section" style={{ padding: "4.5rem 1.75rem" }}>
@@ -190,6 +250,19 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ───────────────────────────────── FAQ ─────────────────────────────── */}
+      <section className="section" style={{ padding: "4.5rem 1.75rem 0", maxWidth: 880 }}>
+        <Reveal>
+          <span className="eyebrow">Good to know</span>
+          <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
+            Questions, answered
+          </h2>
+        </Reveal>
+        <div style={{ marginTop: "1.75rem" }}>
+          <FAQ />
         </div>
       </section>
 

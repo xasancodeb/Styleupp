@@ -459,6 +459,56 @@ export const STYLISTS: Stylist[] = [
   },
 ];
 
+// ─────────────────────────── Service menu ───────────────────────────────
+// The marketplace-level menu of what you can book, shown on the landing page.
+// Each entry deep-links into explore pre-filtered to the matching specialty.
+export const SERVICE_MENU = [
+  {
+    name: "Colour Analysis",
+    specialty: "Colour Analysis",
+    from: 100,
+    blurb: "Find your season and get a personal palette you can shop from forever.",
+  },
+  {
+    name: "Capsule Wardrobe",
+    specialty: "Capsule Wardrobe",
+    from: 95,
+    blurb: "A tightly edited wardrobe where everything goes with everything.",
+  },
+  {
+    name: "Shopping Trip",
+    specialty: "Personal Shopping",
+    from: 100,
+    blurb: "Your stylist joins you in the stores. Two hours, zero wasted purchases.",
+  },
+  {
+    name: "Occasion & Bridal",
+    specialty: "Occasion & Event",
+    from: 170,
+    blurb: "Weddings, galas, milestone moments. Show up unforgettable.",
+  },
+  {
+    name: "Executive Presence",
+    specialty: "Corporate & Executive",
+    from: 130,
+    blurb: "Command the room. Styling for leaders and the about-to-be-promoted.",
+  },
+  {
+    name: "Wardrobe Detox",
+    specialty: "Wardrobe Detox",
+    from: 110,
+    blurb: "Clear the clutter, rediscover what you love, and see what's missing.",
+  },
+] as const;
+
+/** Deterministic "slots left this week" (2–5) so scarcity is stable per
+    stylist and identical between server and client renders. */
+export function slotsLeftThisWeek(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return 2 + (h % 4);
+}
+
 export function getStylist(id: string): Stylist | undefined {
   return STYLISTS.find((s) => s.id === id);
 }

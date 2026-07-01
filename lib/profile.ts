@@ -144,6 +144,8 @@ export interface QuizOption {
   label: string;
   // Each option contributes points to one or more seasons.
   scores: Partial<Record<ColorSeason, number>>;
+  /** Optional colour swatches rendered with the option (visual questions). */
+  swatches?: string[];
 }
 
 export interface QuizQuestion {
@@ -151,6 +153,8 @@ export interface QuizQuestion {
   question: string;
   helper?: string;
   options: QuizOption[];
+  /** Non-scoring question whose answer is stored as a styling goal. */
+  goal?: boolean;
 }
 
 export const SEASON_QUIZ: QuizQuestion[] = [
@@ -168,9 +172,30 @@ export const SEASON_QUIZ: QuizQuestion[] = [
     id: "jewellery",
     question: "Which metal makes your skin look healthiest?",
     options: [
-      { label: "Gold", scores: { spring: 2, autumn: 2 } },
-      { label: "Silver", scores: { summer: 2, winter: 2 } },
-      { label: "Both look good", scores: { spring: 1, summer: 1, autumn: 1, winter: 1 } },
+      { label: "Gold", scores: { spring: 2, autumn: 2 }, swatches: ["#D4AF37", "#E8C874"] },
+      { label: "Silver", scores: { summer: 2, winter: 2 }, swatches: ["#C0C0C8", "#E6E8EB"] },
+      { label: "Both look good", scores: { spring: 1, summer: 1, autumn: 1, winter: 1 }, swatches: ["#D4AF37", "#C0C0C8"] },
+    ],
+  },
+  {
+    id: "hair",
+    question: "What's your natural hair colour?",
+    helper: "The colour you had in your twenties, before any dye.",
+    options: [
+      { label: "Golden or strawberry blonde", scores: { spring: 3 }, swatches: ["#D9A85C", "#C98A5E"] },
+      { label: "Ash blonde or mousy brown", scores: { summer: 3 }, swatches: ["#B4A284", "#8C7B66"] },
+      { label: "Warm brown, auburn or red", scores: { autumn: 3 }, swatches: ["#6B3F26", "#8E3B1F"] },
+      { label: "Dark brown or black", scores: { winter: 3 }, swatches: ["#2E2118", "#141210"] },
+    ],
+  },
+  {
+    id: "eyes",
+    question: "And your eye colour?",
+    options: [
+      { label: "Warm brown or amber", scores: { spring: 1, autumn: 2 }, swatches: ["#8B5A2B", "#B07A3F"] },
+      { label: "Hazel or warm green", scores: { autumn: 2, spring: 1 }, swatches: ["#7C7A46", "#5C6B3C"] },
+      { label: "Blue, grey or soft green", scores: { summer: 2, winter: 1 }, swatches: ["#7FA6C9", "#9AA8AC"] },
+      { label: "Deep brown or near-black", scores: { winter: 2 }, swatches: ["#3E2A20", "#1F1712"] },
     ],
   },
   {
@@ -204,11 +229,24 @@ export const SEASON_QUIZ: QuizQuestion[] = [
   {
     id: "best-colour",
     question: "Which group of colours gets you the most compliments?",
+    helper: "Trust the swatches, not the names.",
     options: [
-      { label: "Coral, peach, warm green", scores: { spring: 3 } },
-      { label: "Dusty rose, lavender, soft blue", scores: { summer: 3 } },
-      { label: "Rust, olive, mustard", scores: { autumn: 3 } },
-      { label: "True red, royal blue, emerald", scores: { winter: 3 } },
+      { label: "Coral, peach, warm green", scores: { spring: 3 }, swatches: ["#FF7F50", "#FFB07C", "#9ACD32"] },
+      { label: "Dusty rose, lavender, soft blue", scores: { summer: 3 }, swatches: ["#C9A0A6", "#B8A9D6", "#A7C7E7"] },
+      { label: "Rust, olive, mustard", scores: { autumn: 3 }, swatches: ["#B7410E", "#708238", "#D4A017"] },
+      { label: "True red, royal blue, emerald", scores: { winter: 3 }, swatches: ["#C8102E", "#1F3FB5", "#10693E"] },
+    ],
+  },
+  {
+    id: "goal",
+    goal: true,
+    question: "Last one: what brings you here?",
+    helper: "This doesn't change your season — it helps us match you with the right stylist.",
+    options: [
+      { label: "I want to know my colours", scores: {} },
+      { label: "Rebuild my wardrobe properly", scores: {} },
+      { label: "A big occasion is coming up", scores: {} },
+      { label: "Level up how I show up at work", scores: {} },
     ],
   },
 ];

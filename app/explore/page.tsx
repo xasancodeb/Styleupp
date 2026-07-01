@@ -21,8 +21,10 @@ import {
   saveInternational,
   saveStylistGender,
   PALETTES,
+  type ClientProfile,
   type ColorSeason,
 } from "@/lib/profile";
+import { matchScore, canMatch } from "@/lib/match";
 
 const GENDERS: { value: Gender | "any"; label: string }[] = [
   { value: "any", label: "Any stylist" },
@@ -45,7 +47,7 @@ const FORMATS = [
 ] as const;
 type Format = (typeof FORMATS)[number]["value"];
 
-type SortKey = "featured" | "rating" | "price-asc" | "price-desc";
+type SortKey = "match" | "featured" | "rating" | "price-asc" | "price-desc";
 
 export default function ExplorePage() {
   const [specialty, setSpecialty] = useState<string | null>(null);
@@ -58,14 +60,26 @@ export default function ExplorePage() {
   const [country, setCountry] = useState<string>("");
   const [international, setInternational] = useState(false);
   const [gender, setGender] = useState<Gender | "any">("any");
+  const [profile, setProfile] = useState<ClientProfile | null>(null);
+
+  const matchable = profile ? canMatch(profile) : false;
+  const scores = useMemo(() => {
+    if (!profile || !matchable) return new Map<string, number>();
+    return new Map(STYLISTS.map((s) => [s.id, matchScore(s, profile).score]));
+  }, [profile, matchable]);
 
   useEffect(() => {
     const p = loadProfile();
+    setProfile(p);
     setSeason(p.season);
     setName(p.fullName);
     if (p.location?.country) setCountry(p.location.country);
     setInternational(p.international);
     setGender(p.preferences.stylistGender ?? "any");
+    if (canMatch(p)) setSort("match");
+    // Deep links from the services menu: /explore?specialty=Colour%20Analysis
+    const wanted = new URLSearchParams(window.location.search).get("specialty");
+    if (wanted && (SPECIALTIES as readonly string[]).includes(wanted)) setSpecialty(wanted);
   }, []);
 
   function chooseCountry(c: string) {
@@ -119,6 +133,8 @@ export default function ExplorePage() {
 
     const cmp = (a: Stylist, b: Stylist) => {
       switch (sort) {
+        case "match":
+          return (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0) || b.rating - a.rating;
         case "rating":
           return b.rating - a.rating;
         case "price-asc":
@@ -131,14 +147,15 @@ export default function ExplorePage() {
     };
 
     const sorted = [...filtered];
-    // When a location is known, surface the nearest stylists first.
+    // Match scoring already weighs proximity; for other sorts, surface the
+    // nearest stylists first when a location is known.
     sorted.sort((a, b) =>
-      country
+      country && sort !== "match"
         ? proximityRank(proximity(a, country)) - proximityRank(proximity(b, country)) || cmp(a, b)
         : cmp(a, b)
     );
     return sorted;
-  }, [specialty, format, priceBand, query, sort, country, international, gender]);
+  }, [specialty, format, priceBand, query, sort, country, international, gender, scores]);
 
   const clear = () => {
     setSpecialty(null);
@@ -272,6 +289,7 @@ export default function ExplorePage() {
         <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
           <label style={{ fontSize: "0.85rem", color: "var(--faint)" }} htmlFor="sort">Sort</label>
           <select id="sort" className="input" style={{ width: "auto", padding: "0.45rem 0.7rem" }} value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
+            {matchable && <option value="match">Best match for you</option>}
             <option value="featured">Featured</option>
             <option value="rating">Top rated</option>
             <option value="price-asc">Price: low to high</option>
@@ -297,7 +315,12 @@ export default function ExplorePage() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {results.map((stylist) => (
-            <StylistCard key={stylist.id} stylist={stylist} proximityLabel={nearLabel(stylist)} />
+            <StylistCard
+              key={stylist.id}
+              stylist={stylist}
+              proximityLabel={nearLabel(stylist)}
+              matchScore={matchable ? scores.get(stylist.id) : undefined}
+            />
           ))}
         </div>
       )}

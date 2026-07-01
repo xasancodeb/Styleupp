@@ -1,11 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
-import { type Stylist } from "@/lib/data";
+import { slotsLeftThisWeek, type Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
-export default function StylistCard({ stylist, proximityLabel }: { stylist: Stylist; proximityLabel?: string }) {
+export default function StylistCard({
+  stylist,
+  proximityLabel,
+  matchScore,
+}: {
+  stylist: Stylist;
+  proximityLabel?: string;
+  matchScore?: number;
+}) {
   const badge = proximityLabel || (stylist.featured ? "Featured" : stylist.country);
+  const slots = slotsLeftThisWeek(stylist.id);
 
   return (
     <Link href={`/stylist/${stylist.id}`} className="card fade-up" style={{ overflow: "hidden", display: "block", padding: "0.55rem" }}>
@@ -38,6 +47,24 @@ export default function StylistCard({ stylist, proximityLabel }: { stylist: Styl
             {badge}
           </span>
         )}
+        {matchScore != null && (
+          <span
+            style={{
+              position: "absolute",
+              bottom: 12,
+              left: 12,
+              padding: "0.34rem 0.75rem",
+              borderRadius: 999,
+              fontSize: "0.76rem",
+              fontWeight: 700,
+              color: "#fff",
+              background: "var(--ink)",
+              boxShadow: "0 2px 10px -4px rgba(0,0,0,0.35)",
+            }}
+          >
+            {matchScore}% match
+          </span>
+        )}
       </div>
 
       <div style={{ padding: "1rem 0.7rem 0.6rem" }}>
@@ -67,6 +94,9 @@ export default function StylistCard({ stylist, proximityLabel }: { stylist: Styl
         >
           <span>{stylist.reviewCount} reviews</span>
           <span style={{ color: "var(--ink)", fontWeight: 600 }}>from {formatGBP(stylist.startingPrice)}</span>
+        </div>
+        <div style={{ fontSize: "0.8rem", color: slots <= 3 ? "var(--accent)" : "var(--faint)", fontWeight: 500, marginTop: "0.45rem" }}>
+          {slots} slot{slots === 1 ? "" : "s"} left this week
         </div>
       </div>
     </Link>

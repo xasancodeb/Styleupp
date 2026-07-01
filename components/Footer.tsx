@@ -1,8 +1,11 @@
 import Link from "next/link";
 
+import NewsletterForm from "@/components/NewsletterForm";
+
 const FOOTER_LINKS = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Stylists" },
+  { href: "/gift", label: "Gift cards" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
   { href: "/corporate", label: "Corporate" },
@@ -31,6 +34,15 @@ export default function Footer() {
             Personal styling, in colour. Vetted stylists for colour analysis, capsule wardrobes
             and occasion styling, near you or over video.
           </p>
+
+          <div style={{ marginTop: "1.75rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
+            <div style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>The colour edit, free</div>
+            <p style={{ color: "var(--dim)", fontSize: "0.9rem", margin: "0.3rem 0 0.9rem", maxWidth: 420 }}>
+              Get our 12-page guide to dressing in your season, plus one sharp styling tip a week.
+              No spam, unsubscribe anytime.
+            </p>
+            <NewsletterForm />
+          </div>
 
           <div
             style={{

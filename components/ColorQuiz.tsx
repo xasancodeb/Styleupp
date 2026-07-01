@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SEASON_QUIZ, determineSeason, saveSeason, PALETTES, type ColorSeason } from "@/lib/profile";
+import {
+  SEASON_QUIZ,
+  determineSeason,
+  saveSeason,
+  saveProfile,
+  loadProfile,
+  PALETTES,
+  type ColorSeason,
+} from "@/lib/profile";
 
 /**
  * The colour-season quiz, fully playable inline. Used both on the landing page
@@ -25,6 +33,14 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
     } else {
       const season = determineSeason(next);
       saveSeason(season);
+      // Store the styling goal (the non-scoring final question) so stylist
+      // matching and recommendations can use it.
+      const goalQ = SEASON_QUIZ.find((q) => q.goal);
+      const goalChoice = goalQ ? goalQ.options[next[goalQ.id]]?.label : undefined;
+      if (goalChoice) {
+        const current = loadProfile();
+        saveProfile({ preferences: { ...current.preferences, goals: [goalChoice] } });
+      }
       void fetch("/api/profile/color-season", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,7 +78,31 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
         </div>
 
         {!compact && (
-          <p style={{ color: "var(--dim)", marginTop: "1.5rem", textAlign: "left", lineHeight: 1.7 }}>{palette.description}</p>
+          <>
+            <p style={{ color: "var(--dim)", marginTop: "1.5rem", textAlign: "left", lineHeight: 1.7 }}>{palette.description}</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginTop: "1.25rem", textAlign: "left" }}>
+              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your metals</div>
+                <div style={{ fontWeight: 600, marginTop: "0.25rem", fontSize: "0.95rem" }}>{palette.metals.join(" · ")}</div>
+              </div>
+              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Your neutrals</div>
+                <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
+                  {palette.neutrals.map((n) => (
+                    <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)" }} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ background: "var(--bg-2)", borderRadius: 14, padding: "0.9rem 1rem" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)" }}>Leave on the rail</div>
+                <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.4rem" }}>
+                  {palette.avoidColors.map((n) => (
+                    <span key={n.hex} title={n.name} style={{ width: 22, height: 22, borderRadius: "50%", background: n.hex, border: "1px solid var(--border)", opacity: 0.55 }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", marginTop: "1.75rem", flexWrap: "wrap" }}>
@@ -109,6 +149,10 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
                 fontSize: "0.98rem",
                 fontFamily: "var(--font-grotesk)",
                 transition: "all 0.16s var(--ease)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "0.9rem",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "color-mix(in srgb, var(--accent) 60%, var(--border))";
@@ -121,7 +165,25 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
                 e.currentTarget.style.transform = "none";
               }}
             >
-              {opt.label}
+              <span>{opt.label}</span>
+              {opt.swatches && (
+                <span style={{ display: "flex", flexShrink: 0 }} aria-hidden>
+                  {opt.swatches.map((hex) => (
+                    <span
+                      key={hex}
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: "50%",
+                        background: hex,
+                        border: "2px solid var(--card)",
+                        marginLeft: -7,
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.18)",
+                      }}
+                    />
+                  ))}
+                </span>
+              )}
             </button>
           ))}
         </div>
