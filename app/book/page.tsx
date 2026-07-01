@@ -174,7 +174,7 @@ function BookingFlow() {
                   <Image src={stylist.avatar} alt="" fill sizes="44px" style={{ objectFit: "cover" }} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "0.72rem", color: "var(--faint)", textTransform: "uppercase", letterSpacing: "0.12em" }}>Your stylist</div>
+                  <div style={{ fontSize: "0.78rem", color: "var(--faint)", fontWeight: 500 }}>Your stylist</div>
                   <div style={{ fontWeight: 600 }}>{stylist.name}</div>
                   <div style={{ color: "var(--dim)", fontSize: "0.85rem" }}>{stylist.city}, {stylist.country}</div>
                 </div>
@@ -244,8 +244,7 @@ function BookingFlow() {
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                        <span className="mono" style={{ fontSize: "0.62rem", color: "var(--accent)" }}>{f === "virtual" ? "VID" : f === "in-person" ? "IRL" : "SHOP"}</span>
-                        <strong style={{ fontFamily: "var(--font-grotesk)", textTransform: "uppercase", letterSpacing: "-0.02em" }}>{FORMAT_LABEL[f]}</strong>
+                        <strong style={{ fontFamily: "var(--font-grotesk)", letterSpacing: "-0.01em" }}>{FORMAT_LABEL[f]}</strong>
                       </div>
                       <p style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.25rem" }}>{desc}</p>
                     </button>
@@ -284,7 +283,7 @@ function BookingFlow() {
                       ] as const).map(([label, group]) =>
                         group.length === 0 ? null : (
                           <div key={label}>
-                            <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--faint)", marginBottom: "0.45rem" }}>{label}</div>
+                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--faint)", marginBottom: "0.45rem" }}>{label}</div>
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: "0.5rem" }}>
                               {group.map((s) => (
                                 <button key={s} className="tag-toggle" data-active={slot === s} onClick={() => setSlot(s)} style={{ textAlign: "center" }}>

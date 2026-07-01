@@ -264,6 +264,46 @@ a:focus-visible, button:focus-visible, .input:focus-visible, .tag-toggle:focus-v
 }
 .ul-link:hover::after, .ul-link[data-active="true"]::after { transform: scaleX(1); }
 
+/* ─────────────────────── Signature moments ──────────────────────── */
+/* The living colour word: one word in the headline slowly drifts through the
+   four seasons' signature hues — coral (spring), lavender (summer), rust
+   (autumn), royal blue (winter) — and back. The site literally wears colour. */
+.gradient-word {
+  background: linear-gradient(90deg,
+    #ff7f50, #a56b8c, #b7410e, #1f3fb5, #2c6e6e, #ff7f50);
+  background-size: 500% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: colourDrift 16s linear infinite;
+}
+@keyframes colourDrift { to { background-position: 500% 0; } }
+
+/* The palette rail: a gently gliding row of real season colours, edge-faded
+   like a physical swatch deck. Pauses when you hover to inspect a colour. */
+.rail {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.rail-track {
+  display: flex;
+  gap: 0.9rem;
+  width: max-content;
+  animation: railGlide 110s linear infinite;
+}
+.rail:hover .rail-track { animation-play-state: paused; }
+@keyframes railGlide { to { transform: translateX(-50%); } }
+.swatch-card { transition: transform 0.3s var(--ease); }
+.swatch-card:hover { transform: translateY(-4px); }
+
+/* soft pulse for "start here" markers */
+.pulse-dot { animation: pulseDot 2.4s var(--ease) infinite; }
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  50% { box-shadow: 0 0 0 7px transparent; }
+}
+
 /* scroll reveal */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }

@@ -1,13 +1,21 @@
 import Link from "next/link";
-import { getFeatured, SPECIALTIES } from "@/lib/data";
+import Image from "next/image";
+import { getFeatured } from "@/lib/data";
 import StylistCard from "@/components/StylistCard";
 import Reveal from "@/components/Reveal";
 import ColorQuiz from "@/components/ColorQuiz";
+import PaletteRail from "@/components/PaletteRail";
 
 const STEPS = [
-  { n: "01", title: "Calibrate", body: "Take the two minute index. It finds your colour season and the stylists who fit your taste, budget and goals." },
-  { n: "02", title: "Commission", body: "Pick a stylist, a service and a format. Video, in person, or a shopping trip near you." },
-  { n: "03", title: "Wear it", body: "You get a real plan and a palette you can shop. We keep your bookings and looks on file." },
+  { n: "1", title: "Take the quiz", body: "Two minutes, no sign-up. It finds your colour season — the shades that make you look rested, radiant and expensive." },
+  { n: "2", title: "Meet your stylist", body: "Choose who you work with: a woman or man stylist, near you or over video, at a price that suits." },
+  { n: "3", title: "Wear it", body: "You leave with a real plan and a palette you can shop from. We keep your looks and bookings on file." },
+];
+
+const QUOTES = [
+  { text: "I get compliments every single week now. I finally understand what suits me.", name: "Priya", detail: "Colour analysis, London" },
+  { text: "My stylist came shopping with me. Two hours, one bag, zero regrets.", name: "Claire", detail: "Shopping trip, Milan" },
+  { text: "I own half as much and look twice as good.", name: "Daniel", detail: "Capsule wardrobe, Tokyo" },
 ];
 
 function Spec({ k, v }: { k: string; v: string }) {
@@ -32,9 +40,9 @@ export default function HomePage() {
               <span className="eyebrow">Personal styling for women · men welcome too</span>
             </Reveal>
             <Reveal delay={60}>
-              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.7rem, 6.5vw, 5rem)", lineHeight: 1.0, letterSpacing: "-0.045em", marginTop: "1.4rem" }}>
-                Find your colour.<br />
-                <span style={{ background: "linear-gradient(120deg, var(--accent), var(--accent-2))", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Then wear it</span>{" "}with confidence.
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.7rem, 6.5vw, 5rem)", lineHeight: 1.04, letterSpacing: "-0.045em", marginTop: "1.4rem" }}>
+                Find your <span className="gradient-word">colour</span>.<br />
+                Then wear it<br />with confidence.
               </h1>
             </Reveal>
             <Reveal delay={120}>
@@ -66,7 +74,7 @@ export default function HomePage() {
           <Reveal delay={140} className="hero-visual">
             <div style={{ position: "relative" }}>
               <div style={{ marginBottom: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)" }} />
+                <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)" }} />
                 <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Start here · free colour quiz</span>
               </div>
               <ColorQuiz compact />
@@ -75,15 +83,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* specialties strip */}
-      <section className="section" style={{ padding: "0 1.75rem" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem", paddingTop: "0.5rem" }}>
-          {SPECIALTIES.map((s) => (
-            <span key={s} className="chip" style={{ fontSize: "0.8rem", padding: "0.4rem 0.85rem" }}>
-              {s}
-            </span>
-          ))}
-        </div>
+      {/* the palette rail — every colour we can dress you in */}
+      <section style={{ padding: "1.5rem 0 0" }}>
+        <Reveal>
+          <p style={{ textAlign: "center", color: "var(--dim)", fontSize: "0.95rem", marginBottom: "1.5rem", padding: "0 1.75rem" }}>
+            Twenty-four colours across four seasons. <span style={{ color: "var(--ink)", fontWeight: 600 }}>One row of these is yours.</span>
+          </p>
+        </Reveal>
+        <PaletteRail />
       </section>
 
       {/* ──────────────────────────── How it works ─────────────────────────── */}
@@ -131,8 +138,63 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ──────────────────────── Editorial statement ──────────────────────── */}
+      <section className="section" style={{ padding: "0 1.75rem 4.5rem" }}>
+        <Reveal>
+          <div style={{ position: "relative", borderRadius: 28, overflow: "hidden", minHeight: "min(76vh, 620px)", display: "flex", alignItems: "flex-end" }}>
+            <Image
+              src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80"
+              alt="A woman in a striking, colour-matched outfit"
+              fill
+              sizes="(max-width: 1180px) 100vw, 1120px"
+              style={{ objectFit: "cover" }}
+            />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.06) 55%)" }} />
+            <div style={{ position: "relative", padding: "clamp(1.75rem, 5vw, 3.5rem)", color: "#fff", maxWidth: 640 }}>
+              <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2rem, 5vw, 3.4rem)", letterSpacing: "-0.035em", lineHeight: 1.04 }}>
+                Wear what makes you glow.
+              </h2>
+              <p style={{ marginTop: "0.9rem", fontSize: "1.05rem", color: "rgba(255,255,255,0.85)", maxWidth: 460 }}>
+                Not what the trend cycle says. Your palette is decided by your skin, hair and eyes,
+                and it never goes out of season.
+              </p>
+              <Link href="/fitting" className="btn" style={{ marginTop: "1.5rem", background: "#fff", color: "var(--ink)" }}>
+                Open the fitting room <span className="arrow">→</span>
+              </Link>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ─────────────────────────── Loved by clients ──────────────────────── */}
+      <section style={{ background: "var(--bg-2)" }}>
+        <div className="section" style={{ padding: "4.5rem 1.75rem" }}>
+          <Reveal>
+            <span className="eyebrow">From real sessions</span>
+            <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
+              People leave glowing
+            </h2>
+          </Reveal>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem", marginTop: "2.25rem" }}>
+            {QUOTES.map((q, i) => (
+              <Reveal key={q.name} delay={i * 90}>
+                <figure className="card" style={{ padding: "1.8rem", margin: 0, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <blockquote style={{ margin: 0, fontSize: "1.1rem", fontWeight: 500, letterSpacing: "-0.015em", lineHeight: 1.45 }}>
+                    &ldquo;{q.text}&rdquo;
+                  </blockquote>
+                  <figcaption style={{ marginTop: "1.4rem", fontSize: "0.88rem" }}>
+                    <span style={{ fontWeight: 600 }}>{q.name}</span>
+                    <span style={{ color: "var(--faint)" }}> · {q.detail}</span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ────────────────────────────── Closing CTA ───────────────────────────── */}
-      <section className="section" style={{ padding: "0 1.75rem 5rem" }}>
+      <section className="section" style={{ padding: "4rem 1.75rem 5rem" }}>
         <Reveal>
           <div className="card" style={{ padding: "clamp(2.5rem, 6vw, 4.5rem) 1.75rem", textAlign: "center", overflow: "hidden", position: "relative" }}>
             <span className="eyebrow">Near you, or anywhere</span>

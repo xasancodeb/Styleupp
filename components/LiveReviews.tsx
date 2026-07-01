@@ -24,7 +24,7 @@ export default function LiveReviews({ slug }: { slug: string }) {
 
   return (
     <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
-      <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--accent-dark)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+      <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--accent)" }}>
         Verified bookings
       </p>
       {reviews.map((r) => (
