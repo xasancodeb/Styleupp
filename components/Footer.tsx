@@ -1,40 +1,71 @@
 import Link from "next/link";
 
+import NewsletterForm from "@/components/NewsletterForm";
+
 const FOOTER_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/explore", label: "Stylists" },
-  { href: "/quiz", label: "Colour quiz" },
-  { href: "/for-stylists", label: "Become a stylist" },
-  { href: "/corporate", label: "For teams" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
+  { href: "/corporate", label: "Corporate" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="room" style={{ marginTop: "5rem" }}>
-      <div className="section" style={{ padding: "3.5rem 1.75rem 2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "2rem" }}>
-          <div>
-            <div style={{ display: "inline-flex", alignItems: "baseline" }}>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "2rem", letterSpacing: "-0.01em" }}>StyleUp</span>
-              <span aria-hidden style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--accent-2)", display: "inline-block", marginLeft: 5 }} />
-            </div>
-            <p style={{ maxWidth: 380, fontSize: "0.95rem", marginTop: "0.7rem" }}>
-              The house of getting dressed well. Twelve stylists, real portfolios,
-              sessions in your city or on video.
+    <footer style={{ marginTop: "4rem", padding: "0 0 1.5rem" }}>
+      <div className="section">
+        <div className="card" style={{ padding: "2.75rem 2rem 2rem", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ width: 11, height: 11, borderRadius: "50%", background: "linear-gradient(140deg, var(--accent), var(--accent-2))", boxShadow: "0 0 14px 1px color-mix(in srgb, var(--accent) 80%, transparent)" }} />
+            <span
+              style={{
+                fontFamily: "var(--font-grotesk)",
+                fontWeight: 800,
+                fontSize: "1.6rem",
+                letterSpacing: "-0.04em",
+                color: "var(--ink)",
+              }}
+            >
+              StyleUp
+            </span>
+          </div>
+          <p style={{ color: "var(--dim)", marginTop: "0.7rem", maxWidth: 380, fontSize: "0.95rem" }}>
+            Personal styling, in colour. Vetted stylists for colour analysis, capsule wardrobes
+            and occasion styling, near you or over video.
+          </p>
+
+          <div style={{ marginTop: "1.75rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
+            <div style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>The style list</div>
+            <p style={{ color: "var(--dim)", fontSize: "0.9rem", margin: "0.3rem 0 0.9rem", maxWidth: 420 }}>
+              One sharp styling tip a week, plus first access as we launch in new cities.
+              No spam, unsubscribe anytime.
             </p>
+            <NewsletterForm />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem 2.5rem" }}>
-            {FOOTER_LINKS.map((l) => (
-              <Link key={l.href} href={l.href} className="ul-link" style={{ fontSize: "0.92rem", fontWeight: 500 }}>
-                {l.label}
-              </Link>
-            ))}
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "1.25rem",
+              marginTop: "2rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--border)",
+              fontSize: "0.9rem",
+              color: "var(--dim)",
+            }}
+          >
+            <div style={{ display: "flex", gap: "1.4rem", flexWrap: "wrap" }}>
+              {FOOTER_LINKS.map((l) => (
+                <Link key={l.href + l.label} href={l.href} className="ul-link" style={{ color: "var(--dim)", fontWeight: 500 }}>
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+            <div style={{ color: "var(--faint)" }}>© {new Date().getFullYear()} StyleUp</div>
           </div>
-        </div>
-        <div style={{ borderTop: "1px solid rgba(242, 236, 217, 0.18)", marginTop: "2.5rem", paddingTop: "1.25rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", fontSize: "0.84rem", color: "rgba(242, 236, 217, 0.6)" }}>
-          <span>© {new Date().getFullYear()} StyleUp</span>
-          <span>Payments secured by Stripe</span>
         </div>
       </div>
     </footer>

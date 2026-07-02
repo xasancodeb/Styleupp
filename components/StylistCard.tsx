@@ -4,8 +4,6 @@ import { extrasOf, getPortfolio, type Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
-// A door in the house: arched portrait, the stylist's name, their taste in
-// one line, and three pieces of their actual work underneath.
 export default function StylistCard({
   stylist,
   proximityLabel,
@@ -15,16 +13,16 @@ export default function StylistCard({
   proximityLabel?: string;
   matchScore?: number;
 }) {
-  const badge = proximityLabel || (stylist.featured ? "House favourite" : stylist.country);
+  const badge = proximityLabel || (stylist.featured ? "Featured" : stylist.country);
 
   return (
-    <Link href={`/stylist/${stylist.id}`} style={{ display: "block" }}>
-      <div className="photo arch" style={{ aspectRatio: "4 / 5" }}>
+    <Link href={`/stylist/${stylist.id}`} className="card fade-up" style={{ overflow: "hidden", display: "block", padding: "0.55rem" }}>
+      <div className="photo" style={{ aspectRatio: "4 / 5" }}>
         <Image
           src={stylist.avatar}
           alt={stylist.name}
           fill
-          sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 320px"
+          sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 300px"
           style={{ objectFit: "cover" }}
         />
         <SaveHeart slug={stylist.id} />
@@ -32,18 +30,17 @@ export default function StylistCard({
           <span
             style={{
               position: "absolute",
-              top: "14%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              padding: "0.3rem 0.8rem",
+              top: 12,
+              left: 12,
+              padding: "0.32rem 0.72rem",
               borderRadius: 999,
-              fontSize: "0.72rem",
+              fontSize: "0.74rem",
               fontWeight: 600,
-              whiteSpace: "nowrap",
-              color: "var(--forest)",
-              background: "rgba(246, 241, 230, 0.92)",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
+              color: stylist.featured && !proximityLabel ? "var(--accent)" : "var(--ink)",
+              background: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              boxShadow: "0 2px 10px -4px rgba(0,0,0,0.25)",
             }}
           >
             {badge}
@@ -53,16 +50,15 @@ export default function StylistCard({
           <span
             style={{
               position: "absolute",
-              bottom: 14,
-              left: "50%",
-              transform: "translateX(-50%)",
-              padding: "0.34rem 0.8rem",
+              bottom: 12,
+              left: 12,
+              padding: "0.34rem 0.75rem",
               borderRadius: 999,
               fontSize: "0.76rem",
               fontWeight: 700,
-              whiteSpace: "nowrap",
-              color: "#f2ecd9",
-              background: "var(--forest)",
+              color: "#fff",
+              background: "var(--accent)",
+              boxShadow: "0 2px 10px -4px rgba(0,0,0,0.35)",
             }}
           >
             {matchScore}% match
@@ -70,22 +66,10 @@ export default function StylistCard({
         )}
       </div>
 
-      <div style={{ textAlign: "center", padding: "1rem 0.4rem 0.4rem" }}>
-        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.55rem", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.01em" }}>
-          {stylist.name}
-        </h3>
-        <div style={{ fontSize: "0.86rem", color: "var(--dim)", marginTop: "0.3rem" }}>
-          {extrasOf(stylist).vibes[0]} · {stylist.city}
-        </div>
-        <div style={{ fontSize: "0.84rem", color: "var(--faint)", marginTop: "0.25rem" }}>
-          <span style={{ color: "var(--accent)" }}>★</span> {stylist.rating} ({stylist.reviewCount}) · from {formatGBP(stylist.startingPrice)}
-        </div>
-      </div>
-
-      {/* their work, on the card */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.4rem", marginTop: "0.5rem" }}>
-        {getPortfolio(stylist).slice(1, 4).map((img) => (
-          <div key={img} className="photo" style={{ aspectRatio: "1 / 1", borderRadius: 10 }}>
+      {/* their work, right on the card: pick by taste, not by bio */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.35rem", marginTop: "0.35rem" }}>
+        {getPortfolio(stylist).slice(1, 4).map((img, i) => (
+          <div key={img} className="photo" style={{ aspectRatio: "1 / 1", borderRadius: 8 }}>
             <Image
               src={img}
               alt={`A look styled by ${stylist.name}`}
@@ -93,8 +77,55 @@ export default function StylistCard({
               sizes="110px"
               style={{ objectFit: "cover" }}
             />
+            {i === 2 && (
+              <span
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "rgba(24,16,10,0.42)",
+                  color: "#fff",
+                  fontSize: "0.74rem",
+                  fontWeight: 600,
+                }}
+              >
+                See work
+              </span>
+            )}
           </div>
         ))}
+      </div>
+
+      <div style={{ padding: "1rem 0.7rem 0.6rem" }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.6rem" }}>
+          <h3 style={{ fontFamily: "var(--font-grotesk)", fontSize: "1.2rem", fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
+            {stylist.name}
+          </h3>
+          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--ink)", whiteSpace: "nowrap" }}>
+            <span style={{ color: "var(--accent)" }}>★</span> {stylist.rating}
+          </span>
+        </div>
+        <div style={{ fontSize: "0.85rem", color: "var(--dim)", marginTop: "0.3rem" }}>
+          {stylist.city} · {extrasOf(stylist).vibes[0]}
+        </div>
+        <p style={{ fontSize: "0.9rem", color: "var(--dim)", lineHeight: 1.45, marginTop: "0.6rem", minHeight: "2.6em" }}>{stylist.tagline}</p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "0.85rem",
+            paddingTop: "0.8rem",
+            borderTop: "1px solid var(--border)",
+            fontSize: "0.85rem",
+            color: "var(--dim)",
+          }}
+        >
+          <span>{stylist.reviewCount} reviews</span>
+          <span style={{ color: "var(--ink)", fontWeight: 600 }}>from {formatGBP(stylist.startingPrice)}</span>
+        </div>
       </div>
     </Link>
   );

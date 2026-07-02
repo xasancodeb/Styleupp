@@ -1,45 +1,41 @@
 @import "tailwindcss";
 
 /* ════════════════════════════════════════════════════════════════════════
-   STYLEUP — The House.
-   A private house of stylists. Cream rooms and deep forest rooms, arched
-   doorways (the signature shape: every portrait sits in an arch), brass
-   accents, Instrument Serif headlines. Feels like being let in somewhere,
-   not like using a website.
+   STYLEUP brand system.
+   Warm ivory canvas, espresso ink, one bordeaux signature. Fraunces for
+   display (fashion authority with character), Instrument Sans for everything
+   else. Photography leads; chrome recedes. Built to read expensive at first
+   glance and stay calm at second.
    ════════════════════════════════════════════════════════════════════════ */
 :root {
-  --bg: #f6f1e6;           /* cream plaster */
-  --card: #fdfaf2;         /* raised cream */
-  --bg-2: #ede6d6;         /* deeper cream band */
-  --paper: #f6f1e6;
+  --bg: #faf6ef;           /* warm ivory canvas */
+  --card: #fffdf9;         /* raised surface */
+  --bg-2: #f3ede2;         /* deeper band for alternating sections */
+  --paper: #faf6ef;
 
-  --forest: #1e3128;       /* the house green */
-  --forest-2: #16261e;     /* deeper green for hovers */
-  --ink: #22301f;          /* body text: green-black */
-  --dark: #22301f;
-  --dim: #5c6b55;
-  --faint: #93987f;
-  --border: #ddd3ba;
-  --line: #e7dfc9;
+  --ink: #221b15;          /* espresso, near-black with warmth */
+  --dark: #221b15;
+  --dim: #6d6156;          /* secondary text */
+  --faint: #a2937f;        /* captions */
+  --border: #e4dccb;       /* warm hairline */
+  --line: #ece5d6;
 
-  --accent: #a86b2d;       /* brass */
-  --accent-2: #c68f4b;
-  --accent-dark: #a86b2d;
-  --accent-soft: #f0e4cd;
+  --accent: #7c2d3e;       /* bordeaux. the one brand colour */
+  --accent-2: #a04a56;
+  --accent-dark: #7c2d3e;
+  --accent-soft: #f4e5e4;
 
   /* the visitor's colour season, set by SeasonAccent after the quiz.
      Used only inside colour-tool surfaces, never for brand chrome. */
-  --season: #a86b2d;
-  --season-soft: #f0e4cd;
+  --season: #7c2d3e;
+  --season-soft: #f4e5e4;
 
-  --radius: 16px;
-  --radius-sm: 10px;
-  /* the signature: an arched doorway for portraits */
-  --arch: 999px 999px 16px 16px;
-  --shadow: 0 18px 44px -20px rgba(30, 49, 40, 0.35);
-  --shadow-soft: 0 5px 20px -12px rgba(30, 49, 40, 0.22);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 14px 40px -18px rgba(60, 42, 24, 0.22);
+  --shadow-soft: 0 4px 18px -10px rgba(60, 42, 24, 0.14);
 
-  --font-display: "Instrument Serif", Georgia, serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --font-grotesk: "Instrument Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: "Instrument Sans", -apple-system, sans-serif;
 
@@ -70,11 +66,11 @@ body {
   text-rendering: optimizeLegibility;
   margin: 0;
   line-height: 1.55;
-  letter-spacing: -0.004em;
+  letter-spacing: -0.005em;
   min-height: 100vh;
 }
 
-::selection { background: var(--forest); color: var(--bg); }
+::selection { background: var(--accent); color: #fff; }
 
 * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 *::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -89,21 +85,27 @@ a { color: inherit; text-decoration: none; }
 .serif,
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.04;
-  color: inherit;
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 40, "WONK" 0;
 }
+.display { font-weight: 600; }
 .display em,
 .font-serif em,
 .serif em {
   font-style: italic;
   color: var(--accent);
+  font-variation-settings: "SOFT" 60;
 }
-.word-accent,
-.gradient-word {
+
+/* the signature word: italic bordeaux serif inside a sans headline */
+.gradient-word,
+.word-accent {
   font-family: var(--font-display);
   font-style: italic;
+  font-weight: 560;
   color: var(--accent);
   background: none;
 }
@@ -120,31 +122,29 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 0.55rem;
   font-family: var(--font-grotesk);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent);
+}
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
 }
 
 .lede {
   font-size: clamp(1.06rem, 1.5vw, 1.22rem);
-  line-height: 1.62;
+  line-height: 1.6;
   color: var(--dim);
   max-width: 58ch;
 }
 
 hr.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
 
-/* ─────────────── The green room: full-width forest sections ─────────────── */
-.room {
-  background: var(--forest);
-  color: #f2ecd9;
-}
-.room .lede, .room p { color: #cfd6c3; }
-.room .eyebrow { color: var(--accent-2); }
-
-/* ─────────────────────── Imagery: arches ────────────────────────── */
+/* ─────────────────────── Imagery ────────────────────────── */
 .photo {
   position: relative;
   overflow: hidden;
@@ -154,11 +154,6 @@ hr.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
 .photo img { transition: transform 0.9s var(--ease); }
 .photo:hover img { transform: scale(1.035); }
 
-/* the signature shape */
-.arch {
-  border-radius: var(--arch);
-}
-
 /* ──────────────────────────── Panels ────────────────────────────── */
 .card {
   background: var(--card);
@@ -166,8 +161,12 @@ hr.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
 }
-a.card { transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
-a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+a.card { transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease); }
+a.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
 
 /* ──────────────────────────── Buttons ───────────────────────────── */
 .btn {
@@ -178,8 +177,9 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
   font-family: var(--font-grotesk);
   font-size: 0.95rem;
   font-weight: 600;
-  border-radius: 999px;
-  padding: 0.82rem 1.6rem;
+  letter-spacing: 0.005em;
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1.5rem;
   transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
   cursor: pointer;
   border: 1px solid transparent;
@@ -189,18 +189,14 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .btn .arrow { display: inline-block; transition: transform 0.3s var(--ease); }
 .btn:hover .arrow { transform: translateX(3px); }
 
-.btn-primary { background: var(--forest); color: #f2ecd9; }
-.btn-primary:hover { background: var(--forest-2); }
+.btn-primary { background: var(--ink); color: #fffdf9; }
+.btn-primary:hover { background: var(--accent); color: #fff; }
 
-.btn-dark { background: var(--forest); color: #f2ecd9; }
-.btn-dark:hover { background: var(--forest-2); }
+.btn-dark { background: var(--ink); color: #fffdf9; }
+.btn-dark:hover { background: var(--accent); color: #fff; }
 
-.btn-outline { background: transparent; color: inherit; border-color: var(--border); }
-.btn-outline:hover { border-color: var(--forest); }
-.room .btn-outline { border-color: rgba(242, 236, 217, 0.35); color: #f2ecd9; }
-.room .btn-outline:hover { border-color: #f2ecd9; }
-.room .btn-primary { background: #f2ecd9; color: var(--forest); }
-.room .btn-primary:hover { background: #fff; }
+.btn-outline { background: transparent; color: var(--ink); border-color: var(--border); }
+.btn-outline:hover { border-color: var(--ink); background: var(--card); }
 
 /* ──────────────────────────── Inputs ────────────────────────────── */
 .input {
@@ -216,8 +212,8 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 }
 .input:focus {
   outline: none;
-  border-color: var(--forest);
-  box-shadow: 0 0 0 4px rgba(30, 49, 40, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .input::placeholder { color: var(--faint); }
 
@@ -226,7 +222,7 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.32rem 0.75rem;
+  padding: 0.32rem 0.72rem;
   border-radius: 999px;
   font-family: var(--font-grotesk);
   font-size: 0.78rem;
@@ -249,11 +245,11 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
   cursor: pointer;
   transition: all 0.16s var(--ease);
 }
-.tag-toggle:hover { border-color: var(--forest); }
+.tag-toggle:hover { border-color: var(--ink); }
 .tag-toggle[data-active="true"] {
-  background: var(--forest);
-  color: #f2ecd9;
-  border-color: var(--forest);
+  background: var(--ink);
+  color: #fffdf9;
+  border-color: var(--ink);
 }
 
 .section { max-width: 1180px; margin: 0 auto; padding: 0 1.75rem; }
@@ -274,17 +270,34 @@ a:focus-visible, button:focus-visible, .input:focus-visible, .tag-toggle:focus-v
 .ul-link:hover::after, .ul-link[data-active="true"]::after { transform: scaleX(1); }
 
 /* ─────────────────────── Signature moments ──────────────────────── */
-/* the corridor: a horizontal snap-scroll of arched portraits */
-.corridor {
+/* The style shelf: an edge-faded horizontal gallery of stylists' work. */
+.shelf {
   display: flex;
-  gap: 1.1rem;
+  gap: 1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding: 0.5rem 1.75rem 1.25rem;
+  padding: 0.25rem 1.75rem 1rem;
   scrollbar-width: none;
 }
-.corridor::-webkit-scrollbar { display: none; }
-.corridor > * { scroll-snap-align: start; flex-shrink: 0; }
+.shelf::-webkit-scrollbar { display: none; }
+.shelf > * { scroll-snap-align: start; flex-shrink: 0; }
+
+/* The palette rail: a gently gliding row of real season colours. */
+.rail {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.rail-track {
+  display: flex;
+  gap: 0.9rem;
+  width: max-content;
+  animation: railGlide 110s linear infinite;
+}
+.rail:hover .rail-track { animation-play-state: paused; }
+@keyframes railGlide { to { transform: translateX(-50%); } }
+.swatch-card { transition: transform 0.3s var(--ease); }
+.swatch-card:hover { transform: translateY(-4px); }
 
 .pulse-dot { animation: pulseDot 2.4s var(--ease) infinite; }
 @keyframes pulseDot {
