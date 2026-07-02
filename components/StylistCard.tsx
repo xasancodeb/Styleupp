@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { extrasOf, getPortfolio, type Stylist } from "@/lib/data";
+import { extrasOf, type Stylist } from "@/lib/data";
 import { formatGBP } from "@/lib/stripe";
 import SaveHeart from "@/components/SaveHeart";
 
@@ -57,45 +57,13 @@ export default function StylistCard({
               fontSize: "0.76rem",
               fontWeight: 700,
               color: "#fff",
-              background: "var(--accent)",
+              background: "var(--ink)",
               boxShadow: "0 2px 10px -4px rgba(0,0,0,0.35)",
             }}
           >
             {matchScore}% match
           </span>
         )}
-      </div>
-
-      {/* their work, right on the card: pick by taste, not by bio */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.35rem", marginTop: "0.35rem" }}>
-        {getPortfolio(stylist).slice(1, 4).map((img, i) => (
-          <div key={img} className="photo" style={{ aspectRatio: "1 / 1", borderRadius: 8 }}>
-            <Image
-              src={img}
-              alt={`A look styled by ${stylist.name}`}
-              fill
-              sizes="110px"
-              style={{ objectFit: "cover" }}
-            />
-            {i === 2 && (
-              <span
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(24,16,10,0.42)",
-                  color: "#fff",
-                  fontSize: "0.74rem",
-                  fontWeight: 600,
-                }}
-              >
-                See work
-              </span>
-            )}
-          </div>
-        ))}
       </div>
 
       <div style={{ padding: "1rem 0.7rem 0.6rem" }}>

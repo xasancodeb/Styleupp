@@ -172,7 +172,7 @@ export default function ExplorePage() {
   return (
     <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
       <span className="eyebrow">{results.length} of {STYLISTS.length} stylists</span>
-      <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
+      <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.4rem, 6vw, 4rem)", letterSpacing: "-0.045em", lineHeight: 1.0, marginTop: "1rem" }}>
         Browse stylists
       </h1>
       <p className="lede" style={{ marginTop: "1.1rem" }}>

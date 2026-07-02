@@ -45,7 +45,7 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
           <div className="card entry-info" style={{ padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
               <span className="eyebrow">{stylist.yearsExperience} yrs · {stylist.city}, {stylist.country}</span>
-              <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "clamp(2.1rem, 5vw, 3.4rem)", letterSpacing: "-0.04em", lineHeight: 1.0, marginTop: "1rem" }}>
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.1rem, 5vw, 3.4rem)", letterSpacing: "-0.04em", lineHeight: 1.0, marginTop: "1rem" }}>
                 {stylist.name}
               </h1>
               <p style={{ marginTop: "1rem", fontSize: "1.05rem", color: "var(--dim)", maxWidth: "46ch" }}>“{stylist.tagline}”</p>

@@ -7,8 +7,7 @@ import { supabaseBrowser } from "@/lib/supabase";
 import NotificationBell from "@/components/NotificationBell";
 
 const LINKS = [
-  { href: "/explore", label: "Stylists" },
-  { href: "/quiz", label: "Colour quiz" },
+  { href: "/explore", label: "Find stylists" },
   { href: "/fitting", label: "Fitting room" },
   { href: "/for-stylists", label: "For stylists" },
 ];
@@ -85,12 +84,12 @@ export default function Nav() {
   return (
     <header style={{ position: "sticky", top: 0, zIndex: 50, padding: "0.7rem 0" }}>
       <div className="section">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 60, padding: "0 0.6rem 0 1.2rem", background: "color-mix(in srgb, var(--card) 82%, transparent)", border: "1px solid var(--line)", borderRadius: 14, backdropFilter: "blur(18px) saturate(1.4)", WebkitBackdropFilter: "blur(18px) saturate(1.4)", boxShadow: "var(--shadow-soft)" }}>
-          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "baseline", gap: 2 }}>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ink)", lineHeight: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 58, padding: "0 0.5rem 0 1.1rem", background: "color-mix(in srgb, var(--bg) 72%, transparent)", border: "1px solid var(--line)", borderRadius: 999, backdropFilter: "blur(20px) saturate(1.8)", WebkitBackdropFilter: "blur(20px) saturate(1.8)", boxShadow: "var(--shadow-soft)" }}>
+          <Link href="/" aria-label="StyleUp home" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 9, height: 9, borderRadius: "50%", background: "linear-gradient(140deg, var(--accent), var(--accent-2))", boxShadow: "0 0 12px 1px color-mix(in srgb, var(--accent) 80%, transparent)" }} />
+            <span style={{ fontFamily: "var(--font-grotesk)", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--ink)", lineHeight: 1 }}>
               StyleUp
             </span>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block", marginLeft: 3 }} />
           </Link>
 
           <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "1.7rem" }}>
