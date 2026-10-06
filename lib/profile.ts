@@ -12,6 +12,8 @@ export interface ClientProfile {
   location: { city: string; country: string } | null;
   /** Open to stylists anywhere over video, rather than only those near me. */
   international: boolean;
+  /** Whether the site wears the visitor's season palette. On by default. */
+  wearColors: boolean;
   preferences: {
     budget: "value" | "mid" | "premium" | null;
     sessionType: "virtual" | "in-person" | "hybrid" | null;
@@ -283,6 +285,7 @@ function emptyProfile(): ClientProfile {
     season: null,
     location: null,
     international: false,
+    wearColors: true,
     preferences: { budget: null, sessionType: null, stylistGender: null, goals: [] },
     updatedAt: new Date().toISOString(),
   };
@@ -321,6 +324,10 @@ export function saveLocation(location: ClientProfile["location"]): ClientProfile
 
 export function saveInternational(international: boolean): ClientProfile {
   return saveProfile({ international });
+}
+
+export function saveWearColors(wearColors: boolean): ClientProfile {
+  return saveProfile({ wearColors });
 }
 
 export function saveStylistGender(stylistGender: "female" | "male" | null): ClientProfile {

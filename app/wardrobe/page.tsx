@@ -240,7 +240,7 @@ export default function WardrobePage() {
               // An outfit whose pieces have since been deleted is not worth a card.
               if (pieces.length === 0) return null;
               return (
-                <article key={outfit.id} className="card" style={{ padding: "1.4rem", display: "flex", flexDirection: "column" }}>
+                <article key={outfit.id} className="card outfit-card" style={{ padding: "1.4rem", display: "flex", flexDirection: "column" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "0.8rem" }}>
                     <div>
                       <h3 style={{ fontWeight: 600, fontSize: "1.15rem", letterSpacing: "-0.02em" }}>{outfit.title}</h3>
@@ -257,9 +257,9 @@ export default function WardrobePage() {
                     </button>
                   </div>
 
-                  <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.9rem", flexWrap: "wrap" }}>
+                  <div className="flatlay" style={{ marginTop: "0.9rem" }}>
                     {pieces.map((p) => (
-                      <span key={p.id} className="photo" style={{ width: 64, height: 80, borderRadius: 8, display: "block", position: "relative" }} title={p.name}>
+                      <span key={p.id} className="photo" style={{ display: "block", position: "relative" }} title={p.name}>
                         <Image src={p.imageUrl} alt={p.name} fill sizes="64px" style={{ objectFit: "cover" }} />
                       </span>
                     ))}

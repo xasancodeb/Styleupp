@@ -110,6 +110,19 @@ const ORG_SCHEMA = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-GB" className={inter.variable}>
+      <head>
+        {/*
+          Paints the visitor's season accent before first paint. Without this
+          the page renders brand violet and then snaps to their colour a frame
+          later. The value was resolved and cached by SeasonAccent, so this
+          stays a tiny synchronous read rather than any colour maths.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var a=JSON.parse(localStorage.getItem("styleup.accent")||"null");if(a&&a[0]){var s=document.documentElement.style;s.setProperty("--accent",a[0]);if(a[1])s.setProperty("--accent-2",a[1])}}catch(e){}`,
+          }}
+        />
+      </head>
       <body>
         {/* Keyboard and screen-reader users shouldn't have to walk the nav on
             every page before reaching the content. */}

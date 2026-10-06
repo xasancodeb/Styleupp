@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getFeatured, SERVICE_MENU } from "@/lib/data";
-import StylistCard from "@/components/StylistCard";
+import StylistRail from "@/components/StylistRail";
 import Reveal from "@/components/Reveal";
 import MatchRequest from "@/components/MatchRequest";
 import PaletteRail from "@/components/PaletteRail";
@@ -154,18 +154,14 @@ export default function HomePage() {
             <div>
               <span className="eyebrow">Featured stylists</span>
               <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem" }}>
-                Meet a few of them
+                Go down the rail
               </h2>
             </div>
             <Link href="/explore" className="btn btn-outline">See everyone <span className="arrow">→</span></Link>
           </div>
         </Reveal>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(265px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
-          {featured.map((stylist, i) => (
-            <Reveal key={stylist.id} delay={(i % 3) * 80}>
-              <StylistCard stylist={stylist} />
-            </Reveal>
-          ))}
+        <div style={{ marginTop: "2rem" }}>
+          <StylistRail stylists={featured} />
         </div>
       </section>
 

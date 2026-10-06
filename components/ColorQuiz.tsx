@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { announceSeasonChange } from "@/components/SeasonAccent";
 import {
   SEASON_QUIZ,
   determineSeason,
@@ -33,6 +34,9 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
     } else {
       const season = determineSeason(next);
       saveSeason(season);
+      // Repaint the site in their palette straight away, so the result card
+      // appears in the colours it is describing.
+      announceSeasonChange();
       // Store the styling goal (the non-scoring final question) so stylist
       // matching and recommendations can use it.
       const goalQ = SEASON_QUIZ.find((q) => q.goal);
@@ -66,6 +70,24 @@ export default function ColorQuiz({ compact = false }: { compact?: boolean }) {
           <span style={{ background: "linear-gradient(120deg, var(--accent), var(--accent-2))", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{palette.name}</span>
         </h2>
         <p style={{ color: "var(--dim)", marginTop: "0.6rem", fontSize: "1.02rem" }}>{palette.tagline}</p>
+
+        {/* The takeover has already happened by the time this renders, so this
+            names what the visitor is looking at rather than promising it. */}
+        <p
+          className="fade-up"
+          style={{
+            marginTop: "1.1rem",
+            fontSize: "0.9rem",
+            fontWeight: 600,
+            color: "var(--accent)",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--accent)" }} />
+          StyleUp is now wearing your colours
+        </p>
 
         <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1.5rem", flexWrap: "wrap" }}>
           {palette.bestColors.map((c) => (

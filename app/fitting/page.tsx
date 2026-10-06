@@ -2,16 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { loadProfile, saveSeason, PALETTES, type ColorSeason } from "@/lib/profile";
+import { loadProfile, saveSeason, saveWearColors, PALETTES, type ColorSeason } from "@/lib/profile";
+import { announceSeasonChange } from "@/components/SeasonAccent";
 
 const SEASONS: ColorSeason[] = ["spring", "summer", "autumn", "winter"];
 
 export default function FittingPage() {
   const [season, setSeason] = useState<ColorSeason | null>(null);
   const [hasResult, setHasResult] = useState(false);
+  const [wearColors, setWearColors] = useState(true);
 
   useEffect(() => {
     const profile = loadProfile();
+    setWearColors(profile.wearColors !== false);
     if (profile.season) {
       setSeason(profile.season);
       setHasResult(true);
@@ -24,6 +27,13 @@ export default function FittingPage() {
     setSeason(s);
     saveSeason(s);
     setHasResult(true);
+    announceSeasonChange();
+  }
+
+  function toggleWear(next: boolean) {
+    setWearColors(next);
+    saveWearColors(next);
+    announceSeasonChange();
   }
 
   const palette = season ? PALETTES[season] : null;
@@ -51,6 +61,52 @@ export default function FittingPage() {
           <Link href="/quiz" style={{ color: "var(--accent-dark)", fontWeight: 600 }}>
             Take the quiz →
           </Link>
+        </div>
+      )}
+
+      {/* The takeover is opt-out, and this is where it lives. */}
+      {hasResult && (
+        <div
+          className="card"
+          style={{ padding: "1rem 1.25rem", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}
+        >
+          <div>
+            <div style={{ fontWeight: 600, fontSize: "0.98rem" }}>Dress StyleUp in my colours</div>
+            <div style={{ color: "var(--dim)", fontSize: "0.88rem", marginTop: "0.2rem" }}>
+              The whole site takes on your palette. Deepened where it needs to be, so everything stays readable.
+            </div>
+          </div>
+          <button
+            role="switch"
+            aria-checked={wearColors}
+            onClick={() => toggleWear(!wearColors)}
+            style={{
+              position: "relative",
+              width: 52,
+              height: 30,
+              flexShrink: 0,
+              borderRadius: 999,
+              border: "1px solid var(--border)",
+              background: wearColors ? "var(--accent)" : "var(--bg-2)",
+              cursor: "pointer",
+              transition: "background 0.25s var(--ease)",
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: 3,
+                left: wearColors ? 25 : 3,
+                width: 22,
+                height: 22,
+                borderRadius: "50%",
+                background: "#fff",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+                transition: "left 0.25s var(--ease)",
+              }}
+            />
+          </button>
         </div>
       )}
 

@@ -273,6 +273,141 @@ summary:focus-visible, select:focus-visible, [tabindex]:focus-visible {
 }
 .skip-link:focus-visible { transform: translate(-50%, 0); }
 
+/* ───────────────────────── The stylist rail ─────────────────────────────
+   Discovery as a rail of clothes rather than a grid of cards: flick, drag,
+   trackpad or arrow keys, snapping to whichever face you land on. */
+.rail-wrap { position: relative; }
+
+.stylist-rail {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding: 0.5rem 0 1.25rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+}
+.stylist-rail::-webkit-scrollbar { display: none; }
+.stylist-rail:active { cursor: grabbing; }
+.stylist-rail:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 18px; }
+
+.rail-card {
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+  display: block;
+  transition: transform 0.4s var(--ease);
+}
+.rail-card:hover { transform: translateY(-6px); }
+.rail-card-photo {
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+  position: relative;
+  box-shadow: var(--shadow-soft);
+}
+/* Keeps the overlaid name legible whatever the photograph is doing. */
+.rail-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 10, 14, 0.78) 0%, rgba(10, 10, 14, 0.25) 38%, transparent 68%);
+}
+.rail-card-copy { position: absolute; left: 1.1rem; right: 1.1rem; bottom: 1rem; color: #fff; }
+.rail-card-vibe {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.rail-card-name {
+  font-family: var(--font-grotesk);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0.3rem 0 0;
+}
+.rail-card-meta { font-size: 0.85rem; margin-top: 0.2rem; opacity: 0.85; }
+.rail-card-line {
+  color: var(--dim);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0.85rem 0.15rem 0;
+}
+.rail-tail { flex: 0 0 1px; }
+
+.rail-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+.rail-progress { display: flex; gap: 6px; align-items: center; }
+.rail-progress span {
+  width: 20px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.3s var(--ease), width 0.3s var(--ease);
+}
+.rail-progress span[data-on="true"] { background: var(--accent); width: 34px; }
+
+.rail-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.rail-btn:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-1px); }
+.rail-btn:disabled { opacity: 0.32; cursor: default; }
+
+@media (max-width: 700px) {
+  .rail-card { flex-basis: 78vw; }
+}
+
+/* ──────────────────────────── The flat-lay ──────────────────────────────
+   An outfit is clothes laid out together, not a row of database thumbnails.
+   Pieces overlap and sit at slight angles, then spread and straighten when
+   you look closer. */
+.flatlay {
+  display: flex;
+  padding: 0.35rem 0 0.2rem 0.9rem;
+  min-height: 92px;
+}
+.flatlay > * {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 80px;
+  border-radius: 9px;
+  margin-left: -22px;
+  background: var(--bg-2);
+  box-shadow: 0 3px 12px -4px rgba(0, 0, 0, 0.3), 0 0 0 3px var(--card);
+  transition: transform 0.42s var(--ease), margin 0.42s var(--ease);
+}
+/* Alternating tilt, so a flat-lay never looks mechanically even. */
+.flatlay > *:nth-child(3n + 1) { transform: rotate(-6deg); }
+.flatlay > *:nth-child(3n + 2) { transform: rotate(3deg) translateY(-3px); }
+.flatlay > *:nth-child(3n + 3) { transform: rotate(8deg) translateY(2px); }
+
+.flatlay:hover > *,
+.outfit-card:focus-within .flatlay > * {
+  transform: rotate(0deg) translateY(-4px);
+  margin-left: 6px;
+}
+.flatlay:hover > *:first-child,
+.outfit-card:focus-within .flatlay > *:first-child { margin-left: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flatlay > * { transition: none; }
+}
+
 /* Collapsible secondary filters (explore page). */
 .more-filters > summary {
   display: flex;
