@@ -8,6 +8,7 @@ import NotificationBell from "@/components/NotificationBell";
 
 const LINKS = [
   { href: "/explore", label: "Find stylists" },
+  { href: "/wardrobe", label: "Wardrobe" },
   { href: "/fitting", label: "Fitting room" },
   { href: "/for-stylists", label: "For stylists" },
 ];

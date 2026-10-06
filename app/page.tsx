@@ -169,6 +169,48 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ───────────────────── The wardrobe (the product) ──────────────────── */}
+      <section style={{ background: "var(--bg-2)" }}>
+        <div className="section" style={{ padding: "4.5rem 1.75rem" }}>
+          <Reveal>
+            <div style={{ maxWidth: 680 }}>
+              <span className="eyebrow">Your wardrobe</span>
+              <h2 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(1.9rem, 4.5vw, 2.8rem)", letterSpacing: "-0.035em", marginTop: "0.6rem", lineHeight: 1.06 }}>
+                The best outfit you own,<br />you haven&apos;t worn yet.
+              </h2>
+              <p className="lede" style={{ marginTop: "1rem" }}>
+                Photograph what is already in your wardrobe. We read every piece, remember its
+                colour and cut, and put together looks that suit your colouring, using only
+                clothes you own. Then your stylist starts from your real wardrobe instead of
+                a blank call.
+              </p>
+            </div>
+          </Reveal>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem", marginTop: "2.25rem" }}>
+            {[
+              { t: "Photograph it", b: "Snap each piece as you go. We identify the garment, its colour and how dressed-up it is." },
+              { t: "Get outfits back", b: "Say where you're going. You get complete looks from your own clothes, and why each one works on you." },
+              { t: "Find the real gap", b: "We name the one piece worth buying, in the colour that suits you. Usually it's far less than you'd think." },
+            ].map((s, i) => (
+              <Reveal key={s.t} delay={i * 90}>
+                <div className="card" style={{ padding: "1.6rem", height: "100%" }}>
+                  <h3 style={{ fontWeight: 600, fontSize: "1.1rem", letterSpacing: "-0.02em" }}>{s.t}</h3>
+                  <p style={{ color: "var(--dim)", marginTop: "0.5rem", fontSize: "0.94rem", lineHeight: 1.6 }}>{s.b}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={120}>
+            <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginTop: "2rem" }}>
+              <Link href="/wardrobe" className="btn btn-primary">Open your wardrobe <span className="arrow">→</span></Link>
+              <Link href="/quiz" className="btn btn-outline">First, find your colours</Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ─────────── Not ready to book? The free colour tool ──────────────── */}
       <section style={{ padding: "1rem 0 4.5rem" }}>
         <Reveal>
