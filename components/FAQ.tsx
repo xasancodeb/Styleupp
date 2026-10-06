@@ -1,35 +1,11 @@
 // Objection-handling FAQ. Native <details> so it needs no JavaScript.
-const QA = [
-  {
-    q: "Is the colour quiz really free?",
-    a: "Completely. Two minutes, no sign-up, no card. You get your colour season and a palette you can shop from straight away. Book a stylist only if you want to go further.",
-  },
-  {
-    q: "What actually happens in a session?",
-    a: "You meet your stylist over video or in person. Depending on the service, they analyse your colours, audit your wardrobe, build a capsule plan or take you shopping. You always leave with something concrete: a palette, a plan or a bag of things that suit you.",
-  },
-  {
-    q: "What if I don't like my first session?",
-    a: "Then it's free. If your first session isn't worth every penny, tell us within 48 hours and we refund it in full. No forms, no argument.",
-  },
-  {
-    q: "Can I choose who I work with?",
-    a: "Yes, completely. Pick the exact stylist whose taste and vibe you like, and filter by gender if that matters to your comfort. Your preference is remembered.",
-  },
-  {
-    q: "Are there stylists near me?",
-    a: "We show your country first, so you see the people who can actually meet you in person or shop the stores with you. Prefer the whole world? Switch to international and meet anyone over video.",
-  },
-  {
-    q: "How do payments and cancellations work?",
-    a: "Payments are handled securely by Stripe; we never see your card. Cancel or reschedule up to 48 hours before your session for free, and 24–48 hours before for a half refund.",
-  },
-];
+// Content lives in lib/faq.ts, shared with the page's FAQPage structured data.
+import { FAQ_ITEMS } from "@/lib/faq";
 
 export default function FAQ() {
   return (
     <div style={{ display: "grid", gap: "0.6rem" }}>
-      {QA.map((item) => (
+      {FAQ_ITEMS.map((item) => (
         <details
           key={item.q}
           className="card"

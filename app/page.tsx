@@ -7,6 +7,7 @@ import PaletteRail from "@/components/PaletteRail";
 import PromiseStrip from "@/components/PromiseStrip";
 import Transformations from "@/components/Transformations";
 import FAQ from "@/components/FAQ";
+import { faqSchema } from "@/lib/faq";
 
 const STEPS = [
   { n: "1", title: "Tell us what you need", body: "A big occasion, a wardrobe that finally works, help shopping, your colours. Thirty seconds, no sign-up." },
@@ -37,7 +38,10 @@ export default function HomePage() {
               <span className="eyebrow">Personal styling, on demand</span>
             </Reveal>
             <Reveal delay={60}>
-              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.7rem, 6.5vw, 5rem)", lineHeight: 1.04, letterSpacing: "-0.045em", marginTop: "1.4rem" }}>
+              {/* Sized so "A personal stylist," actually fits the hero column:
+                  above ~5vw the line overflowed and the three written lines
+                  broke into five, pushing the CTA and the stats below the fold. */}
+              <h1 style={{ fontFamily: "var(--font-grotesk)", fontWeight: 700, fontSize: "clamp(2.7rem, 5vw, 3.7rem)", lineHeight: 1.06, letterSpacing: "-0.04em", marginTop: "1.4rem" }}>
                 A personal <span className="gradient-word">stylist</span>,<br />
                 near you,<br />on your budget.
               </h1>
@@ -50,7 +54,13 @@ export default function HomePage() {
             </Reveal>
             <Reveal delay={180}>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.8rem", marginTop: "1.8rem" }}>
-                <Link href="/explore" className="btn btn-outline">Or browse all stylists</Link>
+                {/* On a phone the matching card sits below the fold, so the
+                    hero needs its own way in. On desktop the card is already
+                    beside this text, which is why this button is hidden there. */}
+                <a href="#match" className="btn btn-primary hero-cta-jump">
+                  Get matched <span className="arrow">→</span>
+                </a>
+                <Link href="/explore" className="btn btn-outline">Browse all stylists</Link>
               </div>
             </Reveal>
             <Reveal delay={240}>
@@ -68,7 +78,7 @@ export default function HomePage() {
 
           {/* the request flow, front and centre: the "hail a stylist" card */}
           <Reveal delay={140} className="hero-visual">
-            <div style={{ position: "relative" }}>
+            <div id="match" style={{ position: "relative", scrollMarginTop: "6rem" }}>
               <div style={{ marginBottom: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)" }} />
                 <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Get matched · takes 30 seconds</span>
@@ -187,7 +197,7 @@ export default function HomePage() {
             Same person. Right colours.
           </h2>
           <p style={{ color: "var(--dim)", marginTop: "0.6rem", maxWidth: 560 }}>
-            Hover over each photo to see what happens when someone starts wearing their season.
+            Hover or tap each photo to see what happens when someone starts wearing their season.
           </p>
         </Reveal>
         <div style={{ marginTop: "2rem" }}>
@@ -223,15 +233,23 @@ export default function HomePage() {
             </p>
             <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "2rem" }}>
               <Link href="/explore" className="btn btn-primary">Browse stylists <span className="arrow">→</span></Link>
-              <Link href="/explore" className="btn btn-outline">Find someone near me</Link>
+              <Link href="/quiz" className="btn btn-outline">Start with the free quiz</Link>
             </div>
           </div>
         </Reveal>
       </section>
 
+      <script
+        type="application/ld+json"
+        // Static content from lib/faq.ts; no user input reaches this string.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema()) }}
+      />
+
       <style>{`
+        .hero-cta-jump { display: none; }
         @media (max-width: 860px) {
           .hero-grid { grid-template-columns: 1fr !important; }
+          .hero-cta-jump { display: inline-flex; }
         }
       `}</style>
     </div>

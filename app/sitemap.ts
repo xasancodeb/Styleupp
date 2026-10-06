@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { STYLISTS } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const base = SITE_URL;
   const now = new Date();
 
   const staticPaths = [

@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getStylist, STYLISTS, getPortfolio, offersInPerson, offersInStoreShopping, extrasOf } from "@/lib/data";
+import { getStylist, STYLISTS, getPortfolio, offersInPerson, offersInStoreShopping, extrasOf, type Stylist } from "@/lib/data";
 import { formatGBP, priceBreakdown } from "@/lib/stripe";
+import { absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/site";
 import SaveStylistButton from "@/components/SaveStylistButton";
 import LiveReviews from "@/components/LiveReviews";
 import StylistCard from "@/components/StylistCard";
@@ -13,13 +15,74 @@ export function generateStaticParams() {
   return STYLISTS.map((s) => ({ id: s.id }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const stylist = getStylist(id);
-  if (!stylist) return { title: "Stylist not found · StyleUp" };
+  if (!stylist) return { title: "Stylist not found", robots: { index: false, follow: false } };
+
+  // A profile is the page people actually share, so it carries its own
+  // description, canonical URL and portrait as the share image.
+  const description = `${stylist.tagline} ${stylist.name} is a personal stylist in ${stylist.city}, ${stylist.country}, specialising in ${stylist.specialties.join(", ").toLowerCase()}. Sessions from ${formatGBP(stylist.startingPrice)}.`;
+
   return {
-    title: `${stylist.name} · StyleUp`,
-    description: stylist.tagline,
+    title: `${stylist.name}, personal stylist in ${stylist.city}`,
+    description,
+    alternates: { canonical: `/stylist/${stylist.id}` },
+    openGraph: {
+      type: "profile",
+      title: `${stylist.name} · personal stylist in ${stylist.city}`,
+      description,
+      url: `/stylist/${stylist.id}`,
+      images: [{ url: stylist.avatar, width: 1200, height: 1500, alt: stylist.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${stylist.name} · personal stylist in ${stylist.city}`,
+      description,
+      images: [stylist.avatar],
+    },
+  };
+}
+
+/**
+ * Person plus the services they offer, with their real rating as an
+ * aggregateRating, so a profile can earn a rich result rather than a plain
+ * blue link. Prices come from the same source as the booking flow.
+ */
+function stylistSchema(stylist: Stylist) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": absoluteUrl(`/stylist/${stylist.id}#person`),
+    name: stylist.name,
+    url: absoluteUrl(`/stylist/${stylist.id}`),
+    image: stylist.avatar,
+    jobTitle: "Personal stylist",
+    description: stylist.bio,
+    knowsLanguage: stylist.languages,
+    knowsAbout: stylist.specialties,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: stylist.city,
+      addressCountry: stylist.country,
+    },
+    worksFor: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: stylist.rating,
+      reviewCount: stylist.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    makesOffer: stylist.services.map((svc) => ({
+      "@type": "Offer",
+      name: svc.name,
+      description: svc.description,
+      price: svc.price,
+      priceCurrency: "GBP",
+      availability: "https://schema.org/InStock",
+      url: absoluteUrl(`/book?stylist=${stylist.id}`),
+    })),
   };
 }
 
@@ -267,6 +330,12 @@ export default async function StylistPage({ params }: { params: Promise<{ id: st
       </div>
 
       <StickyBookBar stylistId={stylist.id} name={stylist.name} fromPrice={formatGBP(stylist.startingPrice)} />
+
+      <script
+        type="application/ld+json"
+        // Built from our own stylist records; no visitor input reaches it.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(stylistSchema(stylist)) }}
+      />
 
       <style>{`
         @media (max-width: 860px) {

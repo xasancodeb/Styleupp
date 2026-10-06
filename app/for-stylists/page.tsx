@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Become a StyleUp stylist · grow your business",
+  title: "Become a stylist",
   description:
     "Join StyleUp's global community of personal stylists. Reach new clients, set your own rates, get paid securely, and pay commission as low as 10%.",
 };

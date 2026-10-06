@@ -1,7 +1,7 @@
 import ColorQuiz from "@/components/ColorQuiz";
 
 export const metadata = {
-  title: "Find your colours · StyleUp",
+  title: "Find your colours",
   description: "Take the two-minute colour-season quiz and discover the palette that makes you glow.",
 };
 

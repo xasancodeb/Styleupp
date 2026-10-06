@@ -61,6 +61,9 @@ export default function ExplorePage() {
   const [international, setInternational] = useState(false);
   const [gender, setGender] = useState<Gender | "any">("any");
   const [profile, setProfile] = useState<ClientProfile | null>(null);
+  // Owned by the visitor once they touch it, so clearing a filter can never
+  // yank the panel shut underneath them.
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const matchable = profile ? canMatch(profile) : false;
   const scores = useMemo(() => {
@@ -80,6 +83,11 @@ export default function ExplorePage() {
     // Deep links from the services menu: /explore?specialty=Colour%20Analysis
     const wanted = new URLSearchParams(window.location.search).get("specialty");
     if (wanted && (SPECIALTIES as readonly string[]).includes(wanted)) setSpecialty(wanted);
+    // Open the panel on arrival only if something in it is already applied,
+    // so an arriving filter is visible rather than silently hidden.
+    if ((wanted && (SPECIALTIES as readonly string[]).includes(wanted)) || p.preferences.stylistGender) {
+      setFiltersOpen(true);
+    }
   }, []);
 
   function chooseCountry(c: string) {
@@ -169,6 +177,10 @@ export default function ExplorePage() {
     ? results.filter((s) => offersInPerson(s) && proximity(s, country) !== "remote").length
     : 0;
 
+  // How many of the folded-away filters are actually narrowing the results.
+  const advancedCount =
+    (gender !== "any" ? 1 : 0) + (specialty ? 1 : 0) + (priceBand !== 0 ? 1 : 0);
+
   return (
     <div className="section" style={{ padding: "2.5rem 1.75rem 2rem" }}>
       <span className="eyebrow">{results.length} of {STYLISTS.length} stylists</span>
@@ -203,7 +215,9 @@ export default function ExplorePage() {
           </select>
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <button className="tag-toggle" data-active={!international} onClick={() => toggleInternational(false)} disabled={!country} style={{ opacity: country ? 1 : 0.5, cursor: country ? "pointer" : "not-allowed" }}>
+          {/* Only reads as selected once a country makes it meaningful;
+              before that it was dark *and* dimmed, which looked broken. */}
+          <button className="tag-toggle" data-active={!!country && !international} onClick={() => toggleInternational(false)} disabled={!country} title={country ? undefined : "Pick your country first"} style={{ opacity: country ? 1 : 0.55, cursor: country ? "pointer" : "not-allowed" }}>
             Near me
           </button>
           <button className="tag-toggle" data-active={international || !country} onClick={() => toggleInternational(true)}>
@@ -247,38 +261,58 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        <div>
-          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Stylist gender</label>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
-            {GENDERS.map((g) => (
-              <button key={g.value} className="tag-toggle" data-active={gender === g.value} onClick={() => chooseGender(g.value)}>
-                {g.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Gender, specialty and budget start folded away: open, they pushed
+            every stylist below the fold on the page whose job is showing them.
+            It opens automatically when a filter is already applied. */}
+        <details
+          className="more-filters"
+          open={filtersOpen}
+          onToggle={(e) => setFiltersOpen((e.currentTarget as HTMLDetailsElement).open)}
+        >
+          <summary>
+            <span>More filters</span>
+            {advancedCount > 0 && (
+              <span className="chip" style={{ background: "var(--ink)", color: "#fff", fontWeight: 600 }}>
+                {advancedCount}
+              </span>
+            )}
+          </summary>
 
-        <div>
-          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Specialty</label>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
-            {SPECIALTIES.map((s) => (
-              <button key={s} className="tag-toggle" data-active={specialty === s} onClick={() => setSpecialty(specialty === s ? null : s)}>
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
+          <div style={{ display: "grid", gap: "1.25rem", marginTop: "1.2rem" }}>
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Stylist gender</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+                {GENDERS.map((g) => (
+                  <button key={g.value} className="tag-toggle" data-active={gender === g.value} onClick={() => chooseGender(g.value)}>
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div>
-          <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Budget</label>
-          <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
-            {PRICE_BANDS.map((b, i) => (
-              <button key={b.label} className="tag-toggle" data-active={priceBand === i} onClick={() => setPriceBand(i)}>
-                {b.label}
-              </button>
-            ))}
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Specialty</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+                {SPECIALTIES.map((s) => (
+                  <button key={s} className="tag-toggle" data-active={specialty === s} onClick={() => setSpecialty(specialty === s ? null : s)}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--dim)" }}>Budget</label>
+              <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
+                {PRICE_BANDS.map((b, i) => (
+                  <button key={b.label} className="tag-toggle" data-active={priceBand === i} onClick={() => setPriceBand(i)}>
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "1.75rem 0 1rem", flexWrap: "wrap", gap: "0.75rem" }}>

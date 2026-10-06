@@ -38,7 +38,21 @@ export default function Transformations() {
           <figure
             key={s.name}
             style={{ margin: 0, cursor: "pointer" }}
+            // Pointer, touch and keyboard all reach the same toggle, so the
+            // colour reveal isn't a hover-only feature.
+            role="button"
+            tabIndex={0}
+            aria-pressed={on}
+            aria-label={`${on ? "Hide" : "Show"} ${s.name.toLowerCase()} in colour`}
             onClick={() => setActive(on ? null : i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setActive(on ? null : i);
+              }
+            }}
+            onFocus={() => setActive(i)}
+            onBlur={() => setActive(null)}
             onMouseEnter={() => setActive(i)}
             onMouseLeave={() => setActive(null)}
           >
@@ -71,7 +85,7 @@ export default function Transformations() {
                   transition: "color 0.3s var(--ease)",
                 }}
               >
-                {on ? "In colour" : "Hover to add colour"}
+                {on ? "In colour" : "See it in colour"}
               </span>
             </div>
             <figcaption style={{ marginTop: "0.9rem" }}>
